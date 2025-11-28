@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="15.1.0" />
+    <PackageReference Include="EFCore.BulkExtensions" Version="8.1.1" />
+    <PackageReference Include="Google.Apis.Drive.v3" Version="1.72.0.3970" />
+    <PackageReference Include="Google.Apis.Sheets.v4" Version="1.72.0.3966" />
+    <PackageReference Include="Hangfire.Core" Version="1.8.22" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0" />
+    <PackageReference Include="NLog" Version="6.0.6" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="6.1.0" />
+	<PackageReference Include="QRCoder" Version="1.6.0" />
+	<PackageReference Include="Volo.Abp.Security" Version="9.3.2" />
+  </ItemGroup>
+
+
+
+	<ItemGroup>
+		<ProjectReference Include="..\traobang.be.infrastructure.data\traobang.be.infrastructure.data.csproj" />
+		<ProjectReference Include="..\traobang.be.infrastructure.external\traobang.be.infrastructure.external.csproj" />
+	</ItemGroup>
+
+
+
+	<ItemGroup>
+	  <Folder Include="Auth\Dtos\User\" />
+	  <Folder Include="Auth\Dtos\Role\" />
+	  <Folder Include="Auth\Implements\" />
+	  <Folder Include="Auth\Interfaces\" />
+	  <Folder Include="Base\" />
+	  <Folder Include="TraoBang\Dtos\" />
+	  <Folder Include="TraoBang\Implements\" />
+	  <Folder Include="TraoBang\Interfaces\" />
+	</ItemGroup>
+</Project>

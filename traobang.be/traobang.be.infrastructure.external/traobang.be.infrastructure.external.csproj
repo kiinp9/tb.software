@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Hangfire.AspNetCore" Version="1.8.22" />
+    <PackageReference Include="Hangfire.Core" Version="1.8.22" />
+    <PackageReference Include="Hangfire.SqlServer" Version="1.8.22" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.2.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0" />
+    <PackageReference Include="NLog" Version="6.0.6" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="6.1.0" />
+  </ItemGroup>
+	
+	
+<ItemGroup>
+    <Folder Include="Log\Archive\" />
+    <Folder Include="Log\Logs\" />
+    <Folder Include="SignalR\Hub\Implements\" />
+    <Folder Include="SignalR\Hub\Interfaces\" />
+    <Folder Include="SignalR\Service\Implements\" />
+    <Folder Include="SignalR\Service\Interfaces\" />
+  </ItemGroup>
+	<ItemGroup>
+		<Folder Include="Log\Archive\" />
+		<Folder Include="Log\Logs\" />
+	</ItemGroup>
+
+
+  <ItemGroup>
+    <Folder Include="Log\Archive\" />
+    <Folder Include="Log\Logs\" />
+  </ItemGroup>
+
+</Project>

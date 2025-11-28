@@ -1,0 +1,6 @@
+@traobang.be_HostAddress = http://localhost:5165
+
+GET {{traobang.be_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

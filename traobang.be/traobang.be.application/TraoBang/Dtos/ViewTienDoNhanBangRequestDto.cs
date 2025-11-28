@@ -1,0 +1,14 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace traobang.be.application.TraoBang.Dtos
+{
+    public class ViewTienDoNhanBangRequestDto
+    {
+  
+        public int SoLuong { get; set; }
+    }
+}

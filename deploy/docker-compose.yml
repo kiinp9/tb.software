@@ -1,0 +1,25 @@
+version: '3.4'
+
+services:
+  traobang.fe:
+    image: traobang.fe.${APP_ENV}
+    container_name: traobang.fe_c.${APP_ENV}
+    build:
+      context: ../traobang.fe
+      dockerfile: Dockerfile
+      args:
+        APP_ENV: ${APP_FE_ENV}
+    ports:
+      - "6200:80"
+    restart: unless-stopped
+  traobang.be:
+    image: traobang.be.${APP_ENV}
+    container_name: traobang.be_c.${APP_ENV}
+    build:
+      context: ..
+      dockerfile: ./traobang.be/Dockerfile
+    ports:
+      - "6100:8080"
+    restart: unless-stopped
+    environment:
+      - DOTNET_ENVIRONMENT=${APP_BE_ENV}

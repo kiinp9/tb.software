@@ -16,7 +16,7 @@ services:
     image: traobang.be.${APP_ENV}
     container_name: traobang.be_c.${APP_ENV}
     build:
-      context: ..
+      context: ../traobang.be
       dockerfile: ./traobang.be/Dockerfile
     ports:
       - "6100:8080"

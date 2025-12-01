@@ -13,7 +13,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["traobang.be/traobang.be.csproj", "traobang.be/"]
-COPY ["traobang.be.Application/traobang.be.application.csproj", "traobang.be.Application/"]
+COPY ["traobang.be.application/traobang.be.application.csproj", "traobang.be.application/"]
 COPY ["traobang.be.infrastructure.data/traobang.be.infrastructure.data.csproj", "traobang.be.infrastructure.data/"]
 COPY ["traobang.be.domain/traobang.be.domain.csproj", "traobang.be.domain/"]
 COPY ["traobang.be.shared/traobang.be.shared.csproj", "traobang.be.shared/"]

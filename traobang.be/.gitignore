@@ -41,7 +41,7 @@ project.fragment.lock.json
 artifacts/
 
 ## EF Core
-Migrations/  
+## Migrations/  
 ## Service Account
 traobang.be/service-account.json
 

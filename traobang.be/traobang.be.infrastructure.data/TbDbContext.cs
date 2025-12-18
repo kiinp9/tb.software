@@ -1,13 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using traobang.be.domain.Auth;
 using traobang.be.domain.TraoBang;
 using traobang.be.shared.Constants.Db;
+using traobang.be.shared.Constants.TraoBang;
 
 namespace traobang.be.infrastructure.data
 {
@@ -24,6 +20,7 @@ namespace traobang.be.infrastructure.data
         public DbSet<DanhSachSinhVienNhanBang> DanhSachSinhVienNhanBangs { get; set; }
         public DbSet<TraoBangLog> TraoBangLogs { get; set; }
         public DbSet<TienDoTraoBang> TienDoTraoBangs { get; set; }
+        public DbSet<Slide> Slides { get; set; }
 
 
 
@@ -58,6 +55,13 @@ namespace traobang.be.infrastructure.data
                 entity.Property(e => e.Deleted).HasDefaultValue(0);
                 entity.Property(e => e.CreatedDate).HasDefaultValueSql("getdate()");
             });
+            modelBuilder.Entity<Slide>(entity =>
+            {
+                entity.Property(e => e.TrangThai).HasDefaultValue(TraoBangConstants.XepHang);
+                entity.Property(e => e.IsShow).HasDefaultValue(true);
+                entity.Property(e => e.Deleted).HasDefaultValue(0);
+                entity.Property(e => e.CreatedDate).HasDefaultValueSql("getdate()");
+            });
             modelBuilder.Entity<TraoBangLog>(entity =>
             {
                 entity.Property(e => e.Deleted).HasDefaultValue(0);
@@ -76,4 +80,3 @@ namespace traobang.be.infrastructure.data
         }
     }
 }
-                                                           

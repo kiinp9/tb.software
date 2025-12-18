@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace traobang.be.shared.Constants.TraoBang
+﻿namespace traobang.be.shared.Constants.TraoBang
 {
     public static class TraoBangConstants
     {
@@ -21,5 +15,11 @@ namespace traobang.be.shared.Constants.TraoBang
         public const int SV = 1;
         public const int MO_BAI = 2;
         public const int KET_BAI = 3;
+    }
+
+    public static class LoaiSlides
+    {
+        public const int BINH_THUONG = 1;
+        public const int SINH_VIEN = 1;
     }
 }

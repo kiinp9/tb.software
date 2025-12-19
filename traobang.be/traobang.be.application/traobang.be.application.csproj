@@ -34,8 +34,5 @@
 	  <Folder Include="Auth\Implements\" />
 	  <Folder Include="Auth\Interfaces\" />
 	  <Folder Include="Base\" />
-	  <Folder Include="TraoBang\Dtos\" />
-	  <Folder Include="TraoBang\Implements\" />
-	  <Folder Include="TraoBang\Interfaces\" />
 	</ItemGroup>
 </Project>

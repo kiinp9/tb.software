@@ -1,22 +1,19 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
 using traobang.be.application.TraoBang.Dtos;
-using traobang.be.application.TraoBang.Implements;
 using traobang.be.application.TraoBang.Interface;
 using traobang.be.Attributes;
 using traobang.be.Controllers.Base;
-
 using traobang.be.shared.Constants.Auth;
 using traobang.be.shared.HttpRequest;
 
-namespace traobang.be.Controllers.TraoBang
+namespace traobang.be.Controllers
 {
     [Route("api/core/trao-bang/plan")]
     [ApiController]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class PlanController:BaseController
+    public class PlanController : BaseController
     {
         private readonly IPlanService _planService;
 
@@ -27,7 +24,7 @@ namespace traobang.be.Controllers.TraoBang
 
         [Permission(PermissionKeys.PlanAdd)]
         [HttpPost("")]
-        public ApiResponse Create (CreatePlanDto dto)
+        public ApiResponse Create(CreatePlanDto dto)
         {
             try
             {
@@ -41,7 +38,7 @@ namespace traobang.be.Controllers.TraoBang
         }
         [Permission(PermissionKeys.PlanUpdate)]
         [HttpPut("{id}")]
-        public ApiResponse Update ([FromRoute] int id,[FromBody] UpdatePlanDto dto)
+        public ApiResponse Update([FromRoute] int id, [FromBody] UpdatePlanDto dto)
         {
             try
             {
@@ -83,13 +80,13 @@ namespace traobang.be.Controllers.TraoBang
         }
         [Permission(PermissionKeys.PlanView)]
         [HttpGet("list")]
-        public async Task <ApiResponse> ListPlan()
+        public async Task<ApiResponse> ListPlan()
         {
             try
             {
                 var result = await _planService.GetListPlan();
                 return new(result);
-                
+
             }
             catch (Exception ex)
             {

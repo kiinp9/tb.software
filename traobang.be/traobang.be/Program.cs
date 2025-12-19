@@ -1,4 +1,3 @@
-using Azure.Identity;
 using Hangfire;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
@@ -13,6 +12,7 @@ using traobang.be.application.Auth.Interfaces;
 using traobang.be.application.Base;
 using traobang.be.application.TraoBang.Implements;
 using traobang.be.application.TraoBang.Interface;
+using traobang.be.application.TraoBang.Interfaces;
 using traobang.be.domain.Auth;
 using traobang.be.infrastructure.data;
 using traobang.be.infrastructure.data.Seeder;
@@ -187,8 +187,8 @@ builder.Services.AddAuthentication(options =>
         }
     )
     .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme);
-    
-    
+
+
 
 builder.Services.AddAuthorization();
 
@@ -218,6 +218,7 @@ builder.Services.AddScoped<IPermissionsService, PermissionsService>();
 
 builder.Services.AddScoped<IPlanService, PlanService>();
 builder.Services.AddScoped<ISubPlanService, SubPlanService>();
+builder.Services.AddScoped<ISlideService, SlideService>();
 #endregion
 
 

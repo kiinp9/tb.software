@@ -23,7 +23,7 @@ namespace traobang.be.domain.TraoBang
         /// <see cref="LoaiSlides"/>
         /// </summary>
         public int LoaiSlide { get; set; }
-        public int IdSinhVienNhanBang { get; set; }
+        public int? IdSinhVienNhanBang { get; set; }
         public string? NoiDung { get; set; }
         public string? Note { get; set; }
         /// <summary>

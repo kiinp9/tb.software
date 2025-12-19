@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace traobang.be.shared.HttpRequest.Error
+﻿namespace traobang.be.shared.HttpRequest.Error
 {
     public static class ErrorCodes
     {
@@ -41,5 +35,8 @@ namespace traobang.be.shared.HttpRequest.Error
         public const int TraoBangErrorSinhVienDaTonTaiTrongHangDoi = 1007;
         public const int TraoBangErrorSinhVienTraoBangNotFound = 1008;
         public const int TraoBangErrorSinhVienTraoBangKhongThuocKhoaDangTrao = 1009;
+        public const int TraoBangErrorLoaiSlideBinhThuongPhaiCoNoiDung = 1010;
+        public const int TraoBangErrorLoaiSlideSinhVienPhaiCoSinhVien = 1011;
+        public const int TraoBangErrorSlideNotFound = 1012;
     }
 }

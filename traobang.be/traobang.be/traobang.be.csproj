@@ -35,7 +35,6 @@
 	  <Folder Include="Attributes\" />
 	  <Folder Include="Controllers\Auth\" />
 	  <Folder Include="Controllers\Base\" />
-	  <Folder Include="Controllers\TraoBang\" />
 	</ItemGroup>
 
 </Project>

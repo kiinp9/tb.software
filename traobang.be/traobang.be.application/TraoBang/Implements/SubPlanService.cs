@@ -4,18 +4,11 @@ using EFCore.BulkExtensions;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Sheets.v4;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using NLog.LayoutRenderers.Wrappers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Dynamic.Core;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 using traobang.be.application.Base;
 
 using traobang.be.application.TraoBang.Dtos;
@@ -32,7 +25,7 @@ using traobang.be.shared.HttpRequest.Error;
 
 namespace traobang.be.application.TraoBang.Implements
 {
-    public class SubPlanService:BaseService, ISubPlanService
+    public class SubPlanService : BaseService, ISubPlanService
     {
         private static readonly TimeZoneInfo VietnamTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
         private readonly ITraoBangService _traoBangService;
@@ -142,7 +135,7 @@ namespace traobang.be.application.TraoBang.Implements
 
             await _tbDbContext.SaveChangesAsync();
         }
-        public BaseResponsePagingDto<ViewSubPlanDto> FindPaging (FindPagingSubPlanDto dto)
+        public BaseResponsePagingDto<ViewSubPlanDto> FindPaging(FindPagingSubPlanDto dto)
         {
             _logger.LogInformation($"{nameof(FindPaging)}, dto = {JsonSerializer.Serialize(dto)}");
             var query = from sp in _tbDbContext.SubPlans
@@ -157,7 +150,7 @@ namespace traobang.be.application.TraoBang.Implements
                 Items = items
             };
         }
-        public void UpdateIsShow (UpdateSubPlanIsShowDto dto)
+        public void UpdateIsShow(UpdateSubPlanIsShowDto dto)
         {
             _logger.LogInformation($"{nameof(UpdateIsShow)}, dto= {JsonSerializer.Serialize(dto)} ");
             var plan = _tbDbContext.Plans.FirstOrDefault(x => x.Id == dto.IdPlan && !x.Deleted)
@@ -168,7 +161,7 @@ namespace traobang.be.application.TraoBang.Implements
             _tbDbContext.SubPlans.Update(subplan);
             _tbDbContext.SaveChanges();
         }
-        public void Delete (int idPlan, int idSubPlan)
+        public void Delete(int idPlan, int idSubPlan)
         {
             _logger.LogInformation($"{nameof(Delete)}, idPlan= {idPlan}, idSubPlan= {idSubPlan} ");
             var plan = _tbDbContext.Plans.FirstOrDefault(x => x.Id == idPlan && !x.Deleted)
@@ -181,7 +174,7 @@ namespace traobang.be.application.TraoBang.Implements
             _tbDbContext.SubPlans.Update(subplan);
             _tbDbContext.SaveChanges();
         }
-        public async Task<List<UpdateOrderSubPlanResponseDto>> MoveOrder (MoveOrderSubPlanDto dto)
+        public async Task<List<UpdateOrderSubPlanResponseDto>> MoveOrder(MoveOrderSubPlanDto dto)
         {
             _logger.LogInformation($"{nameof(MoveOrder)}, dto= {JsonSerializer.Serialize(dto)} ");
             var plan = _tbDbContext.Plans.FirstOrDefault(x => x.Id == dto.IdPlan && !x.Deleted)
@@ -193,13 +186,13 @@ namespace traobang.be.application.TraoBang.Implements
                 .OrderBy(x => x.Order)
                 .ToList();
             var movingSubPlan = subPlans.FirstOrDefault(x => x.Id == dto.IdSubPlan);
-            if(movingSubPlan == null)
+            if (movingSubPlan == null)
             {
                 throw new UserFriendlyException(ErrorCodes.TraoBangErrorSubPlanNotFound);
             }
             var currentOrder = movingSubPlan.Order;
             var newOrder = dto.NewOrder;
-            if(currentOrder == newOrder)
+            if (currentOrder == newOrder)
             {
                 return subPlans.Select(x => new UpdateOrderSubPlanResponseDto
                 {
@@ -273,10 +266,10 @@ namespace traobang.be.application.TraoBang.Implements
                                 .Where(x => x.IdPlan == idPlan && !x.Deleted)
                                 .OrderBy(x => x.Id)
                                 .Select(x => new GetListSubPlanResponseDto
-                                        {
-                                             Id = x.Id,
-                                             Ten = x.Ten
-                                        }) .ToListAsync();
+                                {
+                                    Id = x.Id,
+                                    Ten = x.Ten
+                                }).ToListAsync();
 
             return subPlans;
         }
@@ -409,7 +402,7 @@ namespace traobang.be.application.TraoBang.Implements
             sinhVien.Order = newOrder;
             await _tbDbContext.SaveChangesAsync();
         }
-        public void DeleteSinhVienNhanBang (int idSubPlan, int id)
+        public void DeleteSinhVienNhanBang(int idSubPlan, int id)
         {
             _logger.LogInformation($"{nameof(DeleteSinhVienNhanBang)}, idSubPlan= {idSubPlan}, id= {id} ");
             var subPlan = _tbDbContext.SubPlans.FirstOrDefault(x => x.Id == idSubPlan && !x.Deleted)
@@ -470,7 +463,7 @@ namespace traobang.be.application.TraoBang.Implements
 
             if (nextSinhVien == null)
             {
-                throw new UserFriendlyException(ErrorCodes.TraoBangErrorSinhVienNotFound); 
+                throw new UserFriendlyException(ErrorCodes.TraoBangErrorSinhVienNotFound);
             }
 
             var subPlan = await _tbDbContext.SubPlans
@@ -543,7 +536,7 @@ namespace traobang.be.application.TraoBang.Implements
         {
             _logger.LogInformation($"{nameof(DiemDanhNhanBang)}, mssv= {mssv} ");
             var sinhVien = _tbDbContext.DanhSachSinhVienNhanBangs
-                .FirstOrDefault(x => !x.Deleted && x.MaSoSinhVien.ToLower() == mssv.ToLower()  && x.TrangThai == TraoBangConstants.ThamGiaTraoBang)
+                .FirstOrDefault(x => !x.Deleted && x.MaSoSinhVien.ToLower() == mssv.ToLower() && x.TrangThai == TraoBangConstants.ThamGiaTraoBang)
                 ?? throw new UserFriendlyException(ErrorCodes.TraoBangErrorSinhVienNotFound);
             var subPlan = _tbDbContext.SubPlans
                .FirstOrDefault(x => x.Id == sinhVien.IdSubPlan && x.TrangThai == TraoBangConstants.DangTraoBang && !x.Deleted)
@@ -556,7 +549,7 @@ namespace traobang.be.application.TraoBang.Implements
             {
                 throw new UserFriendlyException(ErrorCodes.TraoBangErrorSinhVienDaTonTaiTrongHangDoi);
             }
-           
+
             var tienDoTraoBang = new TienDoTraoBang
             {
                 IdSubPlan = sinhVien.IdSubPlan,
@@ -638,7 +631,7 @@ namespace traobang.be.application.TraoBang.Implements
             _tbDbContext.TienDoTraoBangs.Update(sinhVien);
             _tbDbContext.SaveChanges();
             await _traoBangService.NotifySinhVienDangTrao();
-             _logger.LogInformation($"Đã bắn SignalR cho sinh viên Id: {id}, SubPlan: {idSubPlan}");
+            _logger.LogInformation($"Đã bắn SignalR cho sinh viên Id: {id}, SubPlan: {idSubPlan}");
         }
         public async Task<GetSinhVienDangTraoBangInforDto> GetSinhVienDangTraoBang()
         {
@@ -647,7 +640,7 @@ namespace traobang.be.application.TraoBang.Implements
             var subPlan = await _tbDbContext.SubPlans
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.TrangThai == TraoBangConstants.DangTraoBang && !x.Deleted);
-            if(subPlan == null)
+            if (subPlan == null)
             {
                 return null;
             }
@@ -672,7 +665,7 @@ namespace traobang.be.application.TraoBang.Implements
                     CapBang = string.Empty,
                     Note = string.Empty,
                     Text = subPlan.MoBai,
-                    TextNote= subPlan.MoBaiNote,
+                    TextNote = subPlan.MoBaiNote,
                     InfoType = ViewSvTypeConstants.MO_BAI,
                 };
             }
@@ -683,7 +676,7 @@ namespace traobang.be.application.TraoBang.Implements
                                         && x.TrangThai == TraoBangConstants.DangTraoBang
                                         && !x.Deleted);
 
-   
+
             if (tienDo != null)
             {
                 var sinhVien = await _tbDbContext.DanhSachSinhVienNhanBangs
@@ -930,8 +923,8 @@ namespace traobang.be.application.TraoBang.Implements
             var soLuongConLai = await _tbDbContext.TienDoTraoBangs
                 .AsNoTracking()
                 .CountAsync(x => x.IdSubPlan == idSubPlan && !x.Deleted && x.TrangThai == TraoBangConstants.ChuanBi);
-           
-           
+
+
             return new GetInforSubPlanDto
             {
                 Ten = subPlan.Ten,
@@ -940,9 +933,9 @@ namespace traobang.be.application.TraoBang.Implements
                 SoLuongDaTrao = soLuongDaTrao,
                 SoLuongConLai = soLuongConLai
             };
-           
+
         }
-        
+
 
         public async Task<GetTienDoTraoBangResponseDto> GetTienDoTraoBang()
         {
@@ -1195,7 +1188,7 @@ namespace traobang.be.application.TraoBang.Implements
 
             var sinhVienTruocDo = await _tbDbContext.TienDoTraoBangs
                 .Where(x => x.IdSubPlan == idSubPlan
-                            && x.Order < sinhVienDangTrao.Order  
+                            && x.Order < sinhVienDangTrao.Order
                             && x.TrangThai == TraoBangConstants.DaTraoBang
                             && !x.Deleted)
                 .OrderByDescending(x => x.Order)
@@ -1266,7 +1259,7 @@ namespace traobang.be.application.TraoBang.Implements
             var subPlan = await _tbDbContext.SubPlans
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == idSubPlan && !x.Deleted);
-            if(subPlan == null)
+            if (subPlan == null)
             {
                 return null;
             }
@@ -1344,7 +1337,7 @@ namespace traobang.be.application.TraoBang.Implements
                 sv.TrangThai = TraoBangConstants.DaTraoBang;
                 _tbDbContext.TienDoTraoBangs.Update(sv);
             }
-                if (sinhVienBatDauDuocPrev == null)
+            if (sinhVienBatDauDuocPrev == null)
             {
                 return null;
             }
@@ -1362,7 +1355,7 @@ namespace traobang.be.application.TraoBang.Implements
                 return null;
             }
 
-           
+
             var sinhVienChuanBiTiepTheo = await _tbDbContext.TienDoTraoBangs
                 .Where(x => x.IdSubPlan == idSubPlan
                             && x.TrangThai == TraoBangConstants.ChuanBi
@@ -1612,7 +1605,7 @@ namespace traobang.be.application.TraoBang.Implements
                 OrderDanhSachNhanBang = sv.Order,
             }).ToList();
 
-      
+
             var itemsFromSinhVienBiBoQua = sinhVienBiBoQua.Select(sv => new ListSinhVienDto
             {
                 TenSubPlan = subPlan.Ten,

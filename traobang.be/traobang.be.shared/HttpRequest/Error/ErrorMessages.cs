@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace traobang.be.shared.HttpRequest.Error
+﻿namespace traobang.be.shared.HttpRequest.Error
 {
     public static class ErrorMessages
     {
@@ -34,7 +28,10 @@ namespace traobang.be.shared.HttpRequest.Error
             { ErrorCodes.TraoBangErrorSinhVienDaTonTaiTrongHangDoi,"Sinh viên nhận bằng đã tồn tại trong hàng đợi" },
             { ErrorCodes.TraoBangErrorSinhVienTraoBangNotFound,"Sinh viên đang trao bằng không tồn tại" },
             { ErrorCodes.TraoBangErrorSinhVienTraoBangKhongThuocKhoaDangTrao,"Sinh viên đang quét không thuộc khoa đang trao bằng" },
-            { ErrorCodes.ImportHeaderErrorInvalid, "Header không đúng định dạng tại dòng {0}" }
+            { ErrorCodes.ImportHeaderErrorInvalid, "Header không đúng định dạng tại dòng {0}" },
+            { ErrorCodes.TraoBangErrorLoaiSlideBinhThuongPhaiCoNoiDung, "Không được bỏ trống nội dung" },
+            { ErrorCodes.TraoBangErrorLoaiSlideBinhThuongPhaiCoNoiDung, "Phải nhập thông tin sinh viên" },
+            { ErrorCodes.TraoBangErrorSlideNotFound, "Không tìm thấy slide" },
         };
         public static string GetMessage(int code)
         {

@@ -1,9 +1,7 @@
-﻿namespace traobang.be.application.TraoBang.Dtos
+﻿namespace traobang.be.application.TraoBang.Dtos.Slide
 {
-    public class CreateSinhVienNhanBangDto
+    public class CreateSlideSinhVienDto
     {
-
-        public int IdSubPlan { get; set; }
         public string HoVaTen { get; set; } = String.Empty;
         public string Email { get; set; } = String.Empty;
         public string EmailSinhVien { get; set; } = String.Empty;
@@ -15,11 +13,9 @@
         public string XepHang { get; set; } = String.Empty;
         public string ThanhTich { get; set; } = String.Empty;
         public string KhoaQuanLy { get; set; } = String.Empty;
-
         public string SoQuyetDinhTotNghiep { get; set; } = String.Empty;
         public DateTime NgayQuyetDinh { get; set; }
         public string? Note { get; set; }
-        public int TrangThai { get; set; }
         public string LinkQR { get; set; } = String.Empty;
     }
 }

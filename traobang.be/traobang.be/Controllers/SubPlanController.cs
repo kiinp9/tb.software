@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Query.ExpressionTranslators.Internal;
 using traobang.be.application.TraoBang.Dtos;
 using traobang.be.application.TraoBang.Interface;
 using traobang.be.Attributes;
@@ -9,7 +8,7 @@ using traobang.be.Controllers.Base;
 using traobang.be.shared.Constants.Auth;
 using traobang.be.shared.HttpRequest;
 
-namespace traobang.be.Controllers.TraoBang
+namespace traobang.be.Controllers
 {
     [Route("api/core/trao-bang/sub-plan")]
     [ApiController]

@@ -2,13 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Text.Json.Nodes;
-using System.Threading.Tasks;
 using traobang.be.application.Base;
 using traobang.be.application.TraoBang.Dtos;
 using traobang.be.application.TraoBang.Interface;
@@ -20,7 +14,7 @@ using traobang.be.shared.HttpRequest.Error;
 
 namespace traobang.be.application.TraoBang.Implements
 {
-    public class PlanService: BaseService,IPlanService
+    public class PlanService : BaseService, IPlanService
     {
         private static readonly TimeZoneInfo VietnamTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
         public PlanService(
@@ -66,7 +60,7 @@ namespace traobang.be.application.TraoBang.Implements
             _tbDbContext.Plans.Update(plan);
             _tbDbContext.SaveChanges();
         }
-        public BaseResponsePagingDto<ViewPlanDto> FindPaging( FindPagingPlanDto dto)
+        public BaseResponsePagingDto<ViewPlanDto> FindPaging(FindPagingPlanDto dto)
         {
             _logger.LogInformation($"{nameof(FindPaging)}, dto = {JsonSerializer.Serialize(dto)}");
             var query = from p in _tbDbContext.Plans
@@ -79,7 +73,7 @@ namespace traobang.be.application.TraoBang.Implements
             {
                 TotalItems = query.Count(),
                 Items = items
-            };  
+            };
         }
         public async Task<List<GetListPlanResponseDto>> GetListPlan()
         {
@@ -111,7 +105,7 @@ namespace traobang.be.application.TraoBang.Implements
             plan.Deleted = true;
             _tbDbContext.Plans.Update(plan);
             _tbDbContext.SaveChanges();
-        }   
+        }
         private static DateTime GetVietnamTime()
         {
             return TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, VietnamTimeZone);

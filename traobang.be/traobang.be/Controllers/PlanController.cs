@@ -80,7 +80,7 @@ namespace traobang.be.Controllers
         }
 
         [Permission(PermissionKeys.PlanDelete)]
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}/config")]
         public ApiResponse DeleteConfig([FromRoute] int id)
         {
             try

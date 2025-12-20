@@ -30,7 +30,7 @@ namespace traobang.be.domain.TraoBang
         public string MaSoSinhVien { get; set; } = String.Empty;
         [MaxLength(50)]
         public string Lop { get; set; } = String.Empty;
-        public DateTime NgaySinh { get; set; }
+        public DateTime? NgaySinh { get; set; }
         [MaxLength(500)]
         public string CapBang { get; set; } = String.Empty;
         [MaxLength(1000)]
@@ -43,7 +43,7 @@ namespace traobang.be.domain.TraoBang
         public string KhoaQuanLy { get; set; } = String.Empty;
         [MaxLength(500)]
         public string SoQuyetDinhTotNghiep { get; set; } = String.Empty;
-        public DateTime NgayQuyetDinh { get; set; }
+        public DateTime? NgayQuyetDinh { get; set; }
         public string? Note { get; set; }
         [Obsolete("Sắp xóa")]
         public bool IsShow { get; set; }

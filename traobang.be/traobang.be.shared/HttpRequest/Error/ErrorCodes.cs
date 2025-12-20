@@ -22,6 +22,7 @@
         public const int GoogleSheetUrlErrorInvalid = 702;
 
         public const int ImportHeaderErrorInvalid = 801;
+        public const int ImportExcelSheetErrorNotFound = 809;
         public const int ErrorNoPermissionAccessGoogleSheet = 901;
         public const int ErrorServiceAccountNotFoundInAppSetting = 902;
         public const int ErrorServiceAccountNotFound = 903;

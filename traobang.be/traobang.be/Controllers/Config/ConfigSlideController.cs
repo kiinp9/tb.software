@@ -103,5 +103,48 @@ namespace traobang.be.Controllers.Config
                 return OkException(ex);
             }
         }
+
+        /// <summary>
+        /// Tải file mẫu để import slide
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("export/template-import-slide")]
+        public IActionResult ExportTemplateImportSlide()
+        {
+            try
+            {
+                var excelTemplate = _slideService.DownloadTemplateImport();
+
+                return File(
+                   excelTemplate,
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    "ImportSlide.xlsx"
+                 );
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse(ex.Message));
+            }
+        }
+
+        /// <summary>
+        /// Import excel slide
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        [HttpPost("import/slide")]
+        public ApiResponse ImportSlide([FromForm] ImportExcelSlideDto dto)
+        {
+            try
+            {
+                _slideService.ImportSlide(dto);
+                return new();
+            }
+            catch (Exception ex)
+            {
+                return OkException(ex);
+            }
+        }
     }
 }

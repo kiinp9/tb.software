@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace traobang.be.application.TraoBang.Dtos
+﻿namespace traobang.be.application.TraoBang.Dtos
 {
     public class ViewSinhVienNhanBangDto
     {
@@ -16,7 +10,7 @@ namespace traobang.be.application.TraoBang.Dtos
         public string EmailSinhVien { get; set; } = String.Empty;
         public string MaSoSinhVien { get; set; } = String.Empty;
         public string Lop { get; set; } = String.Empty;
-        public DateTime NgaySinh { get; set; }
+        public DateTime? NgaySinh { get; set; }
         public string CapBang { get; set; } = String.Empty;
         public string TenNganhDaoTao { get; set; } = String.Empty;
         public string XepHang { get; set; } = String.Empty;
@@ -24,7 +18,7 @@ namespace traobang.be.application.TraoBang.Dtos
         public string KhoaQuanLy { get; set; } = String.Empty;
 
         public string SoQuyetDinhTotNghiep { get; set; } = String.Empty;
-        public DateTime NgayQuyetDinh { get; set; }
+        public DateTime? NgayQuyetDinh { get; set; }
         public string? Note { get; set; }
         public bool IsShow { get; set; }
         public bool IsShowNext { get; set; }
@@ -32,6 +26,6 @@ namespace traobang.be.application.TraoBang.Dtos
         public string Order { get; set; } = String.Empty;
         public int TrangThai { get; set; }
         public string LinkQR { get; set; } = String.Empty;
-        
+
     }
 }

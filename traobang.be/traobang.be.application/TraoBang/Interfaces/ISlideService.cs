@@ -10,5 +10,7 @@ namespace traobang.be.application.TraoBang.Interfaces
         public void Delete(int id);
         public BaseResponsePagingDto<ViewSlideDto> FindPaging(FindPagingSlideDto dto);
         public ViewSlideDto FindById(int id);
+        public byte[] DownloadTemplateImport();
+        public void ImportSlide(ImportExcelSlideDto dto);
     }
 }

@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.105.0" />
     <PackageReference Include="Hangfire.AspNetCore" Version="1.8.22" />
     <PackageReference Include="Hangfire.Core" Version="1.8.22" />
     <PackageReference Include="Hangfire.SqlServer" Version="1.8.22" />
@@ -34,6 +35,11 @@
   <ItemGroup>
     <Folder Include="Log\Archive\" />
     <Folder Include="Log\Logs\" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <ProjectReference Include="..\traobang.be.shared\traobang.be.shared.csproj" />
   </ItemGroup>
 
 </Project>

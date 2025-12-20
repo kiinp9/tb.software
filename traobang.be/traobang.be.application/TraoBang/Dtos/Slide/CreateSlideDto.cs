@@ -11,7 +11,6 @@ namespace traobang.be.application.TraoBang.Dtos.Slide
         /// <see cref="LoaiSlides"/>
         /// </summary>
         public int LoaiSlide { get; set; }
-        public int IdSinhVienNhanBang { get; set; }
         public string? NoiDung { get => _noiDung; set => _noiDung = value?.Trim(); }
         public string? Note { get; set; }
         /// <summary>

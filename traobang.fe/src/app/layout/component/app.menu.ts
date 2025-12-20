@@ -21,7 +21,7 @@ import { SharedService } from '@/service/shared.service';
                 <li *ngIf="item.separator" class="menu-separator"></li>
             </ng-container>
         </ul>
-        
+
     </div>
     `
 })
@@ -43,8 +43,8 @@ export class AppMenu {
             //         }
             //     ]
             // },
-           
-            
+
+
             {
                 items: [
                     {
@@ -94,6 +94,11 @@ export class AppMenu {
                                         label: 'SV nhận bằng',
                                         visible: this._sharedService.isGranted(PermissionConstants.MenuTraoBangCauHinhSinhVienNhanBang),
                                         routerLink: ['/trao-bang/config/sv']
+                                    },
+                                     {
+                                        label: 'Slide',
+                                        visible: this._sharedService.isGranted(PermissionConstants.MenuTraoBangCauHinhSinhVienNhanBang),
+                                        routerLink: ['/trao-bang/config/slide']
                                     },
                                 ]
                             },
@@ -156,6 +161,6 @@ export class AppMenu {
         this.getData();
     }
     getData() {
-       
+
     }
 }

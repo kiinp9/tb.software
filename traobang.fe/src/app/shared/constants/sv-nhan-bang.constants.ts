@@ -71,3 +71,16 @@ export class TraoBangHubConst {
     // static ReceiveChonKhoa = 'ReceiveChonKhoa'
     static ReceiveCheckIn = 'ReceiveCheckIn'
 }
+
+export class SlideConst {
+    static TEXT = 1;
+    static SinhVien = 2;
+    static listLoaiSlide = [{
+        code: 1,
+        name: 'Text'
+    },
+    {
+        code: 2,
+        name: 'Sinh viên'
+    }]
+}

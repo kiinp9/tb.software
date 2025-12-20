@@ -37,4 +37,12 @@ export class TraoBangSubPlanService {
         return this.http.delete<IBaseResponse>(`${this.api}/${id}/plan/${idPlan}`);
     }
 
+    downloadFileTemplate() {
+        return this.http.get(`${this.api}/export/template-import-subplan`, { responseType: 'blob' });
+    }
+
+    uploadFile(body: any) {
+        return this.http.post<IBaseResponse>(`${this.api}/import/sub-plan`, body);
+    }
+
 }

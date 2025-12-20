@@ -1,46 +1,71 @@
+import { SlideService } from '@/service/slide.service';
 import { BaseComponent } from '@/shared/components/base/base-component';
 import { DataTable } from '@/shared/components/data-table/data-table';
 import { CellViewTypes } from '@/shared/constants/data-table.constants';
 import { SharedImports } from '@/shared/import.shared';
 import { IColumn } from '@/shared/models/data-table.models';
 import { Component, inject } from '@angular/core';
-import { PaginatorState } from 'primeng/paginator';
-import { Create } from './create/create';
-import { TblAction, TblActionTypes } from './tbl-action/tbl-action';
 import { FormControl, FormGroup } from '@angular/forms';
-import { IViewRowConfigSubPlan, IFindPagingConfigSubPlan } from '@/models/traobang/sub-plan.models';
-import { TraoBangSubPlanService } from '@/service/sub-plan.service';
+import { TblAction, TblActionTypes } from './tbl-action/tbl-action';
+import { IFindPagingSlide, IViewRowSlide } from '@/models/traobang/slide.models';
+import { PaginatorState } from 'primeng/paginator';
+import { SvNhanBangStatuses } from '@/shared/constants/sv-nhan-bang.constants';
+import { Create } from './create/create';
+import { FileUploadModule } from 'primeng/fileupload';
 import { Upload } from './upload/upload';
-
 @Component({
-    selector: 'app-sub-plan',
-    imports: [SharedImports, DataTable],
-    templateUrl: './sub-plan.html',
-    styleUrl: './sub-plan.scss'
+    selector: 'app-slide',
+    imports: [SharedImports, DataTable, FileUploadModule],
+    templateUrl: './slide.html',
+    styleUrl: './slide.scss'
 })
-export class SubPlan extends BaseComponent {
-    _subPlanService = inject(TraoBangSubPlanService);
+export class SlideScreen extends BaseComponent {
+    _slideService = inject(SlideService);
 
     searchForm: FormGroup = new FormGroup({
         search: new FormControl('')
     });
 
+    listLoaiSlide = [
+        {
+            code: 1,
+            name: 'Text'
+        },
+        {
+            code: 2,
+            name: 'Sinh viên'
+        }
+    ];
+
     columns: IColumn[] = [
         { header: 'STT', cellViewType: CellViewTypes.INDEX, headerContainerStyle: 'width: 6rem' },
-        { header: 'Tên khoa', field: 'ten', headerContainerStyle: 'min-width: 10rem' },
-        { header: 'Mô tả', field: 'moTa', headerContainerStyle: 'min-width: 10rem' },
-        { header: 'Mở bài', field: 'moBai', headerContainerStyle: 'min-width: 10rem' },
-        { header: 'Kết bài', field: 'ketBai', headerContainerStyle: 'min-width: 10rem' },
-        { header: 'Ghi chú', field: 'note', headerContainerStyle: 'min-width: 10rem' },
-        { header: 'Thứ tự', field: 'order', headerContainerStyle: 'width: 10rem' },
-        { header: 'Hiển thị', field: 'isShow', headerContainerStyle: 'width: 10rem', cellViewType: CellViewTypes.CHECKBOX },
+        { header: 'Nội dung', field: 'noiDung', headerContainerStyle: 'min-width: 10rem' },
+        { header: 'Note', field: 'note', headerContainerStyle: 'min-width: 10rem' },
+        {
+            header: 'Loại Slide',
+            field: 'loaiSlideName',
+            headerContainerStyle: 'min-width: 10rem',
+            cellViewType: CellViewTypes.STATUS,
+            statusSeverityFunction: (rowData: IViewRowSlide) => {
+                return SvNhanBangStatuses.getName(rowData.loaiSlide ?? 0);
+            }
+        },
+        {
+            header: 'Trạng thái',
+            field: 'trangThaiText',
+            headerContainerStyle: 'width: 8rem',
+            cellViewType: CellViewTypes.STATUS,
+            statusSeverityFunction: (rowData: IViewRowSlide) => {
+                return SvNhanBangStatuses.getName(rowData.trangThai ?? 0);
+            }
+        },
         { header: 'Thao tác', headerContainerStyle: 'width: 6rem', cellViewType: CellViewTypes.CUSTOM_COMP, customComponent: TblAction }
     ];
 
-    data: IViewRowConfigSubPlan[] = [];
-    query: IFindPagingConfigSubPlan = {
+    data: IViewRowSlide[] = [];
+    query: IFindPagingSlide = {
         pageNumber: this.START_PAGE_NUMBER,
-        pageSize: 20
+        pageSize: this.MAX_PAGE_SIZE
     };
 
     override ngOnInit(): void {
@@ -58,12 +83,21 @@ export class SubPlan extends BaseComponent {
 
     getData() {
         this.loading = true;
-        this._subPlanService
+        this._slideService
             .findPaging({ ...this.query, keyword: this.searchForm.get('search')?.value })
             .subscribe({
                 next: (res) => {
                     if (this.isResponseSucceed(res, false)) {
-                        this.data = res.data.items;
+                        this.data = res.data.items.map((item) => {
+                            let loai = this.listLoaiSlide.find((x) => x.code == item.loaiSlide);
+                            let trangThaiText = SvNhanBangStatuses.List.find((x) => x.code == item.trangThai);
+                            return {
+                                ...item,
+                                loaiSlideName: loai?.name ?? '',
+                                trangThaiText: trangThaiText?.name
+                            };
+                        });
+                        console.log(this.data);
                         this.totalRecords = res.data.totalItems;
                     }
                 }
@@ -74,7 +108,7 @@ export class SubPlan extends BaseComponent {
     }
 
     onOpenCreate() {
-        const ref = this._dialogService.open(Create, { header: 'Tạo khoa', closable: true, modal: true, styleClass: 'w-[700px]', focusOnShow: false });
+        const ref = this._dialogService.open(Create, { header: 'Tạo Slide', closable: true, modal: true, styleClass: 'w-[700px]', focusOnShow: false });
         ref.onClose.subscribe((result) => {
             if (result) {
                 this.getData();
@@ -82,8 +116,16 @@ export class SubPlan extends BaseComponent {
         });
     }
 
-    onOpenUpdate(data: IViewRowConfigSubPlan) {
-        const ref = this._dialogService.open(Create, { header: 'Cập nhật khoa', closable: true, modal: true, styleClass: 'w-[700px]', focusOnShow: false, data });
+    onCustomEmit(data: { type: string; data: IViewRowSlide; field?: string }) {
+        if (data.type === TblActionTypes.update) {
+            this.onOpenUpdate(data.data);
+        } else if (data.type === TblActionTypes.delete) {
+            this.onDelete(data.data);
+        }
+    }
+
+    onOpenUpdate(data: IViewRowSlide) {
+        const ref = this._dialogService.open(Create, { header: 'Cập nhật Slide', closable: true, modal: true, styleClass: 'w-[700px]', focusOnShow: false, data });
         ref.onClose.subscribe((result) => {
             if (result) {
                 this.getData();
@@ -91,14 +133,14 @@ export class SubPlan extends BaseComponent {
         });
     }
 
-    onDelete(data: IViewRowConfigSubPlan) {
+    onDelete(data: IViewRowSlide) {
         this.confirmDelete(
             {
-                header: 'Bạn chắc chắn muốn xóa khoa?',
+                header: 'Bạn chắc chắn muốn xóa SV?',
                 message: 'Không thể khôi phục sau khi xóa'
             },
             () => {
-                this._subPlanService.delete(data.id || 0, data.idPlan || 0).subscribe(
+                this._slideService.delete(data.id || 0).subscribe(
                     (res) => {
                         if (this.isResponseSucceed(res, true, 'Đã xóa')) {
                             this.getData();
@@ -112,24 +154,16 @@ export class SubPlan extends BaseComponent {
         );
     }
 
-    onCustomEmit(data: { type: string; data: IViewRowConfigSubPlan; field?: string }) {
-        if (data.type === TblActionTypes.update) {
-            this.onOpenUpdate(data.data);
-        } else if (data.type === TblActionTypes.delete) {
-            this.onDelete(data.data);
-        }
-    }
-
     downloadTemplate() {
         this.loading = true;
-        this._subPlanService.downloadFileTemplate().subscribe({
+        this._slideService.downloadFileTemplate().subscribe({
             next: (res: Blob) => {
                 if (res) {
                     const blob = new Blob([res], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
                     const url = window.URL.createObjectURL(blob);
                     const link = document.createElement('a');
                     link.href = url;
-                    link.download = 'subplan_template.xlsx';
+                    link.download = 'slide_template.xlsx';
                     link.click();
                     window.URL.revokeObjectURL(url);
                 }
@@ -142,6 +176,7 @@ export class SubPlan extends BaseComponent {
             }
         });
     }
+
     onUpload() {
         const ref = this._dialogService.open(Upload, { header: 'Import từ file', closable: true, modal: true, styleClass: 'w-[700px]', focusOnShow: false });
         ref.onClose.subscribe((result) => {

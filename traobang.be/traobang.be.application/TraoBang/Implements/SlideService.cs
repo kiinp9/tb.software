@@ -158,7 +158,6 @@ namespace traobang.be.application.TraoBang.Implements
                             (s.NoiDung ?? "").Trim().ToLower().Contains(dto.Keyword.Trim().ToLower()) ||
                             (sv.HoVaTen ?? "").Trim().ToLower().Contains(dto.Keyword.Trim().ToLower())
                         )
-                        orderby s.Order
                         select new ViewSlideDto()
                         {
                             Id = s.Id,
@@ -172,7 +171,7 @@ namespace traobang.be.application.TraoBang.Implements
                             Note = s.Note,
                             Order = s.Order,
                             TrangThai = s.TrangThai,
-                            SinhVien = new Dtos.ViewSinhVienNhanBangDto()
+                            SinhVien = sv == null ? null : new ViewSinhVienNhanBangDto()
                             {
                                 Id = sv.Id,
                                 Note = sv.Note,

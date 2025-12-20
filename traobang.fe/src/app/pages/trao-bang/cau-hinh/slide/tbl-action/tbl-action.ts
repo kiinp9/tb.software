@@ -1,33 +1,31 @@
 
-import { IViewRowConfigPlan } from '@/models/traobang/plan.models';
 import { BaseComponent } from '@/shared/components/base/base-component';
 import { TBL_CUSTOM_COMP_EMIT } from '@/shared/components/data-table/data-table';
 import { SharedImports } from '@/shared/import.shared';
 import { Component, inject, Input, ViewChild } from '@angular/core';
 import { MenuItem } from 'primeng/api';
-import { Button } from 'primeng/button';
 import { Menu } from 'primeng/menu';
+import { Button } from 'primeng/button';
+import { IViewRowUser } from '@/models/auth/user.models';
 
 export const TblActionTypes = {
-    detail: 'detail',
     update: 'update',
     delete: 'delete',
-    config: 'config',
-
 }
 
 @Component({
     selector: 'app-tbl-action',
-    standalone: true,
     imports: [SharedImports, Menu],
     templateUrl: 'tbl-action.html'
 })
 export class TblAction extends BaseComponent {
     private static currentOpenMenu: Menu | null = null;
-    tblEmit = inject(TBL_CUSTOM_COMP_EMIT);
-     private readonly MENU_OFFSET_X = 5;
+    private readonly MENU_OFFSET_X = 5;
     private readonly MENU_WIDTH = 180;
-    @Input() row: IViewRowConfigPlan = {};
+
+    tblEmit = inject(TBL_CUSTOM_COMP_EMIT);
+
+    @Input() row: IViewRowUser = {};
     @Input() rowIndex: number = 0;
     @Input() data: any;
     @ViewChild('menu', { static: false }) menu!: Menu;
@@ -47,23 +45,18 @@ export class TblAction extends BaseComponent {
                 label: 'Xóa',
                 icon: 'pi pi-trash',
                 command: () => this.onClick(TblActionTypes.delete)
-            },
-            {
-                label: 'Xóa cấu hình',
-                icon: 'pi pi-trash',
-                command: () => this.onClick(TblActionTypes.config)
             }
         ];
     }
 
-    onClick(customType: string) {
+    onClick(customType: string): void {
         this.tblEmit.emit({
             data: this.row,
             type: customType
         });
     }
 
-     onMenuClick(event: any) {
+    onMenuClick(event: Event): void {
         event?.stopPropagation();
         event?.preventDefault();
 
@@ -79,6 +72,7 @@ export class TblAction extends BaseComponent {
 
         TblAction.currentOpenMenu = this.menu?.visible ? this.menu : null;
     }
+
     private setMenuPosition(): void {
         if (!this.actionBtn?.el?.nativeElement || !this.menu?.containerViewChild?.nativeElement) return;
 
@@ -91,7 +85,6 @@ export class TblAction extends BaseComponent {
         menuElement.style.top = `${buttonRect.top}px`;
         menuElement.style.zIndex = '9999';
     }
-
 
     ngOnDestroy(): void {
         if (TblAction.currentOpenMenu === this.menu) {

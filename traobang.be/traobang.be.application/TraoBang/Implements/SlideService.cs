@@ -9,22 +9,27 @@ using traobang.be.application.TraoBang.Dtos.Slide;
 using traobang.be.application.TraoBang.Interfaces;
 using traobang.be.domain.TraoBang;
 using traobang.be.infrastructure.data;
+using traobang.be.infrastructure.external.Excel;
 using traobang.be.shared.Constants.TraoBang;
 using traobang.be.shared.HttpRequest.AppException;
 using traobang.be.shared.HttpRequest.BaseRequest;
 using traobang.be.shared.HttpRequest.Error;
+using traobang.be.shared.Utils;
 
 namespace traobang.be.application.TraoBang.Implements
 {
     public class SlideService : BaseService, ISlideService
     {
+        private readonly IExcelService _excelService;
         public SlideService(
             TbDbContext tbDbContext,
             ILogger<SlideService> logger,
             IHttpContextAccessor httpContextAccessor,
+            IExcelService excelService,
             IMapper mapper)
         : base(tbDbContext, logger, httpContextAccessor, mapper)
         {
+            _excelService = excelService;
         }
 
         public void Create(CreateSlideDto dto)
@@ -205,6 +210,152 @@ namespace traobang.be.application.TraoBang.Implements
             var sv = _tbDbContext.DanhSachSinhVienNhanBangs.FirstOrDefault(x => x.Id == slide.IdSinhVienNhanBang && !x.Deleted);
             data.SinhVien = _mapper.Map<ViewSinhVienNhanBangDto>(sv);
             return data;
+        }
+
+        public byte[] DownloadTemplateImport()
+        {
+            _logger.LogInformation($"{nameof(DownloadTemplateImport)}");
+
+            var path = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "Templates",
+                "ImportSlide.xlsx"
+            );
+
+            var bytes = File.ReadAllBytes(path);
+
+            return bytes;
+        }
+
+        public void ImportSlide(ImportExcelSlideDto dto)
+        {
+            _logger.LogInformation($"{nameof(ImportSlide)}");
+
+            var username = getCurrentName();
+            var data = _excelService.ReadExcelFile(dto.File, "Sheet1");
+
+            int col = 0;
+            int indexSTT = col++;
+            int indexSubPlan = col++;
+            int indexLoaiSlide = col++;
+            int indexMSSV = col++;
+            int indexHoTenNoiDung = col++;
+            int indexLop = col++;
+            int indexNgaySinh = col++;
+            int indexCapBang = col++;
+            int indexTenNganhDaoTao = col++;
+            int indexXepHang = col++;
+            int indexThanhTich = col++;
+            int indexEmail = col++;
+            int indexKhoaQuanLy = col++;
+            int indexTruongKhoa = col++;
+            int indexSoQuyetDinhTotNghiep = col++;
+            int indexNgayQuyetDinh = col++;
+            int indexNoteChoMC = col++;
+
+            if (data != null && data.Count > 0)
+            {
+                var listAll = new List<ImportExcelMapSlideSinhVienDto>();
+
+                int rowIndex = 1;
+
+                using (var tran = _tbDbContext.Database.BeginTransaction())
+                {
+                    // insert vao map
+                    for (int i = 0; i < data.Count; i++)
+                    {
+                        if (i == 0)
+                        {
+                            continue;
+                        }
+                        var row = data[i];
+
+                        var stt = row[indexSTT];
+                        var tenSubPlan = row[indexSubPlan];
+                        var loaiSlide = Convert.ToInt32(row[indexLoaiSlide]);
+                        var mssv = row[indexMSSV];
+                        var hoTenNoiDung = row[indexHoTenNoiDung];
+                        var lop = row[indexLop];
+                        var ngaySinh = row[indexNgaySinh];
+                        var capBang = row[indexCapBang];
+                        var tenNganhDaoTao = row[indexTenNganhDaoTao];
+                        var xepHang = row[indexXepHang];
+                        var thanhTich = row[indexThanhTich];
+                        var email = row[indexEmail];
+                        var khoaQuanLy = row[indexKhoaQuanLy];
+                        var truongKhoa = row[indexTruongKhoa];
+                        var soQuyetDinhTotNghiep = row[indexSoQuyetDinhTotNghiep];
+                        var ngayQuyetDinh = row[indexNgayQuyetDinh];
+                        var noteChoMC = row[indexNoteChoMC];
+
+                        var subplan = _tbDbContext.SubPlans.FirstOrDefault(x => x.Ten == tenSubPlan && !x.Deleted);
+
+                        if (subplan == null)
+                        {
+                            continue;
+                        }
+
+                        var tmpMap = new ImportExcelMapSlideSinhVienDto();
+
+                        if (loaiSlide == LoaiSlides.SINH_VIEN)
+                        {
+                            tmpMap.SinhVien = new DanhSachSinhVienNhanBang
+                            {
+                                CapBang = capBang,
+                                Email = email,
+                                EmailSinhVien = email,
+                                HoVaTen = hoTenNoiDung,
+                                MaSoSinhVien = mssv,
+                                Lop = lop,
+                                NgayQuyetDinh = DateTimeUtils.ParseVietnamDate(ngayQuyetDinh),
+                                NgaySinh = DateTimeUtils.ParseVietnamDate(ngaySinh),
+                                Note = noteChoMC,
+                                KhoaQuanLy = khoaQuanLy,
+                                SoQuyetDinhTotNghiep = soQuyetDinhTotNghiep,
+                                TenNganhDaoTao = tenNganhDaoTao,
+                                ThanhTich = thanhTich,
+                                XepHang = xepHang,
+                            };
+                        }
+
+                        tmpMap.Slide = new Slide
+                        {
+                            IdSubPlan = subplan.Id,
+                            IsShow = true,
+                            LoaiSlide = loaiSlide,
+                            NoiDung = hoTenNoiDung,
+                            Note = noteChoMC,
+                            Order = rowIndex,
+                            TrangThai = TraoBangConstants.XepHang,
+                            CreatedBy = username,
+                        };
+
+                        listAll.Add(tmpMap);
+
+                        rowIndex++;
+                    }
+
+                    // insert list sinh vien
+                    var listSinhVien = listAll.Where(x => x.SinhVien != null).Select(x => x.SinhVien);
+                    _tbDbContext.DanhSachSinhVienNhanBangs.AddRange(listSinhVien!);
+                    _tbDbContext.SaveChanges();
+
+                    // insert list slide
+                    var listSlide = new List<Slide>();
+                    foreach (var item in listAll)
+                    {
+                        if (item.SinhVien != null)
+                        {
+                            item.Slide.IdSinhVienNhanBang = item.SinhVien.Id;
+                        }
+                        listSlide.Add(item.Slide);
+                    }
+                    _tbDbContext.Slides.AddRange(listSlide);
+                    _tbDbContext.SaveChanges();
+
+                    tran.Commit();
+                }
+            }
         }
     }
 }

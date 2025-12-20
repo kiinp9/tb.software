@@ -14,6 +14,7 @@
             { ErrorCodes.AuthInvalidPassword, "Mật khẩu không đúng" },
             { ErrorCodes.AuthErrorCreateUser, "Lỗi tạo user" },
             { ErrorCodes.AuthErrorCreateRole, "Lỗi tạo role" },
+            { ErrorCodes.ImportExcelSheetErrorNotFound, "Không tìm thấy sheet '{0}' trong file Excel" },
             { ErrorCodes.Found, "Đã tồn tại trong hệ thống" },
             { ErrorCodes.GoogleSheetUrlErrorInvalid, "URL Google Sheet không hợp lệ hoặc không thể truy cập được" },
             { ErrorCodes.ErrorNoPermissionAccessGoogleSheet,"Không có quyền truy cập vào Google Sheet" },

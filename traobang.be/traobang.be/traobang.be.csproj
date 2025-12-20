@@ -35,6 +35,14 @@
 	  <Folder Include="Attributes\" />
 	  <Folder Include="Controllers\Auth\" />
 	  <Folder Include="Controllers\Base\" />
+	  <Folder Include="Templates\" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+	  <None Update="Templates\ImportSlide.xlsx">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 
 </Project>

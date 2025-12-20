@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using traobang.be.application.TraoBang.Dtos;
+using traobang.be.application.TraoBang.Dtos.SubPlan;
 using traobang.be.application.TraoBang.Interface;
 using traobang.be.Attributes;
 using traobang.be.Controllers.Base;
@@ -473,6 +474,49 @@ namespace traobang.be.Controllers
             {
                 var data = await _subPlanService.GetTienDoNhanBangSinhVienBatDauPrev(dto);
                 return new(data);
+            }
+            catch (Exception ex)
+            {
+                return OkException(ex);
+            }
+        }
+
+        /// <summary>
+        /// Download template excel import khoa
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("export/template-import-subplan")]
+        public IActionResult ExportTemplateImportSlide()
+        {
+            try
+            {
+                var excelTemplate = _subPlanService.DownloadTemplateImport();
+
+                return File(
+                   excelTemplate,
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    "ImportKhoa.xlsx"
+                 );
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse(ex.Message));
+            }
+        }
+
+        /// <summary>
+        /// Import excel khoa
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        [HttpPost("import/sub-plan")]
+        public ApiResponse ImportSubPlan([FromForm] ImportExcelSubPlanDto dto)
+        {
+            try
+            {
+                _subPlanService.ImportExcelSubplan(dto);
+                return new();
             }
             catch (Exception ex)
             {

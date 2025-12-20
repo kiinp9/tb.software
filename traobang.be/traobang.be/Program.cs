@@ -17,6 +17,7 @@ using traobang.be.domain.Auth;
 using traobang.be.infrastructure.data;
 using traobang.be.infrastructure.data.Seeder;
 using traobang.be.infrastructure.external.BackgroundJob;
+using traobang.be.infrastructure.external.Excel;
 using traobang.be.infrastructure.external.SignalR.Hub.Implements;
 using traobang.be.infrastructure.external.SignalR.Service.Implements;
 using traobang.be.infrastructure.external.SignalR.Service.Interfaces;
@@ -216,9 +217,12 @@ builder.Services.AddScoped<IUsersService, UsersService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IPermissionsService, PermissionsService>();
 
+builder.Services.AddScoped<IExcelService, ExcelService>();
+
 builder.Services.AddScoped<IPlanService, PlanService>();
 builder.Services.AddScoped<ISubPlanService, SubPlanService>();
 builder.Services.AddScoped<ISlideService, SlideService>();
+
 #endregion
 
 

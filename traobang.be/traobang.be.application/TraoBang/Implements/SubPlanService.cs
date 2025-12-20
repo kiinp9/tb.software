@@ -12,10 +12,12 @@ using System.Text.Json;
 using traobang.be.application.Base;
 
 using traobang.be.application.TraoBang.Dtos;
+using traobang.be.application.TraoBang.Dtos.Slide;
+using traobang.be.application.TraoBang.Dtos.SubPlan;
 using traobang.be.application.TraoBang.Interface;
 using traobang.be.domain.TraoBang;
 using traobang.be.infrastructure.data;
-
+using traobang.be.infrastructure.external.Excel;
 using traobang.be.infrastructure.external.SignalR.Service.Interfaces;
 using traobang.be.shared.Constants.TraoBang;
 using traobang.be.shared.HttpRequest.AppException;
@@ -29,11 +31,13 @@ namespace traobang.be.application.TraoBang.Implements
     {
         private static readonly TimeZoneInfo VietnamTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
         private readonly ITraoBangService _traoBangService;
+        private readonly IExcelService _excelService;
         private readonly IConfiguration _configuration;
         public SubPlanService(
             TbDbContext tbDbContext,
             ILogger<SubPlanService> logger,
             IHttpContextAccessor httpContextAccessor,
+            IExcelService excelService,
             IMapper mapper,
             IConfiguration configuration,
             ITraoBangService traoBangService
@@ -42,6 +46,7 @@ namespace traobang.be.application.TraoBang.Implements
         {
             _configuration = configuration;
             _traoBangService = traoBangService;
+            _excelService = excelService;
         }
         public void Create(int idPlan, CreateSubPlanDto dto)
         {
@@ -860,7 +865,6 @@ namespace traobang.be.application.TraoBang.Implements
                 TrangThai = nextSubPlan.TrangThai
             };
         }
-
         public async Task<List<GetListSubPlanDto>> GetListSubPlanInfor(int idPlan)
         {
             _logger.LogInformation($"{nameof(GetListSubPlanInfor)}, idPlan= {idPlan}");
@@ -935,8 +939,6 @@ namespace traobang.be.application.TraoBang.Implements
             };
 
         }
-
-
         public async Task<GetTienDoTraoBangResponseDto> GetTienDoTraoBang()
         {
             var sinhVienDaTrao = await _tbDbContext.TienDoTraoBangs
@@ -1795,6 +1797,78 @@ namespace traobang.be.application.TraoBang.Implements
                 TotalDataImported = totalDataImported,
                 ImportTimeInSeconds = (int)stopwatch.Elapsed.TotalSeconds
             };
+        }
+
+        public byte[] DownloadTemplateImport()
+        {
+            _logger.LogInformation($"{nameof(DownloadTemplateImport)}");
+
+            var path = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "Templates",
+                "ImportKhoa.xlsx"
+            );
+
+            var bytes = File.ReadAllBytes(path);
+
+            return bytes;
+        }
+
+        public void ImportExcelSubplan(ImportExcelSubPlanDto dto)
+        {
+            _logger.LogInformation($"{nameof(ImportExcelSubplan)}");
+
+            var username = getCurrentName();
+            var data = _excelService.ReadExcelFile(dto.File, "Sheet1");
+
+            int col = 0;
+            int indexSTT = col++;
+            int indexTen = col++;
+            int indexTruongKhoa = col++;
+
+            if (data != null && data.Count > 0)
+            {
+                var listAll = new List<ImportExcelMapSlideSinhVienDto>();
+
+                int rowIndex = 1;
+                var listSubPlan = new List<SubPlan>();
+                // insert vao map
+                for (int i = 0; i < data.Count; i++)
+                {
+                    if (i == 0)
+                    {
+                        continue;
+                    }
+
+                    var row = data[i];
+
+                    var stt = row[indexSTT];
+                    var tenSubPlan = row[indexTen];
+                    var tenTruongKhoa = row[indexTruongKhoa];
+
+                    if (string.IsNullOrEmpty(tenSubPlan))
+                    {
+                        continue;
+                    }
+
+                    var tmpSubPlan = new SubPlan()
+                    {
+                        IdPlan = dto.IdPlan,
+                        Ten = tenSubPlan,
+                        TruongKhoa = tenTruongKhoa,
+                        Order = rowIndex,
+                        CreatedBy = username,
+                        IsShow = true,
+                        TrangThai = TraoBangConstants.XepHang,
+                    };
+                    listSubPlan.Add(tmpSubPlan);
+
+                    rowIndex++;
+                }
+
+                _tbDbContext.AddRange(listSubPlan);
+                _tbDbContext.SaveChanges();
+            }
         }
 
         private string GetCellValue(List<string> row, Dictionary<string, int> colIndexMap, string headerName)

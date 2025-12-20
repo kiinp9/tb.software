@@ -764,16 +764,23 @@ namespace traobang.be.application.TraoBang.Implements
         public async Task<List<ViewTienDoNhanBangResponseDto>> GetTienDoNhanBang(ViewTienDoNhanBangRequestDto dto)
         {
             _logger.LogInformation($"{nameof(GetTienDoNhanBang)}, dto= {JsonSerializer.Serialize(dto)} ");
-            var khoaDangTrao = _tbDbContext.SubPlans
-                .AsNoTracking()
-                .FirstOrDefault(x => x.TrangThai == TraoBangConstants.DangTraoBang && !x.Deleted);
+
+            var khoaDangTrao = (
+                                from plan in _tbDbContext.Plans.AsNoTracking().Where(x => x.TrangThai == TrangThaiPlan.DangHoatDong && !x.Deleted)
+                                join subplan in _tbDbContext.SubPlans.AsNoTracking().Where(x => !x.Deleted) on plan.Id equals subplan.IdPlan
+                                where subplan.TrangThai == TraoBangConstants.DangTraoBang
+                                select subplan
+                               ).FirstOrDefault();
+
             if (khoaDangTrao == null)
             {
                 return null;
             }
+
             var sinhVien = _tbDbContext.DanhSachSinhVienNhanBangs
                 .AsNoTracking()
                 .FirstOrDefault(x => !x.Deleted && x.IdSubPlan == khoaDangTrao.Id);
+
             if (sinhVien == null)
             {
                 return null;
@@ -788,11 +795,6 @@ namespace traobang.be.application.TraoBang.Implements
                             && x.TrangThai == TraoBangConstants.DaTraoBang)
                 .OrderByDescending(x => x.Order)
                 .FirstOrDefaultAsync();
-
-            /*if (sinhVienDaTrao != null)
-            {
-                results.Add(sinhVienDaTrao);
-            }*/
 
             var soLuongConLai = dto.SoLuong - results.Count;
             if (soLuongConLai > 0)

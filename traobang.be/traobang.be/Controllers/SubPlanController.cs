@@ -154,6 +154,7 @@ namespace traobang.be.Controllers
                 return OkException(ex);
             }
         }
+
         [Permission(PermissionKeys.SubPlanAdd)]
         [HttpPost("sinh-vien-nhan-bang")]
         public ApiResponse CreateSinhVienNhanBang([FromBody] CreateSinhVienNhanBangDto dto)
@@ -168,6 +169,7 @@ namespace traobang.be.Controllers
                 return OkException(ex);
             }
         }
+
         [Permission(PermissionKeys.SubPlanUpdate)]
         [HttpPut("sinh-vien-nhan-bang")]
         public async Task<ApiResponse> UpdateSinhVienNhanBang([FromBody] UpdateSinhVienNhanBangDto dto)
@@ -252,6 +254,12 @@ namespace traobang.be.Controllers
                 return OkException(ex);
             }
         }
+
+        /// <summary>
+        /// Get tien do sinh vien nhan bang
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
         [Permission(PermissionKeys.SubPlanView)]
         [HttpGet("sinh-vien-nhan-bang/tien-do")]
         public async Task<ApiResponse> GetTienDoNhanBang([FromQuery] ViewTienDoNhanBangRequestDto dto)
@@ -266,6 +274,7 @@ namespace traobang.be.Controllers
                 return OkException(ex);
             }
         }
+
         [Permission(PermissionKeys.SubPlanView)]
         [HttpGet("{idSubPlan}/thong-tin-subplan")]
         public async Task<ApiResponse> GetThongTinSubPlan([FromRoute] int idSubPlan)

@@ -40,6 +40,7 @@ namespace traobang.be.infrastructure.data
 
             modelBuilder.Entity<Plan>(entity =>
             {
+                entity.Property(e => e.TrangThai).HasDefaultValue(TrangThaiPlan.KhoiTao);
                 entity.Property(e => e.Deleted).HasDefaultValue(0);
                 entity.Property(e => e.CreatedDate).HasDefaultValueSql("getdate()");
                 entity.Property(e => e.ThoiGianBatDau).HasDefaultValueSql("getdate()");

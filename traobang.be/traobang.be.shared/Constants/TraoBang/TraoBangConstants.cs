@@ -22,4 +22,11 @@
         public const int BINH_THUONG = 1;
         public const int SINH_VIEN = 2;
     }
+
+    public static class TrangThaiPlan
+    {
+        public const int KhoiTao = 1;
+        public const int DangHoatDong = 2;
+        public const int DaKetThuc = 3;
+    }
 }

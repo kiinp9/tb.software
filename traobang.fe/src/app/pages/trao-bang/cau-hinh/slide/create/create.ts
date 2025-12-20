@@ -1,4 +1,4 @@
-import { IViewRowSlide } from '@/models/traobang/slide.models';
+import { ICreateSlide, IUpdateSlide, IViewRowSlide } from '@/models/traobang/slide.models';
 import { IViewRowConfigSubPlan } from '@/models/traobang/sub-plan.models';
 import { SlideService } from '@/service/slide.service';
 import { TraoBangSubPlanService } from '@/service/sub-plan.service';
@@ -22,25 +22,24 @@ export class Create extends BaseComponent {
     private _slideService = inject(SlideService);
     private _subPlanService = inject(TraoBangSubPlanService);
 
-    listLoaiSlide = SlideConst.listLoaiSlide
+    listLoaiSlide = SlideConst.listLoaiSlide;
 
     listSvTrangThai = SvNhanBangStatuses.List;
-    listTrangThai = SvNhanBangStatuses.List
+    listTrangThai = SvNhanBangStatuses.List;
 
     listRole: IViewRowSlide[] = [];
     listSubPlan: IViewRowConfigSubPlan[] = [];
     isStudent: boolean = false;
-    override form: FormGroup = new FormGroup(
-        {
-            idSubPlan: new FormControl('',),
-            loaiSlide: new FormControl('',),
-            noiDung: new FormControl([], [Validators.required]),
-            note: new FormControl('', [Validators.required]),
-            trangThai: new FormControl(''),
-            isShow: new FormControl(''),
 
-        }
-    );
+    override form: FormGroup = new FormGroup({
+        idSubPlan: new FormControl('', [Validators.required]),
+        loaiSlide: new FormControl(SlideConst.TEXT, [Validators.required]),
+        noiDung: new FormControl([], [Validators.required]),
+        note: new FormControl('', [Validators.required]),
+        trangThai: new FormControl('', [Validators.required]),
+        isShow: new FormControl(true)
+    });
+
     studentForm = new FormGroup({
         hoVaTen: new FormControl('', [Validators.required]),
         maSoSinhVien: new FormControl('', [Validators.required]),
@@ -56,9 +55,19 @@ export class Create extends BaseComponent {
         soQuyetDinhTotNghiep: new FormControl(''),
         ngayQuyetDinh: new FormControl(new Date()),
         note: new FormControl(''),
-        linkQR: new FormControl(''),
-    })
+        linkQR: new FormControl('')
+    });
+
     override ValidationMessages: Record<string, Record<string, string>> = {
+        loaiSlide: {
+            required: 'Vui lòng chọn loại slide'
+        },
+        idSubPlan: {
+            required: 'Vui lòng chọn khoa'
+        },
+        trangThai: {
+            required: 'Vui lòng chọn trạng thái'
+        },
         noiDung: {
             required: 'Không được bỏ trống'
         },
@@ -69,6 +78,9 @@ export class Create extends BaseComponent {
             required: 'Không được bỏ trống'
         },
         hoVaTen: {
+            required: 'Không được bỏ trống'
+        },
+        maSoSinhVien: {
             required: 'Không được bỏ trống'
         },
         emailSinhVien: {
@@ -103,12 +115,16 @@ export class Create extends BaseComponent {
         }
     };
 
+    getStudentError(field: string) {
+        return this.getErrorMessage(this.studentForm.get(field), field);
+    }
 
     get isUpdate() {
         return this._config.data?.id;
     }
 
     override ngOnInit(): void {
+        console.log(this._config.data)
         this.getListSubPlan();
         if (this.isUpdate) {
             this.form.setValue({
@@ -117,10 +133,10 @@ export class Create extends BaseComponent {
                 loaiSlide: this._config.data.loaiSlide,
                 note: this._config.data.note,
                 trangThai: this._config.data.trangThai,
-                isShow: this._config.data.isShow,
+                isShow: this._config.data.isShow
             });
             if (this._config.data.loaiSlide == SlideConst.SinhVien) {
-                this.isStudent = true
+                this.isStudent = true;
                 this.studentForm.setValue({
                     hoVaTen: this._config.data.sinhVien.hoVaTen,
                     maSoSinhVien: this._config.data.sinhVien.maSoSinhVien,
@@ -136,8 +152,8 @@ export class Create extends BaseComponent {
                     soQuyetDinhTotNghiep: this._config.data.sinhVien.soQuyetDinhTotNghiep,
                     ngayQuyetDinh: new Date(this._config.data.sinhVien.ngayQuyetDinh),
                     note: this._config.data.sinhVien.note,
-                    linkQR: this._config.data.sinhVien.linkQR,
-                })
+                    linkQR: this._config.data.sinhVien.linkQR
+                });
             }
         }
     }
@@ -146,22 +162,118 @@ export class Create extends BaseComponent {
         this._subPlanService.getList(1).subscribe({
             next: (res) => {
                 if (this.isResponseSucceed(res)) {
-                    this.listSubPlan = res.data
+                    this.listSubPlan = res.data;
                 }
             }
-        })
+        });
     }
 
     onChangeLoaiSlide() {
         if (this.form.get('loaiSlide')?.value == SlideConst.SinhVien) {
-            this.isStudent = true
-        }
-        else{
-            this.isStudent = false
+            this.isStudent = true;
+        } else {
+            this.isStudent = false;
         }
     }
 
-    onSubmit() {
+    isFormStudentInvalid() {
+        if (this.studentForm.invalid) {
+            this.studentForm.markAllAsTouched();
+            return true;
+        }
+        return false;
+    }
 
+    onSubmit() {
+        // Mark all fields as touched to trigger validation display
+        this.form.markAllAsTouched();
+
+        if (!this.isStudent) {
+            if (this.isFormInvalid()) {
+                this.messageError('Vui lòng kiểm tra và điền đầy đủ thông tin bắt buộc');
+                return;
+            }
+            if (this.isUpdate) {
+                this.onSubmitUpdate();
+            } else {
+                this.onSubmitCreate();
+            }
+        } else {
+            this.studentForm.markAllAsTouched();
+            if (this.isFormInvalid() || this.isFormStudentInvalid()) {
+                this.messageError('Vui lòng kiểm tra và điền đầy đủ thông tin bắt buộc');
+                return;
+            }
+            if (this.isUpdate) {
+                this.onSubmitUpdate();
+            } else {
+                this.onSubmitCreate();
+            }
+        }
+    }
+
+    onSubmitUpdate() {
+        this.loading = true;
+        let body: IUpdateSlide;
+
+        if (!this.isStudent) {
+            body = {
+                id: this._config.data.id,
+                ...this.form.value
+            };
+        } else {
+            body = {
+                id: this._config.data.id,
+                ...this.form.value,
+                sinhVien: {
+                    ...this.studentForm.value
+                }
+            };
+        }
+        console.log(body)
+        this._slideService.update(body).subscribe({
+            next: (res) => {
+                if (this.isResponseSucceed(res, true, 'Đã lưu')) {
+                    this._ref?.close(true);
+                }
+            },
+            error: (err) => {
+                this.messageError(err?.message);
+            },
+            complete: () => {
+                this.loading = false;
+            }
+        });
+    }
+
+    onSubmitCreate() {
+        this.loading = true;
+        let body: ICreateSlide;
+        if (!this.isStudent) {
+            body = {
+                ...this.form.value
+            };
+        } else {
+            body = {
+                ...this.form.value,
+                sinhVien: {
+                    ...this.studentForm.value
+                }
+            };
+        }
+        console.log(body)
+        this._slideService.create(body).subscribe({
+            next: (res) => {
+                if (this.isResponseSucceed(res, true, 'Đã thêm slide')) {
+                    this._ref?.close(true);
+                }
+            },
+            error: (err) => {
+                this.messageError(err?.message);
+            },
+            complete: () => {
+                this.loading = false;
+            }
+        });
     }
 }

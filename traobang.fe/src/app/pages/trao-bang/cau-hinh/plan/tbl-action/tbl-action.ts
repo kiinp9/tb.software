@@ -13,6 +13,7 @@ export const TblActionTypes = {
     update: 'update',
     delete: 'delete',
     config: 'config',
+
 }
 
 @Component({
@@ -31,10 +32,10 @@ export class TblAction extends BaseComponent {
     @Input() data: any;
     @ViewChild('menu', { static: false }) menu!: Menu;
     @ViewChild('actionBtn', { static: false }) actionBtn!: Button;
-    
+
     actionType = TblActionTypes;
     menuItems: MenuItem[] = [];
-    
+
     override ngOnInit(): void {
         this.menuItems = [
             {
@@ -46,17 +47,22 @@ export class TblAction extends BaseComponent {
                 label: 'Xóa',
                 icon: 'pi pi-trash',
                 command: () => this.onClick(TblActionTypes.delete)
+            },
+            {
+                label: 'Xóa cấu hình',
+                icon: 'pi pi-trash',
+                command: () => this.onClick(TblActionTypes.config)
             }
         ];
     }
-    
+
     onClick(customType: string) {
         this.tblEmit.emit({
             data: this.row,
             type: customType
         });
     }
-    
+
      onMenuClick(event: any) {
         event?.stopPropagation();
         event?.preventDefault();
@@ -66,7 +72,7 @@ export class TblAction extends BaseComponent {
         }
 
         this.menu?.toggle(event);
-        
+
         setTimeout(() => {
             this.setMenuPosition();
         }, 0);
@@ -79,7 +85,7 @@ export class TblAction extends BaseComponent {
         const buttonRect = this.actionBtn.el.nativeElement.getBoundingClientRect();
         const menuElement = this.menu.containerViewChild.nativeElement;
         const leftPosition = buttonRect.left - this.MENU_WIDTH - this.MENU_OFFSET_X;
-        
+
         menuElement.style.position = 'fixed';
         menuElement.style.left = `${leftPosition}px`;
         menuElement.style.top = `${buttonRect.top}px`;

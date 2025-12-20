@@ -12,13 +12,15 @@
                         <input formControlName="search" pInputText type="text" placeholder="Search" />
                     </p-iconfield>
                 </div>
+                <p-button label="Tìm kiếm" type="submit" styleClass="w-32" />
             </div>
-            <p-button label="Tìm kiếm" type="submit" styleClass="w-32" />
+            <div class="flex">
+                <p-button icon="pi pi-download" (onClick)="downloadTemplate()" class="mr-3" label="Template excel" />
+                <p-button icon="pi pi-file-import" label="Import excel" (onClick)="onUpload()" />
+            </div>
         </div>
     </form>
     <div class="mt-4">
-        <app-data-table [columns]="columns" [data]="data" [loading]="loading" (onCustomComp)="onCustomEmit($event)"
-            [pageSize]="query.pageSize" [pageNumber]="query.pageNumber" [total]="totalRecords"
-            (onPageChanged)="onPageChanged($event)" />
+        <app-data-table [columns]="columns" [data]="data" [loading]="loading" (onCustomComp)="onCustomEmit($event)" [pageSize]="query.pageSize" [pageNumber]="query.pageNumber" [total]="totalRecords" (onPageChanged)="onPageChanged($event)" />
     </div>
 </div>

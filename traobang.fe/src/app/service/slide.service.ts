@@ -1,11 +1,10 @@
-import { inject, Injectable } from "@angular/core";
+import { inject, Injectable } from '@angular/core';
 import { IBaseResponse, IBaseResponsePaging, IBaseResponseWithData } from '@/shared/models/request-paging.base.models';
 import { HttpClient } from '@angular/common/http';
-import { ICreateSlide, IFindPagingSlide, IUpdateSlide, IViewRowSlide } from "@/models/traobang/slide.models";
+import { ICreateSlide, IFindPagingSlide, IUpdateSlide, IViewRowSlide } from '@/models/traobang/slide.models';
 @Injectable({
     providedIn: 'root'
 })
-
 export class SlideService {
     api = '/api/config/slide';
     http = inject(HttpClient);
@@ -30,5 +29,17 @@ export class SlideService {
 
     update(body: IUpdateSlide) {
         return this.http.put<IBaseResponse>(`${this.api}`, body);
+    }
+
+    delete(id: number) {
+        return this.http.delete<IBaseResponse>(`${this.api}/${id}`);
+    }
+
+    downloadFileTemplate() {
+        return this.http.get(`${this.api}/export/template-import-slide`, { responseType: 'blob' });
+    }
+
+    uploadFile(body: any) {
+        return this.http.post<IBaseResponse>(`${this.api}/import/slide`, body);
     }
 }

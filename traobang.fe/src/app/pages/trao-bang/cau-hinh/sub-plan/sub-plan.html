@@ -8,29 +8,19 @@
             <div class="flex flex-col justify-end flex-1">
                 <p-iconfield class="w-full">
                     <p-inputicon class="pi pi-search" />
-                    <input formControlName="search"
-                           pInputText
-                           type="text"
-                           placeholder="Search"
-                           class="w-150 " />
+                    <input formControlName="search" pInputText type="text" placeholder="Search" class="w-150" />
                 </p-iconfield>
             </div>
 
-            <p-button label="Thêm mới"
-                      styleClass="w-32"
-                      (onClick)="onOpenCreate()" />
+            <p-button label="Thêm mới" styleClass="w-32" (onClick)="onOpenCreate()" />
+            <div class="flex">
+                <p-button icon="pi pi-download" (onClick)="downloadTemplate()" class="mr-3" label="Template excel" />
+                <p-button icon="pi pi-file-import" label="Import excel" (onClick)="onUpload()" />
+            </div>
         </div>
     </form>
 
     <div class="mt-4">
-        <app-data-table
-            [columns]="columns"
-            [data]="data"
-            [loading]="loading"
-            (onCustomComp)="onCustomEmit($event)"
-            [pageSize]="query.pageSize"
-            [pageNumber]="query.pageNumber"
-            [total]="totalRecords"
-            (onPageChanged)="onPageChanged($event)" />
+        <app-data-table [columns]="columns" [data]="data" [loading]="loading" (onCustomComp)="onCustomEmit($event)" [pageSize]="query.pageSize" [pageNumber]="query.pageNumber" [total]="totalRecords" (onPageChanged)="onPageChanged($event)" />
     </div>
 </div>

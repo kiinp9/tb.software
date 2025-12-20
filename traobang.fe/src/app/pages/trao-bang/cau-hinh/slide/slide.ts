@@ -11,10 +11,11 @@ import { IFindPagingSlide, IViewRowSlide } from '@/models/traobang/slide.models'
 import { PaginatorState } from 'primeng/paginator';
 import { SvNhanBangStatuses } from '@/shared/constants/sv-nhan-bang.constants';
 import { Create } from './create/create';
-
+import { FileUploadModule } from 'primeng/fileupload';
+import { Upload } from './upload/upload';
 @Component({
     selector: 'app-slide',
-    imports: [SharedImports, DataTable],
+    imports: [SharedImports, DataTable, FileUploadModule],
     templateUrl: './slide.html',
     styleUrl: './slide.scss'
 })
@@ -25,21 +26,25 @@ export class SlideScreen extends BaseComponent {
         search: new FormControl('')
     });
 
-    listLoaiSlide = [{
-        code: 1,
-        name: 'Text'
-    },
-    {
-        code: 2,
-        name: 'Sinh viên'
-    }]
+    listLoaiSlide = [
+        {
+            code: 1,
+            name: 'Text'
+        },
+        {
+            code: 2,
+            name: 'Sinh viên'
+        }
+    ];
 
     columns: IColumn[] = [
         { header: 'STT', cellViewType: CellViewTypes.INDEX, headerContainerStyle: 'width: 6rem' },
         { header: 'Nội dung', field: 'noiDung', headerContainerStyle: 'min-width: 10rem' },
         { header: 'Note', field: 'note', headerContainerStyle: 'min-width: 10rem' },
         {
-            header: 'Loại Slide', field: 'loaiSlideName', headerContainerStyle: 'min-width: 10rem',
+            header: 'Loại Slide',
+            field: 'loaiSlideName',
+            headerContainerStyle: 'min-width: 10rem',
             cellViewType: CellViewTypes.STATUS,
             statusSeverityFunction: (rowData: IViewRowSlide) => {
                 return SvNhanBangStatuses.getName(rowData.loaiSlide ?? 0);
@@ -52,7 +57,6 @@ export class SlideScreen extends BaseComponent {
             cellViewType: CellViewTypes.STATUS,
             statusSeverityFunction: (rowData: IViewRowSlide) => {
                 return SvNhanBangStatuses.getName(rowData.trangThai ?? 0);
-
             }
         },
         { header: 'Thao tác', headerContainerStyle: 'width: 6rem', cellViewType: CellViewTypes.CUSTOM_COMP, customComponent: TblAction }
@@ -84,16 +88,16 @@ export class SlideScreen extends BaseComponent {
             .subscribe({
                 next: (res) => {
                     if (this.isResponseSucceed(res, false)) {
-                        this.data = res.data.items.map(item => {
-                            let loai = this.listLoaiSlide.find(x => x.code == item.loaiSlide);
-                            let trangThaiText = SvNhanBangStatuses.List.find(x => x.code == item.trangThai)
+                        this.data = res.data.items.map((item) => {
+                            let loai = this.listLoaiSlide.find((x) => x.code == item.loaiSlide);
+                            let trangThaiText = SvNhanBangStatuses.List.find((x) => x.code == item.trangThai);
                             return {
                                 ...item,
                                 loaiSlideName: loai?.name ?? '',
                                 trangThaiText: trangThaiText?.name
                             };
                         });
-                        console.log(this.data)
+                        console.log(this.data);
                         this.totalRecords = res.data.totalItems;
                     }
                 }
@@ -116,6 +120,7 @@ export class SlideScreen extends BaseComponent {
         if (data.type === TblActionTypes.update) {
             this.onOpenUpdate(data.data);
         } else if (data.type === TblActionTypes.delete) {
+            this.onDelete(data.data);
         }
     }
 
@@ -128,4 +133,56 @@ export class SlideScreen extends BaseComponent {
         });
     }
 
+    onDelete(data: IViewRowSlide) {
+        this.confirmDelete(
+            {
+                header: 'Bạn chắc chắn muốn xóa SV?',
+                message: 'Không thể khôi phục sau khi xóa'
+            },
+            () => {
+                this._slideService.delete(data.id || 0).subscribe(
+                    (res) => {
+                        if (this.isResponseSucceed(res, true, 'Đã xóa')) {
+                            this.getData();
+                        }
+                    },
+                    (err) => {
+                        this.messageError(err?.message);
+                    }
+                );
+            }
+        );
+    }
+
+    downloadTemplate() {
+        this.loading = true;
+        this._slideService.downloadFileTemplate().subscribe({
+            next: (res: Blob) => {
+                if (res) {
+                    const blob = new Blob([res], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                    const url = window.URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = 'slide_template.xlsx';
+                    link.click();
+                    window.URL.revokeObjectURL(url);
+                }
+            },
+            error: (err) => {
+                this.messageError(err?.message || 'Có lỗi xảy ra khi tải template');
+            },
+            complete: () => {
+                this.loading = false;
+            }
+        });
+    }
+
+    onUpload() {
+        const ref = this._dialogService.open(Upload, { header: 'Import từ file', closable: true, modal: true, styleClass: 'w-[700px]', focusOnShow: false });
+        ref.onClose.subscribe((result) => {
+            if (result) {
+                this.getData();
+            }
+        });
+    }
 }

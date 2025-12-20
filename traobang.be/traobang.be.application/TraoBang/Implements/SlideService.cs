@@ -261,6 +261,30 @@ namespace traobang.be.application.TraoBang.Implements
 
                 using (var tran = _tbDbContext.Database.BeginTransaction())
                 {
+                    // xóa các slide + sv trước trong chương trình (plan)
+                    var listOldSlide = (
+                                    from s in _tbDbContext.Slides.Where(x => !x.Deleted)
+                                    join sp in _tbDbContext.SubPlans.Where(x => !x.Deleted) on s.IdSubPlan equals sp.Id
+                                    where sp.IdPlan == dto.IdPlan
+                                    select s
+                                    ).ToList();
+                    var listIdOldSlide = listOldSlide.Select(x => x.Id);
+                    var listOldSv = _tbDbContext.DanhSachSinhVienNhanBangs.Where(x => listIdOldSlide.Contains(x.Id) && !x.Deleted);
+
+                    foreach (var oldslide in listOldSlide)
+                    {
+                        oldslide.Deleted = true;
+                        oldslide.DeletedBy = username;
+                        oldslide.DeletedDate = DateTime.Now;
+                    }
+
+                    foreach (var oldSv in listOldSv)
+                    {
+                        oldSv.Deleted = true;
+                        oldSv.DeletedBy = username;
+                        oldSv.DeletedDate = DateTime.Now;
+                    }
+
                     // insert vao map
                     for (int i = 0; i < data.Count; i++)
                     {
@@ -288,7 +312,7 @@ namespace traobang.be.application.TraoBang.Implements
                         var ngayQuyetDinh = row[indexNgayQuyetDinh];
                         var noteChoMC = row[indexNoteChoMC];
 
-                        var subplan = _tbDbContext.SubPlans.FirstOrDefault(x => x.Ten == tenSubPlan && !x.Deleted);
+                        var subplan = _tbDbContext.SubPlans.FirstOrDefault(x => x.IdPlan == dto.IdPlan && x.Ten == tenSubPlan && !x.Deleted);
 
                         if (subplan == null)
                         {

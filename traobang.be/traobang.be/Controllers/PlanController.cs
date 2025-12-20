@@ -78,6 +78,22 @@ namespace traobang.be.Controllers
                 return OkException(ex);
             }
         }
+
+        [Permission(PermissionKeys.PlanDelete)]
+        [HttpDelete("{id}")]
+        public ApiResponse DeleteConfig([FromRoute] int id)
+        {
+            try
+            {
+                _planService.DeleteConfig(id);
+                return new();
+            }
+            catch (Exception ex)
+            {
+                return OkException(ex);
+            }
+        }
+
         [Permission(PermissionKeys.PlanView)]
         [HttpGet("list")]
         public async Task<ApiResponse> ListPlan()

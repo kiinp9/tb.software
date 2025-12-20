@@ -1832,7 +1832,8 @@ namespace traobang.be.application.TraoBang.Implements
 
                 int rowIndex = 1;
                 var listSubPlan = new List<SubPlan>();
-                // insert vao map
+
+                // insert
                 for (int i = 0; i < data.Count; i++)
                 {
                     if (i == 0)
@@ -1851,17 +1852,26 @@ namespace traobang.be.application.TraoBang.Implements
                         continue;
                     }
 
-                    var tmpSubPlan = new SubPlan()
+                    var oldSubPlan = _tbDbContext.SubPlans.FirstOrDefault(x => x.IdPlan == dto.IdPlan && x.Ten == tenSubPlan && !x.Deleted);
+                    if (oldSubPlan != null)
                     {
-                        IdPlan = dto.IdPlan,
-                        Ten = tenSubPlan,
-                        TruongKhoa = tenTruongKhoa,
-                        Order = rowIndex,
-                        CreatedBy = username,
-                        IsShow = true,
-                        TrangThai = TraoBangConstants.XepHang,
-                    };
-                    listSubPlan.Add(tmpSubPlan);
+                        oldSubPlan.TruongKhoa = tenTruongKhoa;
+                        oldSubPlan.Order = rowIndex;
+                    }
+                    else
+                    {
+                        var tmpSubPlan = new SubPlan()
+                        {
+                            IdPlan = dto.IdPlan,
+                            Ten = tenSubPlan,
+                            TruongKhoa = tenTruongKhoa,
+                            Order = rowIndex,
+                            CreatedBy = username,
+                            IsShow = true,
+                            TrangThai = TraoBangConstants.XepHang,
+                        };
+                        listSubPlan.Add(tmpSubPlan);
+                    }
 
                     rowIndex++;
                 }

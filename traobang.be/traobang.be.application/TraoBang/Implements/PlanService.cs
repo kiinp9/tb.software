@@ -106,6 +106,52 @@ namespace traobang.be.application.TraoBang.Implements
             _tbDbContext.Plans.Update(plan);
             _tbDbContext.SaveChanges();
         }
+
+        public void DeleteConfig(int id)
+        {
+            _logger.LogInformation($"{nameof(DeleteConfig)}, id = {id}");
+
+            var username = getCurrentName();
+
+            // xóa các slide + sv trước trong chương trình (plan)
+            var listOldSlide = (
+                            from s in _tbDbContext.Slides.Where(x => !x.Deleted)
+                            join sp in _tbDbContext.SubPlans.Where(x => !x.Deleted) on s.IdSubPlan equals sp.Id
+                            where sp.IdPlan == id
+                            select s
+                            ).ToList();
+            var listIdOldSlide = listOldSlide.Select(x => x.Id);
+            var listOldSv = _tbDbContext.DanhSachSinhVienNhanBangs.Where(x => listIdOldSlide.Contains(x.Id) && !x.Deleted);
+
+            using (var tran = _tbDbContext.Database.BeginTransaction())
+            {
+                foreach (var oldslide in listOldSlide)
+                {
+                    oldslide.Deleted = true;
+                    oldslide.DeletedBy = username;
+                    oldslide.DeletedDate = DateTime.Now;
+                }
+
+                foreach (var oldSv in listOldSv)
+                {
+                    oldSv.Deleted = true;
+                    oldSv.DeletedBy = username;
+                    oldSv.DeletedDate = DateTime.Now;
+                }
+
+                // xoa old subplan
+                var listOldSubplan = _tbDbContext.SubPlans.Where(x => x.IdPlan == id && !x.Deleted);
+                foreach (var subplan in listOldSubplan)
+                {
+                    subplan.Deleted = true;
+                    subplan.DeletedBy = username;
+                    subplan.DeletedDate = DateTime.Now;
+                }
+
+                tran.Commit();
+            }
+        }
+
         private static DateTime GetVietnamTime()
         {
             return TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, VietnamTimeZone);

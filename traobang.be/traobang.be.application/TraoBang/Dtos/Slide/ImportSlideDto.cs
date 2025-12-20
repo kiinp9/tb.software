@@ -5,6 +5,7 @@ namespace traobang.be.application.TraoBang.Dtos.Slide
 {
     public class ImportExcelSlideDto
     {
+        required public int IdPlan { get; set; }
         required public IFormFile File { get; set; }
     }
 

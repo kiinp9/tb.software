@@ -50,6 +50,7 @@ namespace traobang.be.Controllers
                 return OkException(ex);
             }
         }
+
         [Permission(PermissionKeys.SubPlanView)]
         [HttpGet("")]
         public ApiResponse FindPaging([FromQuery] FindPagingSubPlanDto dto)

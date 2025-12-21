@@ -86,7 +86,8 @@ namespace traobang.be.application.TraoBang.Implements
                 .Select(x => new GetListPlanResponseDto
                 {
                     Id = x.Id,
-                    Ten = x.Ten
+                    Ten = x.Ten,
+                    TrangThai = x.TrangThai,
                 })
                 .ToListAsync();
 

@@ -143,9 +143,12 @@ namespace traobang.be.application.TraoBang.Implements
         public BaseResponsePagingDto<ViewSubPlanDto> FindPaging(FindPagingSubPlanDto dto)
         {
             _logger.LogInformation($"{nameof(FindPaging)}, dto = {JsonSerializer.Serialize(dto)}");
-            var query = from sp in _tbDbContext.SubPlans
-                        where !sp.Deleted
-                        orderby sp.IdPlan, sp.Order ascending
+            var query = from sp in _tbDbContext.SubPlans.AsNoTracking().Where(x => !x.Deleted)
+                        join p in _tbDbContext.Plans.AsNoTracking().Where(x => !x.Deleted) on sp.IdPlan equals p.Id
+                        where
+                            (string.IsNullOrEmpty(dto.Keyword) || (sp.Ten.ToLower().Contains(dto.Keyword.ToLower()))) &&
+                            (dto.IdPlan == null || p.Id == dto.IdPlan)
+                        orderby p descending, sp.IdPlan, sp.Order ascending
                         select sp;
             var data = query.Paging(dto).ToList();
             var items = _mapper.Map<List<ViewSubPlanDto>>(data);

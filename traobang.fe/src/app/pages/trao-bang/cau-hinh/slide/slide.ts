@@ -6,6 +6,7 @@ import { SharedImports } from '@/shared/import.shared';
 import { IColumn } from '@/shared/models/data-table.models';
 import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { TblAction, TblActionTypes } from './tbl-action/tbl-action';
 import { IFindPagingSlide, IViewRowSlide } from '@/models/traobang/slide.models';
 import { PaginatorState } from 'primeng/paginator';
@@ -13,6 +14,10 @@ import { SvNhanBangStatuses } from '@/shared/constants/sv-nhan-bang.constants';
 import { Create } from './create/create';
 import { FileUploadModule } from 'primeng/fileupload';
 import { Upload } from './upload/upload';
+import { TraoBangPlanService } from '@/service/plan.service';
+import { IViewRowConfigPlan } from '@/models/traobang/plan.models';
+import { TraoBangSubPlanService } from '@/service/sub-plan.service';
+import { IViewRowConfigSubPlan } from '@/models/traobang/sub-plan.models';
 @Component({
     selector: 'app-slide',
     imports: [SharedImports, DataTable, FileUploadModule],
@@ -21,11 +26,17 @@ import { Upload } from './upload/upload';
 })
 export class SlideScreen extends BaseComponent {
     _slideService = inject(SlideService);
+    _traoBangPlanService = inject(TraoBangPlanService);
+    _subPlanService = inject(TraoBangSubPlanService);
 
     searchForm: FormGroup = new FormGroup({
-        search: new FormControl('')
+        search: new FormControl(''),
+        idPlan: new FormControl(''),
+        idSubPlan: new FormControl('')
     });
 
+    listPlanActive: IViewRowConfigPlan[] = [];
+    listSubPlan: IViewRowConfigSubPlan[] = [];
     listLoaiSlide = [
         {
             code: 1,
@@ -69,7 +80,33 @@ export class SlideScreen extends BaseComponent {
     };
 
     override ngOnInit(): void {
+        this.getListPlanActive();
+        this.getListSubPlan();
         this.getData();
+
+        // Debounce search input
+        this.searchForm
+            .get('search')
+            ?.valueChanges.pipe(debounceTime(500), distinctUntilChanged())
+            .subscribe(() => {
+                this.getData();
+            });
+    }
+
+    getListPlanActive() {
+        this._traoBangPlanService.getList().subscribe((res) => {
+            this.listPlanActive = res.data;
+        });
+    }
+
+    getListSubPlan() {
+        this._subPlanService.getListSubPlanActive().subscribe({
+            next: (res) => {
+                if (this.isResponseSucceed(res)) {
+                    this.listSubPlan = res.data;
+                }
+            }
+        });
     }
 
     onSearch() {
@@ -83,28 +120,34 @@ export class SlideScreen extends BaseComponent {
 
     getData() {
         this.loading = true;
-        this._slideService
-            .findPaging({ ...this.query, keyword: this.searchForm.get('search')?.value })
-            .subscribe({
-                next: (res) => {
-                    if (this.isResponseSucceed(res, false)) {
-                        this.data = res.data.items.map((item) => {
-                            let loai = this.listLoaiSlide.find((x) => x.code == item.loaiSlide);
-                            let trangThaiText = SvNhanBangStatuses.List.find((x) => x.code == item.trangThai);
-                            return {
-                                ...item,
-                                loaiSlideName: loai?.name ?? '',
-                                trangThaiText: trangThaiText?.name
-                            };
-                        });
-                        console.log(this.data);
-                        this.totalRecords = res.data.totalItems;
+        let dataFilter = { idPlan: this.searchForm.get('idPlan')?.value ?? '', idSubPlan: this.searchForm.get('idSubPlan')?.value?? '' };
+        if (dataFilter) {
+            this._slideService
+                .findPaging({ ...this.query, keyword: this.searchForm.get('search')?.value }, dataFilter)
+                .subscribe({
+                    next: (res) => {
+                        if (this.isResponseSucceed(res, false)) {
+                            this.data = res.data.items.map((item) => {
+                                let loai = this.listLoaiSlide.find((x) => x.code == item.loaiSlide);
+                                let trangThaiText = SvNhanBangStatuses.List.find((x) => x.code == item.trangThai);
+                                return {
+                                    ...item,
+                                    loaiSlideName: loai?.name ?? '',
+                                    trangThaiText: trangThaiText?.name
+                                };
+                            });
+                            // console.log(this.data);
+                            this.totalRecords = res.data.totalItems;
+                        }
                     }
-                }
-            })
-            .add(() => {
-                this.loading = false;
-            });
+                })
+                .add(() => {
+                    this.loading = false;
+                });
+        }
+        else{
+
+        }
     }
 
     onOpenCreate() {

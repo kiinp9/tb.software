@@ -11,7 +11,7 @@ import { SlideScreen } from "./cau-hinh/slide/slide";
 export default [
     { path: 'config/plan', title: 'Chương trình', data: { breadcrumb: 'plan', permission: PermissionConstants.MenuTraoBangCauHinhChuongTrinh }, component: Plan, canActivate: [permissionGuard], },
     { path: 'config/sub-plan', title: 'Khoa', data: { breadcrumb: 'sub-plan', permission: PermissionConstants.MenuTraoBangCauHinhKhoa }, component: SubPlan, canActivate: [permissionGuard] },
-    { path: 'config/sv', title: 'Sinh viên nhận bằng', data: { breadcrumb: 'sv', permission: PermissionConstants.MenuTraoBangCauHinhSinhVienNhanBang }, component: SvNhanBang, canActivate: [permissionGuard] },
+    // { path: 'config/sv', title: 'Sinh viên nhận bằng', data: { breadcrumb: 'sv', permission: PermissionConstants.MenuTraoBangCauHinhSinhVienNhanBang }, component: SvNhanBang, canActivate: [permissionGuard] },
     { path: 'scan-qr-sv', title: 'Checkin', data: { breadcrumb: 'scan-qr-sv', permission: PermissionConstants.MenuTraoBangQuetQr }, component: ScanQrSv, canActivate: [permissionGuard] },
     { path: 'mc-screen', title: 'Điều khiển', data: { breadcrumb: 'mc-screen', permission: PermissionConstants.MenuTraoBangMc }, component: McScreen, canActivate: [permissionGuard] },
     { path: 'config/slide', title: 'Slide', data: { breadcrumb: 'slide', permission: PermissionConstants.MenuTraoBangMc }, component: SlideScreen, canActivate: [permissionGuard] },

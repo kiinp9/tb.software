@@ -90,11 +90,11 @@ export class AppMenu {
                                         visible: this._sharedService.isGranted(PermissionConstants.MenuTraoBangCauHinhKhoa),
                                         routerLink: ['/trao-bang/config/sub-plan']
                                     },
-                                    {
-                                        label: 'SV nhận bằng',
-                                        visible: this._sharedService.isGranted(PermissionConstants.MenuTraoBangCauHinhSinhVienNhanBang),
-                                        routerLink: ['/trao-bang/config/sv']
-                                    },
+                                    // {
+                                    //     label: 'SV nhận bằng',
+                                    //     visible: this._sharedService.isGranted(PermissionConstants.MenuTraoBangCauHinhSinhVienNhanBang),
+                                    //     routerLink: ['/trao-bang/config/sv']
+                                    // },
                                      {
                                         label: 'Slide',
                                         visible: this._sharedService.isGranted(PermissionConstants.MenuTraoBangCauHinhSinhVienNhanBang),

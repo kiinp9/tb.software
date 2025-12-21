@@ -8,7 +8,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { PaginatorState } from 'primeng/paginator';
 import { Create } from './create/create';
 import { TblAction, TblActionTypes } from './tbl-action/tbl-action';
-import { IViewRowConfigPlan, IFindPagingConfigPlan } from '@/models/traobang/plan.models';
+import { IViewRowConfigPlan, IFindPagingConfigPlan, PlanTrangThai } from '@/models/traobang/plan.models';
 import { TraoBangPlanService } from '@/service/plan.service';
 
 @Component({
@@ -28,6 +28,15 @@ export class Plan extends BaseComponent {
         { header: 'STT', cellViewType: CellViewTypes.INDEX, headerContainerStyle: 'width: 6rem' },
         { header: 'Tên chương trình', field: 'ten', headerContainerStyle: 'min-width: 10rem' },
         { header: 'Mô tả', field: 'moTa', headerContainerStyle: 'min-width: 10rem' },
+        {
+            header: 'Trạng thái',
+            field: 'trangThaiText',
+            headerContainerStyle: 'width: 10rem',
+            cellViewType: CellViewTypes.STATUS,
+            statusSeverityFunction: (rowData: IViewRowConfigPlan) => {
+                return PlanTrangThai.getName(rowData.trangThai ?? 0);
+            }
+        },
         { header: 'Bắt đầu', field: 'thoiGianBatDau', headerContainerStyle: 'width: 10rem', cellViewType: CellViewTypes.DATE, dateFormat: 'dd/MM/yyyy HH:mm:ss' },
         { header: 'Kết thúc', field: 'thoiGianKetThuc', headerContainerStyle: 'width: 10rem', cellViewType: CellViewTypes.DATE, dateFormat: 'dd/MM/yyyy HH:mm:ss' },
         { header: 'Thao tác', headerContainerStyle: 'width: 6rem', cellViewType: CellViewTypes.CUSTOM_COMP, customComponent: TblAction }
@@ -59,7 +68,13 @@ export class Plan extends BaseComponent {
             .subscribe({
                 next: (res) => {
                     if (this.isResponseSucceed(res, false)) {
-                        this.data = res.data.items;
+                        this.data = res.data.items.map((item) => {
+                            let trangThaiText = PlanTrangThai.ListTrangThai.find((x) => x.code == item.trangThai);
+                            return {
+                                ...item,
+                                trangThaiText: trangThaiText?.name ?? ''
+                            };
+                        });
                         this.totalRecords = res.data.totalItems;
                     }
                 }

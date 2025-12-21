@@ -11,6 +11,9 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { IViewRowConfigSubPlan, IFindPagingConfigSubPlan } from '@/models/traobang/sub-plan.models';
 import { TraoBangSubPlanService } from '@/service/sub-plan.service';
 import { Upload } from './upload/upload';
+import { IViewRowConfigPlan } from '@/models/traobang/plan.models';
+import { TraoBangPlanService } from '@/service/plan.service';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
     selector: 'app-sub-plan',
@@ -20,18 +23,19 @@ import { Upload } from './upload/upload';
 })
 export class SubPlan extends BaseComponent {
     _subPlanService = inject(TraoBangSubPlanService);
+    _traoBangPlanService = inject(TraoBangPlanService);
+
+    listPlanActive: IViewRowConfigPlan[] = [];
 
     searchForm: FormGroup = new FormGroup({
-        search: new FormControl('')
+        search: new FormControl(''),
+        idPlan: new FormControl('')
     });
 
     columns: IColumn[] = [
         { header: 'STT', cellViewType: CellViewTypes.INDEX, headerContainerStyle: 'width: 6rem' },
         { header: 'Tên khoa', field: 'ten', headerContainerStyle: 'min-width: 10rem' },
-        { header: 'Mô tả', field: 'moTa', headerContainerStyle: 'min-width: 10rem' },
-        { header: 'Mở bài', field: 'moBai', headerContainerStyle: 'min-width: 10rem' },
-        { header: 'Kết bài', field: 'ketBai', headerContainerStyle: 'min-width: 10rem' },
-        { header: 'Ghi chú', field: 'note', headerContainerStyle: 'min-width: 10rem' },
+        { header: 'Trưởng Khoa', field: 'truongKhoa', headerContainerStyle: 'min-width: 10rem' },
         { header: 'Thứ tự', field: 'order', headerContainerStyle: 'width: 10rem' },
         { header: 'Hiển thị', field: 'isShow', headerContainerStyle: 'width: 10rem', cellViewType: CellViewTypes.CHECKBOX },
         { header: 'Thao tác', headerContainerStyle: 'width: 6rem', cellViewType: CellViewTypes.CUSTOM_COMP, customComponent: TblAction }
@@ -44,7 +48,22 @@ export class SubPlan extends BaseComponent {
     };
 
     override ngOnInit(): void {
+        this.getListPlanActive();
         this.getData();
+
+        // Debounce search input
+        this.searchForm
+            .get('search')
+            ?.valueChanges.pipe(debounceTime(500), distinctUntilChanged())
+            .subscribe(() => {
+                this.getData();
+            });
+    }
+
+    getListPlanActive() {
+        this._traoBangPlanService.getList().subscribe((res) => {
+            this.listPlanActive = res.data;
+        });
     }
 
     onSearch() {
@@ -58,8 +77,9 @@ export class SubPlan extends BaseComponent {
 
     getData() {
         this.loading = true;
+        let dataFilter = { idPlan: this.searchForm.get('idPlan')?.value ?? '' };
         this._subPlanService
-            .findPaging({ ...this.query, keyword: this.searchForm.get('search')?.value })
+            .findPaging({ ...this.query, keyword: this.searchForm.get('search')?.value }, dataFilter)
             .subscribe({
                 next: (res) => {
                     if (this.isResponseSucceed(res, false)) {

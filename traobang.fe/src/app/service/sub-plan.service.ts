@@ -11,9 +11,9 @@ export class TraoBangSubPlanService {
     api = '/api/core/trao-bang/sub-plan';
     http = inject(HttpClient);
 
-    findPaging(query: IFindPagingConfigSubPlan) {
+    findPaging(query: IFindPagingConfigSubPlan, dataFilter?: any) {
         return this.http.get<IBaseResponsePaging<IViewRowConfigSubPlan>>(this.api, {
-            params: { ...query }
+            params: { ...query, ...dataFilter }
         });
     }
 
@@ -43,6 +43,10 @@ export class TraoBangSubPlanService {
 
     uploadFile(body: any) {
         return this.http.post<IBaseResponse>(`${this.api}/import/sub-plan`, body);
+    }
+
+    getListSubPlanActive() {
+        return this.http.get<IBaseResponseWithData<IViewRowConfigSubPlan[]>>(`${this.api}/plan/active/list-sub-plan-infor`);
     }
 
 }

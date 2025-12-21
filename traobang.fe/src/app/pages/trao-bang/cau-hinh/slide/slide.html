@@ -6,13 +6,26 @@
     <form [formGroup]="searchForm" (ngSubmit)="onSearch()">
         <div class="flex flex-row justify-between items-end space-x-2">
             <div class="flex flex-row justify-between align-items-end space-x-2">
+                <!--  -->
                 <div class="flex flex-col justify-end">
                     <p-iconfield>
                         <p-inputicon class="pi pi-search" />
                         <input formControlName="search" pInputText type="text" placeholder="Search" />
                     </p-iconfield>
                 </div>
-                <p-button label="Tìm kiếm" type="submit" styleClass="w-32" />
+                <!--  -->
+                <div class="flex flex-col justify-end">
+                    <p-iconfield>
+                        <p-select [options]="listPlanActive" formControlName="idPlan" optionValue="id" optionLabel="ten" placeholder="Chọn chương trình" (onChange)="getData()" [showClear]="true" />
+                    </p-iconfield>
+                </div>
+                <!--  -->
+                <div class="flex flex-col justify-end">
+                    <p-iconfield>
+                        <p-select [options]="listSubPlan" formControlName="idSubPlan" optionValue="id" optionLabel="ten" placeholder="Chọn khoa" (onChange)="getData()" [showClear]="true" />
+                    </p-iconfield>
+                </div>
+                <!-- <p-button label="Tìm kiếm" type="submit" styleClass="w-32" /> -->
             </div>
             <div class="flex">
                 <p-button icon="pi pi-download" (onClick)="downloadTemplate()" class="mr-3" label="Template excel" />

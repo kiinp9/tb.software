@@ -103,7 +103,7 @@ namespace traobang.be.application.TraoBang.Implements
             slide.TrangThai = dto.TrangThai;
             slide.Order = dto.Order;
 
-            if (dto.SinhVien != null)
+            if (slide.LoaiSlide == LoaiSlides.SINH_VIEN && dto.SinhVien != null)
             {
                 var sv = _tbDbContext.DanhSachSinhVienNhanBangs.FirstOrDefault(x => x.Id == dto.SinhVien.Id && !x.Deleted);
                 if (sv != null)
@@ -124,6 +124,43 @@ namespace traobang.be.application.TraoBang.Implements
                     sv.Note = dto.SinhVien.Note;
                     sv.LinkQR = dto.SinhVien.LinkQR;
                 }
+                else
+                {
+                    var newsv = new DanhSachSinhVienNhanBang
+                    {
+                        HoVaTen = dto.SinhVien.HoVaTen,
+                        MaSoSinhVien = dto.SinhVien.MaSoSinhVien,
+                        Lop = dto.SinhVien.Lop,
+                        NgaySinh = dto.SinhVien.NgaySinh,
+                        CapBang = dto.SinhVien.CapBang,
+                        TenNganhDaoTao = dto.SinhVien.TenNganhDaoTao,
+                        XepHang = dto.SinhVien.XepHang,
+                        ThanhTich = dto.SinhVien.ThanhTich,
+                        Email = dto.SinhVien.Email,
+                        EmailSinhVien = $"{dto.SinhVien.MaSoSinhVien}@st.huce.edu.vn",
+                        KhoaQuanLy = dto.SinhVien.KhoaQuanLy,
+                        SoQuyetDinhTotNghiep = dto.SinhVien.SoQuyetDinhTotNghiep,
+                        NgayQuyetDinh = dto.SinhVien.NgayQuyetDinh,
+                        Note = dto.SinhVien.Note,
+                        LinkQR = dto.SinhVien.LinkQR,
+                    };
+                    _tbDbContext.DanhSachSinhVienNhanBangs.Add(newsv);
+                    _tbDbContext.SaveChanges();
+                    slide.IdSinhVienNhanBang = newsv.Id;
+                }
+            }
+            else if (dto.LoaiSlide == LoaiSlides.BINH_THUONG)
+            {
+                var oldSv = _tbDbContext.DanhSachSinhVienNhanBangs.FirstOrDefault(x => x.Id == slide.IdSinhVienNhanBang && !x.Deleted);
+                if (oldSv != null)
+                {
+                    string username = getCurrentName();
+
+                    oldSv.Deleted = true;
+                    oldSv.DeletedDate = DateTime.Now;
+                    oldSv.DeletedBy = username;
+                }
+                slide.IdSinhVienNhanBang = null;
             }
 
             _tbDbContext.SaveChanges();

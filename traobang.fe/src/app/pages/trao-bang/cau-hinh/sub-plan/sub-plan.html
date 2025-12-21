@@ -4,16 +4,25 @@
     </div>
 
     <form [formGroup]="searchForm" (ngSubmit)="onSearch()">
-        <div class="flex flex-row justify-between items-center mb-4 space-x-2">
-            <div class="flex flex-col justify-end flex-1">
-                <p-iconfield class="w-full">
-                    <p-inputicon class="pi pi-search" />
-                    <input formControlName="search" pInputText type="text" placeholder="Search" class="w-150" />
-                </p-iconfield>
+        <div class="flex flex-row justify-between items-end space-x-2">
+            <div class="flex flex-row justify-between align-items-end space-x-2">
+                <div class="flex flex-col justify-end">
+                    <p-iconfield class="w-full">
+                        <p-inputicon class="pi pi-search" />
+                        <input formControlName="search" pInputText type="text" placeholder="Search" />
+                    </p-iconfield>
+                </div>
+
+                <!--  -->
+                <div class="flex flex-col justify-end">
+                    <p-iconfield>
+                        <p-select [options]="listPlanActive" formControlName="idPlan" optionValue="id" optionLabel="ten" placeholder="Chọn chương trình" (onChange)="getData()" [showClear]="true" />
+                    </p-iconfield>
+                </div>
             </div>
 
-            <p-button label="Thêm mới" styleClass="w-32" (onClick)="onOpenCreate()" />
             <div class="flex">
+                <p-button label="Thêm mới" class="mr-3" styleClass="w-32" (onClick)="onOpenCreate()" />
                 <p-button icon="pi pi-download" (onClick)="downloadTemplate()" class="mr-3" label="Template excel" />
                 <p-button icon="pi pi-file-import" label="Import excel" (onClick)="onUpload()" />
             </div>

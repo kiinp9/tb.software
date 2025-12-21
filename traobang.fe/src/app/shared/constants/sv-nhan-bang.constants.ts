@@ -1,4 +1,4 @@
-import { environment } from "src/environments/environment";
+import { environment } from 'src/environments/environment';
 
 export class SvNhanBangStatuses {
     static XEP_HANG = 1;
@@ -18,15 +18,14 @@ export class SvNhanBangStatuses {
     ];
 
     static getSeverity(code: number) {
-        const found = this.List.find(x => x.code === code);
+        const found = this.List.find((x) => x.code === code);
         return typeof found != 'undefined' ? found.severity : '';
     }
 
     static getName(code: number) {
-        const found = this.List.find(x => x.code === code);
+        const found = this.List.find((x) => x.code === code);
         return typeof found != 'undefined' ? found.name : '';
     }
-
 }
 
 export class ViewSvTypeConstants {
@@ -53,34 +52,35 @@ export class SubPlanStatuses {
     ];
 
     static getSeverity(code: number) {
-        const found = this.List.find(x => x.code === code);
+        const found = this.List.find((x) => x.code === code);
         return typeof found != 'undefined' ? found.severity : '';
     }
 
     static getName(code: number) {
-        const found = this.List.find(x => x.code === code);
+        const found = this.List.find((x) => x.code === code);
         return typeof found != 'undefined' ? found.name : '';
     }
-
 }
 
 export class TraoBangHubConst {
-    static HUB = environment.baseUrl + '/hub/trao-bang'
-    static ReceiveSinhVienDangTrao = 'ReceiveSinhVienDangTrao'
-    static ReceiveChonKhoa = 'ReceiveChonKhoa'
+    static HUB = environment.baseUrl + '/hub/trao-bang';
+    static ReceiveSinhVienDangTrao = 'ReceiveSinhVienDangTrao';
+    static ReceiveChonKhoa = 'ReceiveChonKhoa';
     // static ReceiveChonKhoa = 'ReceiveChonKhoa'
-    static ReceiveCheckIn = 'ReceiveCheckIn'
+    static ReceiveCheckIn = 'ReceiveCheckIn';
 }
 
 export class SlideConst {
     static TEXT = 1;
     static SinhVien = 2;
-    static listLoaiSlide = [{
-        code: 1,
-        name: 'Text'
-    },
-    {
-        code: 2,
-        name: 'Sinh viên'
-    }]
+    static listLoaiSlide = [
+        {
+            code: 1,
+            name: 'Text'
+        },
+        {
+            code: 2,
+            name: 'Sinh viên'
+        }
+    ];
 }

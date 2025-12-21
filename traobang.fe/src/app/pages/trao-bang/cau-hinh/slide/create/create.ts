@@ -162,7 +162,7 @@ export class Create extends BaseComponent {
     }
 
     getListSubPlan() {
-        this._subPlanService.getList(1).subscribe({
+        this._subPlanService.getListSubPlanActive().subscribe({
             next: (res) => {
                 if (this.isResponseSucceed(res)) {
                     this.listSubPlan = res.data;

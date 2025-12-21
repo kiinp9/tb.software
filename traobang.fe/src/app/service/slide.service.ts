@@ -9,9 +9,9 @@ export class SlideService {
     api = '/api/config/slide';
     http = inject(HttpClient);
 
-    findPaging(query: IFindPagingSlide) {
+    findPaging(query: IFindPagingSlide, dataFilter?: any) {
         return this.http.get<IBaseResponsePaging<IViewRowSlide>>(this.api, {
-            params: { ...query }
+            params: { ...query, ...dataFilter }
         });
     }
 

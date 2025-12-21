@@ -40,6 +40,9 @@
 
 
 	<ItemGroup>
+	  <None Update="Templates\ImportKhoa.xlsx">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	  <None Update="Templates\ImportSlide.xlsx">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>

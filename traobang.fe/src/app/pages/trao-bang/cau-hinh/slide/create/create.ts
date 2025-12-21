@@ -1,3 +1,4 @@
+import { SinhVien } from './../../../../../models/traobang/slide.models';
 import { ICreateSlide, IUpdateSlide, IViewRowSlide } from '@/models/traobang/slide.models';
 import { IViewRowConfigSubPlan } from '@/models/traobang/sub-plan.models';
 import { SlideService } from '@/service/slide.service';
@@ -55,7 +56,8 @@ export class Create extends BaseComponent {
         soQuyetDinhTotNghiep: new FormControl(''),
         ngayQuyetDinh: new FormControl(new Date()),
         note: new FormControl(''),
-        linkQR: new FormControl('')
+        linkQR: new FormControl(''),
+        id: new FormControl('')
     });
 
     override ValidationMessages: Record<string, Record<string, string>> = {
@@ -124,7 +126,7 @@ export class Create extends BaseComponent {
     }
 
     override ngOnInit(): void {
-        console.log(this._config.data)
+        console.log(this._config.data);
         this.getListSubPlan();
         if (this.isUpdate) {
             this.form.setValue({
@@ -152,7 +154,8 @@ export class Create extends BaseComponent {
                     soQuyetDinhTotNghiep: this._config.data.sinhVien.soQuyetDinhTotNghiep,
                     ngayQuyetDinh: new Date(this._config.data.sinhVien.ngayQuyetDinh),
                     note: this._config.data.sinhVien.note,
-                    linkQR: this._config.data.sinhVien.linkQR
+                    linkQR: this._config.data.sinhVien.linkQR,
+                    id : this._config.data.sinhVien.id
                 });
             }
         }
@@ -230,7 +233,7 @@ export class Create extends BaseComponent {
                 }
             };
         }
-        console.log(body)
+        // console.log(body);
         this._slideService.update(body).subscribe({
             next: (res) => {
                 if (this.isResponseSucceed(res, true, 'Đã lưu')) {
@@ -261,7 +264,7 @@ export class Create extends BaseComponent {
                 }
             };
         }
-        console.log(body)
+        // console.log(body);
         this._slideService.create(body).subscribe({
             next: (res) => {
                 if (this.isResponseSucceed(res, true, 'Đã thêm slide')) {

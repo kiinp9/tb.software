@@ -318,13 +318,18 @@ namespace traobang.be.Controllers
                 return OkException(ex);
             }
         }
+
+        /// <summary>
+        /// Lấy danh sách subplan của plan active
+        /// </summary>
+        /// <returns></returns>
         [Permission(PermissionKeys.SubPlanView)]
-        [HttpGet("plan/{idPlan}/list-sub-plan-infor")]
-        public async Task<ApiResponse> GetListSubPlanInfor([FromRoute] int idPlan)
+        [HttpGet("plan/active/list-sub-plan-infor")]
+        public async Task<ApiResponse> GetListSubPlanInfor()
         {
             try
             {
-                var data = await _subPlanService.GetListSubPlanInfor(idPlan);
+                var data = await _subPlanService.GetListSubPlanInfor();
                 return new(data);
             }
             catch (Exception ex)
@@ -332,6 +337,7 @@ namespace traobang.be.Controllers
                 return OkException(ex);
             }
         }
+
         [Permission(PermissionKeys.SubPlanAdd)]
         [HttpPut("{idSubPlan}/sinh-vien-nhan-bang/{id}/trang-thai")]
         public ApiResponse UpdateTrangThaiSinhVienNhanBang([FromRoute] int idSubPlan, [FromRoute] int id)

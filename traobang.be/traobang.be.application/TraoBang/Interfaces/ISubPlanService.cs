@@ -26,7 +26,11 @@ namespace traobang.be.application.TraoBang.Interface
         public Task<GetInforSubPlanDto> GetInforSubPlan(int idSubPlan);
         public Task UpdateTrangThaiSubPlan(int id);
         public Task<GetNextSubPlanResponseDto?> NextSubPlan();
-        public Task<List<GetListSubPlanDto>> GetListSubPlanInfor(int idPlan);
+        /// <summary>
+        /// Lấy danh sách subplan của plan active
+        /// </summary>
+        /// <returns></returns>
+        public Task<List<GetListSubPlanDto>> GetListSubPlanInfor();
         public Task UpdateTrangThaiSinhVienNhanBang(int idSubPlan, int id);
         public Task<GetSinhVienDangTraoBangInforDto> GetSinhVienDangTraoBang();
         public Task<GetTienDoTraoBangResponseDto> GetTienDoTraoBang();

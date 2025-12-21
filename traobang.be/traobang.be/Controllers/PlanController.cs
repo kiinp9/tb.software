@@ -36,6 +36,7 @@ namespace traobang.be.Controllers
                 return OkException(ex);
             }
         }
+
         [Permission(PermissionKeys.PlanUpdate)]
         [HttpPut("{id}")]
         public ApiResponse Update([FromRoute] int id, [FromBody] UpdatePlanDto dto)

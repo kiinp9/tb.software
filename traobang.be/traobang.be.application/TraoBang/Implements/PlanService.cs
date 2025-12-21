@@ -7,6 +7,7 @@ using traobang.be.application.Base;
 using traobang.be.application.TraoBang.Dtos;
 using traobang.be.application.TraoBang.Interface;
 using traobang.be.infrastructure.data;
+using traobang.be.shared.Constants.TraoBang;
 using traobang.be.shared.HttpRequest.AppException;
 using traobang.be.shared.HttpRequest.BaseRequest;
 using traobang.be.shared.HttpRequest.Error;
@@ -29,6 +30,7 @@ namespace traobang.be.application.TraoBang.Implements
         public void Create(CreatePlanDto dto)
         {
             _logger.LogInformation($"{nameof(Create)}, dto = {JsonSerializer.Serialize(dto)}");
+
             var vietnameNow = GetVietnamTime();
             var plan = new domain.TraoBang.Plan
             {
@@ -37,29 +39,48 @@ namespace traobang.be.application.TraoBang.Implements
                 ThoiGianBatDau = dto.ThoiGianBatDau,
                 ThoiGianKetThuc = dto.ThoiGianKetThuc,
                 CreatedDate = vietnameNow,
+                TrangThai = TrangThaiPlan.KhoiTao,
                 Deleted = false
             };
             _tbDbContext.Plans.Add(plan);
             _tbDbContext.SaveChanges();
-
-
         }
+
         public void Update(int id, UpdatePlanDto dto)
         {
             _logger.LogInformation($"{nameof(Update)}, dto = {JsonSerializer.Serialize(dto)}");
+
             var plan = _tbDbContext.Plans.FirstOrDefault(x => x.Id == id && !x.Deleted);
             if (plan == null)
             {
                 throw new UserFriendlyException(ErrorCodes.TraoBangErrorPlanNotFound);
             }
             var vietnameNow = GetVietnamTime();
-            plan.Ten = dto.Ten;
-            plan.MoTa = dto.MoTa;
-            plan.ThoiGianBatDau = dto.ThoiGianBatDau;
-            plan.ThoiGianKetThuc = dto.ThoiGianKetThuc;
-            _tbDbContext.Plans.Update(plan);
-            _tbDbContext.SaveChanges();
+
+            using (var tran = _tbDbContext.Database.BeginTransaction())
+            {
+                if (plan.TrangThai != dto.TrangThai && dto.TrangThai == TrangThaiPlan.DangHoatDong)
+                {
+                    var planDangHoatDong = _tbDbContext.Plans.AsNoTracking().Where(x => x.TrangThai == TrangThaiPlan.DangHoatDong && !x.Deleted);
+                    foreach (var pl in planDangHoatDong)
+                    {
+                        pl.TrangThai = TrangThaiPlan.KhoiTao;
+                    }
+                }
+
+                plan.Ten = dto.Ten;
+                plan.MoTa = dto.MoTa;
+                plan.ThoiGianBatDau = dto.ThoiGianBatDau;
+                plan.ThoiGianKetThuc = dto.ThoiGianKetThuc;
+                plan.TrangThai = dto.TrangThai;
+
+                _tbDbContext.Plans.Update(plan);
+                _tbDbContext.SaveChanges();
+
+                tran.Commit();
+            }
         }
+
         public BaseResponsePagingDto<ViewPlanDto> FindPaging(FindPagingPlanDto dto)
         {
             _logger.LogInformation($"{nameof(FindPaging)}, dto = {JsonSerializer.Serialize(dto)}");

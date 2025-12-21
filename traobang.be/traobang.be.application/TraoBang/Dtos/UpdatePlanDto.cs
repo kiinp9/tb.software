@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using traobang.be.shared.Constants.TraoBang;
+using traobang.be.shared.Validations;
 
 namespace traobang.be.application.TraoBang.Dtos
 {
@@ -12,5 +9,8 @@ namespace traobang.be.application.TraoBang.Dtos
         public string MoTa { get; set; } = String.Empty;
         public DateTime ThoiGianBatDau { get; set; }
         public DateTime ThoiGianKetThuc { get; set; }
+
+        [IntegerRange(AllowableValues = new int[] { TrangThaiPlan.KhoiTao, TrangThaiPlan.DaKetThuc, TrangThaiPlan.DangHoatDong })]
+        public int TrangThai { get; set; }
     }
 }

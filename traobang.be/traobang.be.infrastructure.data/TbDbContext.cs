@@ -45,8 +45,12 @@ namespace traobang.be.infrastructure.data
                 entity.Property(e => e.CreatedDate).HasDefaultValueSql("getdate()");
                 entity.Property(e => e.ThoiGianBatDau).HasDefaultValueSql("getdate()");
                 entity.Property(e => e.ThoiGianKetThuc).HasDefaultValueSql("getdate()");
-                entity.HasOne(e =>e.GiaoDien).WithMany(s => s.Plans).HasForeignKey(e => e.IdGiaoDien).OnDelete(DeleteBehavior.Restrict);
-            });
+                entity.HasOne(e => e.GiaoDien)
+                       .WithMany(s => s.Plans)
+                       .HasForeignKey(e => e.IdGiaoDien)
+                        .IsRequired(false)
+                       .OnDelete(DeleteBehavior.Restrict);
+                            });
             modelBuilder.Entity<SubPlan>(entity =>
             {
                 entity.Property(e => e.Deleted).HasDefaultValue(0);

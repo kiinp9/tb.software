@@ -19,7 +19,7 @@ namespace traobang.be.domain.TraoBang
         public required string TenGiaoDien { get; set; }
         public required string NoiDung { get; set; }
         public string? MoTa { get; set; }
-        public List<Plan> Plans { get; set; } = new List<Plan>();
+        public List<Plan> Plans { get; set; } = [];
         public DateTime? ThoiGianBatDau { get; set; }
         public DateTime? ThoiGianKetThuc { get; set; }
         public string? CreatedBy { get; set; }

@@ -28,7 +28,7 @@ namespace traobang.be.domain.TraoBang
         /// <summary>
         /// Map với bảng giao diện
         /// </summary>
-        public int IdGiaoDien { get; set; }
+        public int? IdGiaoDien { get; set; }
         public GiaoDien? GiaoDien { get; set; }
         public DateTime? ThoiGianBatDau { get; set; }
         public DateTime? ThoiGianKetThuc { get; set; }

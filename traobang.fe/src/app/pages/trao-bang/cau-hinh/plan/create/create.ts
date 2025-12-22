@@ -1,5 +1,5 @@
 
-import { ICreateConfigPlan, IUpdateConfigPlan } from '@/models/traobang/plan.models';
+import { ICreateConfigPlan, IUpdateConfigPlan, PlanTrangThai } from '@/models/traobang/plan.models';
 import { TraoBangPlanService } from '@/service/plan.service';
 import { BaseComponent } from '@/shared/components/base/base-component';
 import { SharedImports } from '@/shared/import.shared';
@@ -19,9 +19,12 @@ export class Create extends BaseComponent {
     private _config = inject(DynamicDialogConfig);
     private _planService = inject(TraoBangPlanService);
 
+    listTrangThai = PlanTrangThai.ListTrangThai
+
     override form: FormGroup = new FormGroup({
         id: new FormControl(null),
         ten: new FormControl('', [Validators.required]),
+        trangThai: new FormControl(this.listTrangThai[0].code, [Validators.required]),
         moTa: new FormControl(''),
         time: new FormControl(null, [Validators.required])
     });
@@ -55,11 +58,11 @@ export class Create extends BaseComponent {
             return;
         }
 
-       if (this.isUpdate) {
-        this.onSubmitUpdate();
-       } else {
-        this.onSubmitCreate();
-       }
+        if (this.isUpdate) {
+            this.onSubmitUpdate();
+        } else {
+            this.onSubmitCreate();
+        }
     }
 
     onSubmitCreate() {
@@ -69,6 +72,7 @@ export class Create extends BaseComponent {
         const body: ICreateConfigPlan = {
             ten: this.form.value['ten'],
             moTa: this.form.value['moTa'],
+            trangThai: this.form.value['trangThai'],
             thoiGianBatDau: from,
             thoiGianKetThuc: to
         };
@@ -96,6 +100,7 @@ export class Create extends BaseComponent {
             id: this.form.value['id'],
             ten: this.form.value['ten'],
             moTa: this.form.value['moTa'],
+            trangThai: this.form.value['trangThai'],
             thoiGianBatDau: from,
             thoiGianKetThuc: to
         };

@@ -15,10 +15,17 @@
         }
     </div>
     <div class="mb-3">
+        <label for="trangThai" class="block text-surface-900 dark:text-surface-0 font-medium mb-2">Trạng Thái</label>
+        <p-select  formControlName="trangThai" id="trangThai" [options]="listTrangThai" optionLabel="name" optionValue="code" class="w-full mb-2" />
+        @if (form.get('trangThai')?.hasError('required') && form.get('trangThai')?.touched) {
+        <p-message severity="error" variant="simple" size="small">{{ getError('trangThai') }} </p-message>
+        }
+    </div>
+    <div class="mb-3">
         <label for="time" class="block text-surface-900 dark:text-surface-0 font-medium mb-2">Thời gian <span
                 class="text-red-500">*</span></label>
-        <p-datepicker formControlName="time" id="time" selectionMode="range" [showTime]="true"
-            [showIcon]="true" [showOnFocus]="false" styleClass="w-full" [appendTo]="'body'" />
+        <p-datepicker formControlName="time" id="time" selectionMode="range" [showTime]="true" [showIcon]="true"
+            [showOnFocus]="false" styleClass="w-full" [appendTo]="'body'" />
     </div>
     <div class="mt-5 flex flex-row justify-end">
         <p-button label="Lưu" icon="pi pi-save" type="submit" [loading]="loading" />

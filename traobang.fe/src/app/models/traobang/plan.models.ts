@@ -11,11 +11,12 @@ export interface IViewRowConfigPlan {
     createdDate?: string;
 }
 
-export interface IFindPagingConfigPlan extends IBaseRequestPaging {}
+export interface IFindPagingConfigPlan extends IBaseRequestPaging { }
 
 export interface ICreateConfigPlan {
     ten: string;
     moTa?: string;
+    trangThai?: number;
     thoiGianBatDau?: string;
     thoiGianKetThuc?: string;
 }

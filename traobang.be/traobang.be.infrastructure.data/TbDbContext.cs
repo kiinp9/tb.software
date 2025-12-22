@@ -22,6 +22,7 @@ namespace traobang.be.infrastructure.data
         public DbSet<TienDoTraoBang> TienDoTraoBangs { get; set; }
         public DbSet<Slide> Slides { get; set; }
 
+        public DbSet<GiaoDien> GiaoDiens { get; set; }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -37,7 +38,6 @@ namespace traobang.be.infrastructure.data
         {
             modelBuilder.UseOpenIddict();
 
-
             modelBuilder.Entity<Plan>(entity =>
             {
                 entity.Property(e => e.TrangThai).HasDefaultValue(TrangThaiPlan.KhoiTao);
@@ -45,7 +45,12 @@ namespace traobang.be.infrastructure.data
                 entity.Property(e => e.CreatedDate).HasDefaultValueSql("getdate()");
                 entity.Property(e => e.ThoiGianBatDau).HasDefaultValueSql("getdate()");
                 entity.Property(e => e.ThoiGianKetThuc).HasDefaultValueSql("getdate()");
-            });
+                entity.HasOne(e => e.GiaoDien)
+                       .WithMany(s => s.Plans)
+                       .HasForeignKey(e => e.IdGiaoDien)
+                        .IsRequired(false)
+                       .OnDelete(DeleteBehavior.Restrict);
+                            });
             modelBuilder.Entity<SubPlan>(entity =>
             {
                 entity.Property(e => e.Deleted).HasDefaultValue(0);
@@ -73,7 +78,11 @@ namespace traobang.be.infrastructure.data
                 entity.Property(e => e.Deleted).HasDefaultValue(0);
                 entity.Property(e => e.CreatedDate).HasDefaultValueSql("getdate()");
             });
-
+            modelBuilder.Entity<GiaoDien>(entity =>
+            {
+                entity.Property(e => e.Deleted).HasDefaultValue(0);
+                entity.Property(e => e.CreatedDate).HasDefaultValueSql("getdate()");
+            });
 
             modelBuilder.HasDefaultSchema(DbSchemas.Core);
 

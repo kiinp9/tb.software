@@ -22,6 +22,8 @@ namespace traobang.be.infrastructure.data
         public DbSet<TienDoTraoBang> TienDoTraoBangs { get; set; }
         public DbSet<Slide> Slides { get; set; }
 
+        public DbSet<GiaoDien> GiaoDiens { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

@@ -33,6 +33,7 @@
             { ErrorCodes.TraoBangErrorLoaiSlideBinhThuongPhaiCoNoiDung, "Không được bỏ trống nội dung" },
             { ErrorCodes.TraoBangErrorLoaiSlideBinhThuongPhaiCoNoiDung, "Phải nhập thông tin sinh viên" },
             { ErrorCodes.TraoBangErrorSlideNotFound, "Không tìm thấy slide" },
+            { ErrorCodes.TraoBangErrorGiaoDienNotFound, "Không tìm thấy giao diện" },
         };
         public static string GetMessage(int code)
         {

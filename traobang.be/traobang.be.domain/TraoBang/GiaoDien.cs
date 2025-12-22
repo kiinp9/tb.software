@@ -1,12 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Xml.Linq;
 using traobang.be.shared.Constants.Db;
 
 namespace traobang.be.domain.TraoBang
 {
-    [Table(nameof(GiaoDien), Schema=DbSchemas.TraoBang)]
+    [Table(nameof(GiaoDien), Schema = DbSchemas.TraoBang)]
     [Index(
         nameof(Id),
         IsUnique = false,
@@ -18,7 +17,7 @@ namespace traobang.be.domain.TraoBang
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public required string TenGiaoDien { get; set; }
-        public required string NoiDung { get; set; } 
+        public required string NoiDung { get; set; }
         public string? MoTa { get; set; }
         public List<Plan> Plans { get; set; } = new List<Plan>();
         public DateTime? ThoiGianBatDau { get; set; }

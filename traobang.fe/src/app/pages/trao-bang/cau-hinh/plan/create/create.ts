@@ -39,11 +39,13 @@ export class Create extends BaseComponent {
     };
 
     override ngOnInit(): void {
+        console.log(this._config.data)
         if (this.isUpdate) {
             this.form.setValue({
                 id: this._config.data.id,
                 ten: this._config.data.ten,
                 moTa: this._config.data.moTa,
+                trangThai: this._config.data.trangThai,
                 time: [new Date(this._config.data.thoiGianBatDau), new Date(this._config.data.thoiGianKetThuc)]
             });
         }

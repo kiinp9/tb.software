@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿    using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using traobang.be.application.TraoBang.Dtos.GiaoDien;
@@ -40,7 +40,7 @@ namespace traobang.be.Controllers
         }
 
         //[Permission(PermissionKeys.GiaoDienUpdate)]
-        [HttpPut("{id}")]
+        [HttpPut("")]
         public ApiResponse Update(UpdateGiaoDienDto dto)
         {
             try

@@ -4,7 +4,7 @@ import { BaseComponent } from '@/shared/components/base/base-component';
 import { Component, ElementRef, inject, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import createStudioEditor from '@grapesjs/studio-sdk';
-import { tableComponent, dialogComponent, rteTinyMce, canvasAbsoluteMode, layoutSidebarButtons, googleFontsAssetProvider, dataSourceHandlebars, } from "@grapesjs/studio-sdk-plugins";
+import { tableComponent, dialogComponent, rteTinyMce, canvasAbsoluteMode, layoutSidebarButtons, googleFontsAssetProvider, dataSourceHandlebars } from '@grapesjs/studio-sdk-plugins';
 import { Breadcrumb } from '@/shared/components/breadcrumb/breadcrumb';
 import { MenuItem } from 'primeng/api';
 import { IViewGiaoDien } from '@/models/traobang/giao-dien.models';
@@ -23,7 +23,7 @@ export class CreateGiaoDien extends BaseComponent {
     home: MenuItem = { icon: 'pi pi-home', routerLink: '/' };
 
     idGiaoDien!: any;
-    giaoDien!: IViewGiaoDien
+    giaoDien!: IViewGiaoDien;
     submitted: boolean = false;
 
     override form: FormGroup = new FormGroup({
@@ -33,32 +33,28 @@ export class CreateGiaoDien extends BaseComponent {
     override ValidationMessages: Record<string, Record<string, string>> = {
         tenGiaoDien: {
             required: 'Không được bỏ trống'
-        },
+        }
     };
-
 
     async ngAfterViewInit() {
         await createStudioEditor({
             licenseKey: '25678fc14abc44f1824d13156e1b355f53988497d8354604a7cb3176a076c8e',
             root: this.editorEl.nativeElement,
             fonts: {
-                enableFontManager: true,
+                enableFontManager: true
             },
             onReady: ({ editor }) => {
                 this.editor = editor;
-                if (this.idGiaoDien) {
-
-                    editor.loadData(this.stringToDesign(this.giaoDien.noiDung ?? ""))
-                }
+                this.loadEditorData();
                 console.log('EDITOR READY', this.editor);
             },
             plugins: [
+                googleFontsAssetProvider.init({ apiKey: 'AIzaSyByNrR2JpnJcuRRQimwgRhHDca8fXIHx8Y' }),
                 (editor) => {
-                    // editor.Blocks.add('variable', {
-                    //     label: "name",
-                    //     content: `<H1>{{name}}<H1/>`,
-                    //     category: 'Data',
-                    // })
+                    editor.onReady(() => {
+                        const textCmp = editor.getWrapper()?.find('p')[0];
+                        editor.select(textCmp);
+                    });
                 },
                 tableComponent.init({
                     block: { category: 'Extra', label: 'My Table' }
@@ -69,8 +65,7 @@ export class CreateGiaoDien extends BaseComponent {
                         const demoRte = component.get('demorte');
                         if (demoRte === 'fixed') {
                             return {
-                                toolbar:
-                                    'bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | link image media',
+                                toolbar: 'bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | link image media',
                                 fixed_toolbar_container_target: document.querySelector('.rteContainer')
                             };
                         } else if (demoRte === 'quickbar') {
@@ -84,20 +79,9 @@ export class CreateGiaoDien extends BaseComponent {
                     }
                 }),
                 // canvasAbsoluteMode,
-                layoutSidebarButtons,
+                layoutSidebarButtons
             ],
-            blocks: {
-
-            },
-            // dataSources: {
-            //     globalData: {
-            //         user: { firstName: 'Alice', isCustomer: true },
-            //         products: [
-            //             { name: 'Laptop Pro X15', price: 1200.0 },
-            //             { name: 'Wireless Mouse M2', price: 25.99 }
-            //         ]
-            //     },
-            // },
+            blocks: {},
             layout: {
                 default: {
                     type: 'row',
@@ -108,18 +92,20 @@ export class CreateGiaoDien extends BaseComponent {
                             type: 'canvasSidebarTop',
                             sidebarTop: {
                                 rightContainer: {
-                                    buttons: ({ items }) => [{
-                                        ...items.find(item => item.id === 'showCode'),
-                                        id: items.find(item => item.id === 'showCode')?.id || 'showCode',
-                                        variant: 'outline',
-                                        label: 'Show code'
-                                    }],
-                                },
-                            },
+                                    buttons: ({ items }) => [
+                                        {
+                                            ...items.find((item) => item.id === 'showCode'),
+                                            id: items.find((item) => item.id === 'showCode')?.id || 'showCode',
+                                            variant: 'outline',
+                                            label: 'Show code'
+                                        }
+                                    ]
+                                }
+                            }
                         },
-                        { type: 'sidebarRight' },
-                    ],
-                },
+                        { type: 'sidebarRight' }
+                    ]
+                }
             },
             project: {
                 default: {
@@ -129,12 +115,11 @@ export class CreateGiaoDien extends BaseComponent {
                             component: `
                             <h1>Tạo Giao Diện</h1>
                            `
-                        },
-                    ],
-                },
-            },
+                        }
+                    ]
+                }
+            }
         });
-
     }
 
     override ngOnInit() {
@@ -146,7 +131,7 @@ export class CreateGiaoDien extends BaseComponent {
                 }
             });
         }
-        this.getGiaoDienById()
+        this.getGiaoDienById();
     }
 
     getGiaoDienById() {
@@ -157,11 +142,11 @@ export class CreateGiaoDien extends BaseComponent {
                     if (this.isResponseSucceed(res, false)) {
                         this.giaoDien = res.data;
                         this.form.get('tenGiaoDien')?.patchValue(this.giaoDien.tenGiaoDien);
+                        this.loadEditorData();
                     }
                 }
             });
         }
-
     }
 
     saveTemplate() {
@@ -171,26 +156,25 @@ export class CreateGiaoDien extends BaseComponent {
         }
         this.loading = true;
         const projectData = this.editor.storeData();
-        let body: any
+        let body: any;
         if (this.idGiaoDien) {
             body = {
                 id: this.idGiaoDien,
-                tenGiaoDien: this.form.get("tenGiaoDien")?.value,
+                tenGiaoDien: this.form.get('tenGiaoDien')?.value,
                 noiDung: this.designToString(projectData)
-            }
-        }
-        else {
+            };
+        } else {
             body = {
-                tenGiaoDien: this.form.get("tenGiaoDien")?.value,
+                tenGiaoDien: this.form.get('tenGiaoDien')?.value,
                 noiDung: this.designToString(projectData)
-            }
+            };
         }
 
         if (this.idGiaoDien) {
             this._giaoDienServices.update(body).subscribe({
                 next: (res) => {
-                    if (this.isResponseSucceed(res, true, "Cập nhật giao diện thành công")) {
-                        this.ngOnInit()
+                    if (this.isResponseSucceed(res, true, 'Cập nhật giao diện thành công')) {
+                        this.ngOnInit();
                     }
                 },
                 error: (err) => {
@@ -199,16 +183,14 @@ export class CreateGiaoDien extends BaseComponent {
                 complete: () => {
                     this.loading = false;
                 }
-            })
-        }
-        else {
+            });
+        } else {
             this._giaoDienServices.create(body).subscribe({
                 next: (res) => {
-                    if (this.isResponseSucceed(res, true, "Thêm mới giao diện thành công")) {
-                        this.idGiaoDien = res.data.id
-                        this.ngOnInit()
+                    if (this.isResponseSucceed(res, true, 'Thêm mới giao diện thành công')) {
+                        this.idGiaoDien = res.data.id;
+                        this.ngOnInit();
                     }
-
                 },
                 error: (err) => {
                     this.messageError(err?.message);
@@ -216,12 +198,29 @@ export class CreateGiaoDien extends BaseComponent {
                 complete: () => {
                     this.loading = false;
                 }
-            })
+            });
         }
     }
 
     back() {
         this.router.navigate(['trao-bang/config/giao-dien']);
+    }
+
+    loadEditorData() {
+        if (!this.editor) return;
+
+        this.editor.loadData({
+            pages: [],
+            styles: [],
+            components: []
+        });
+
+        if (this.idGiaoDien && this.giaoDien?.noiDung) {
+            const designData = this.stringToDesign(this.giaoDien.noiDung);
+            if (designData) {
+                this.editor.loadData(designData);
+            }
+        }
     }
 
     designToString(design: any): string {
@@ -232,9 +231,8 @@ export class CreateGiaoDien extends BaseComponent {
         try {
             return JSON.parse(designString);
         } catch (error) {
-            console.error("Invalid design JSON string:", error);
+            console.error('Invalid design JSON string:', error);
             return null;
         }
     }
 }
-

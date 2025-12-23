@@ -34,7 +34,7 @@ export class SlideScreen extends BaseComponent {
         idPlan: new FormControl(''),
         idSubPlan: new FormControl('')
     });
-
+    dataFilter: any = {};
     listPlanActive: IViewRowConfigPlan[] = [];
     listSubPlan: IViewRowConfigSubPlan[] = [];
     listLoaiSlide = [
@@ -81,7 +81,6 @@ export class SlideScreen extends BaseComponent {
 
     override ngOnInit(): void {
         this.getListPlanActive();
-        this.getListSubPlan();
         this.getData();
 
         // Debounce search input
@@ -96,13 +95,23 @@ export class SlideScreen extends BaseComponent {
     getListPlanActive() {
         this._traoBangPlanService.getList().subscribe((res) => {
             this.listPlanActive = res.data;
-            this.searchForm.get('idPlan')?.patchValue(this.listPlanActive.find(e => e.trangThai == PlanTrangThai.DANG_HOAT_DONG)?.id)
+            this.searchForm.get('idPlan')?.patchValue(this.listPlanActive.find((e) => e.trangThai == PlanTrangThai.DANG_HOAT_DONG)?.id);
         });
-
     }
 
-    getListSubPlan() {
-        this._subPlanService.getListSubPlanActive().subscribe({
+    onChangeSelectPlan() {
+        this.getListSubPlan(this.searchForm.get('idPlan')?.value ?? '');
+        this.dataFilter = { idPlan: this.searchForm.get('idPlan')?.value ?? '', idSubPlan: this.searchForm.get('idSubPlan')?.value ?? '' };
+        this.getData();
+    }
+
+    onChangeSelectSubPlan() {
+        this.dataFilter = { idPlan: this.searchForm.get('idPlan')?.value ?? '', idSubPlan: this.searchForm.get('idSubPlan')?.value ?? '' };
+        this.getData();
+    }
+
+    getListSubPlan(id: number) {
+        this._subPlanService.getListSubPlanByPlanActiveId(id).subscribe({
             next: (res) => {
                 if (this.isResponseSucceed(res)) {
                     this.listSubPlan = res.data;
@@ -122,10 +131,9 @@ export class SlideScreen extends BaseComponent {
 
     getData() {
         this.loading = true;
-        let dataFilter = { idPlan: this.searchForm.get('idPlan')?.value ?? '', idSubPlan: this.searchForm.get('idSubPlan')?.value ?? '' };
 
         this._slideService
-            .findPaging({ ...this.query, keyword: this.searchForm.get('search')?.value }, dataFilter)
+            .findPaging({ ...this.query, keyword: this.searchForm.get('search')?.value }, this.dataFilter)
             .subscribe({
                 next: (res) => {
                     if (this.isResponseSucceed(res, false)) {

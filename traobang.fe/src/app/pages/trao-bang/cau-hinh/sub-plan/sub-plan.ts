@@ -64,6 +64,7 @@ export class SubPlan extends BaseComponent {
         this._traoBangPlanService.getList().subscribe((res) => {
             this.listPlanActive = res.data;
             this.searchForm.get('idPlan')?.patchValue(this.listPlanActive.find(e => e.trangThai == PlanTrangThai.DANG_HOAT_DONG)?.id)
+            this.onSearch();
         });
     }
 

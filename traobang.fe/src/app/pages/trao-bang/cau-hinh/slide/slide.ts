@@ -15,7 +15,7 @@ import { Create } from './create/create';
 import { FileUploadModule } from 'primeng/fileupload';
 import { Upload } from './upload/upload';
 import { TraoBangPlanService } from '@/service/plan.service';
-import { IViewRowConfigPlan } from '@/models/traobang/plan.models';
+import { IViewRowConfigPlan, PlanTrangThai } from '@/models/traobang/plan.models';
 import { TraoBangSubPlanService } from '@/service/sub-plan.service';
 import { IViewRowConfigSubPlan } from '@/models/traobang/sub-plan.models';
 @Component({
@@ -96,7 +96,9 @@ export class SlideScreen extends BaseComponent {
     getListPlanActive() {
         this._traoBangPlanService.getList().subscribe((res) => {
             this.listPlanActive = res.data;
+             this.searchForm.get('idPlan')?.patchValue(this.listPlanActive.find(e => e.trangThai == PlanTrangThai.DANG_HOAT_DONG)?.id)
         });
+
     }
 
     getListSubPlan() {
@@ -120,7 +122,7 @@ export class SlideScreen extends BaseComponent {
 
     getData() {
         this.loading = true;
-        let dataFilter = { idPlan: this.searchForm.get('idPlan')?.value ?? '', idSubPlan: this.searchForm.get('idSubPlan')?.value?? '' };
+        let dataFilter = { idPlan: this.searchForm.get('idPlan')?.value ?? '', idSubPlan: this.searchForm.get('idSubPlan')?.value ?? '' };
         if (dataFilter) {
             this._slideService
                 .findPaging({ ...this.query, keyword: this.searchForm.get('search')?.value }, dataFilter)
@@ -145,7 +147,7 @@ export class SlideScreen extends BaseComponent {
                     this.loading = false;
                 });
         }
-        else{
+        else {
 
         }
     }

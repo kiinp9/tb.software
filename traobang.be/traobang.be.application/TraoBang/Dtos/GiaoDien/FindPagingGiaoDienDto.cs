@@ -2,7 +2,7 @@
 
 namespace traobang.be.application.TraoBang.Dtos.GiaoDien
 {
-    public class FindPaginGiaoDienDto : BaseRequestPagingDto
+    public class FindPagingGiaoDienDto : BaseRequestPagingDto
     {
        
     }

@@ -59,7 +59,7 @@ namespace traobang.be.application.TraoBang.Implements
             _tbDbContext.SaveChanges();
         }
 
-        public BaseResponsePagingDto<ViewGiaoDienDto> FindPaging(FindPaginGiaoDienDto dto)
+        public BaseResponsePagingDto<ViewGiaoDienDto> FindPaging(FindPagingGiaoDienDto dto)
         {
             _logger.LogInformation($"{nameof(FindPaging)}, dto = {JsonSerializer.Serialize(dto)}");
             var query =

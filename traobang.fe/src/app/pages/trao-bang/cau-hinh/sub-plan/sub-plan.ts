@@ -11,7 +11,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { IViewRowConfigSubPlan, IFindPagingConfigSubPlan } from '@/models/traobang/sub-plan.models';
 import { TraoBangSubPlanService } from '@/service/sub-plan.service';
 import { Upload } from './upload/upload';
-import { IViewRowConfigPlan } from '@/models/traobang/plan.models';
+import { IViewRowConfigPlan, PlanTrangThai } from '@/models/traobang/plan.models';
 import { TraoBangPlanService } from '@/service/plan.service';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 
@@ -63,6 +63,7 @@ export class SubPlan extends BaseComponent {
     getListPlanActive() {
         this._traoBangPlanService.getList().subscribe((res) => {
             this.listPlanActive = res.data;
+            this.searchForm.get('idPlan')?.patchValue(this.listPlanActive.find(e => e.trangThai == PlanTrangThai.DANG_HOAT_DONG)?.id)
         });
     }
 

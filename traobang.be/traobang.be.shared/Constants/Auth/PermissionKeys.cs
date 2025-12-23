@@ -51,6 +51,12 @@ namespace traobang.be.shared.Constants.Auth
         public const string SubPlanDelete = Function + "SubPlanDelete";
         public const string SubPlanView = Function + "SubPlanView";
 
+        public const string CategoryGiaoDien = "QL GiaoDien";
+        public const string GiaoDiennAdd = Function + "GiaoDienAdd";
+        public const string GiaoDienUpdate = Function + "GiaoDienUpdate";
+        public const string GiaoDienDelete = Function + "GiaoDienDelete";
+        public const string GiaoDienView = Function + "GiaoDienView";
+
         public static readonly (string Key, string Name, string Category)[] All =
         {
 
@@ -88,6 +94,11 @@ namespace traobang.be.shared.Constants.Auth
             (SubPlanUpdate, "Cập nhật SubPlan", CategorySubPlan),
             (SubPlanDelete, "Xoá SubPlan", CategorySubPlan),
             (SubPlanView, "Xem SubPlan", CategorySubPlan),
+
+            (GiaoDiennAdd, "Thêm GiaoDien ", CategoryGiaoDien),
+            (GiaoDienUpdate, "Cập nhật GiaoDien", CategoryGiaoDien),
+            (GiaoDienDelete, "Xoá GiaoDien", CategoryGiaoDien),
+            (GiaoDienView, "Xem GiaoDien", CategoryGiaoDien),
 
 
         };

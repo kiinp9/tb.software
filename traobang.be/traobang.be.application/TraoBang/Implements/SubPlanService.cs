@@ -662,9 +662,13 @@ namespace traobang.be.application.TraoBang.Implements
         {
             _logger.LogInformation($"{nameof(GetSinhVienDangTraoBang)} ");
 
-            var subPlan = await _tbDbContext.SubPlans
-                .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.TrangThai == TraoBangConstants.DangTraoBang && !x.Deleted);
+            var subPlan = await (
+                    from sp in _tbDbContext.SubPlans.AsNoTracking().Where(x => !x.Deleted && x.IsShow)
+                    join p in _tbDbContext.Plans.AsNoTracking().Where(x => !x.Deleted && x.TrangThai == TrangThaiPlan.DangHoatDong) on sp.IdPlan equals p.Id
+                    where sp.TrangThai == TrangThaiSubPlan.DangTraoBang
+                    select sp
+                ).FirstOrDefaultAsync();
+
             if (subPlan == null)
             {
                 return null;
@@ -678,6 +682,18 @@ namespace traobang.be.application.TraoBang.Implements
 
             if (!coSinhVienDaTraoHoacDangTrao && subPlan.IsShowMoBai)
             {
+                var slideMoBai = _tbDbContext.Slides.AsNoTracking().OrderBy(x => x.Id)
+                                        .FirstOrDefault(x => !x.Deleted && x.IdSubPlan == subPlan.Id && x.IsShow && x.LoaiSlide == LoaiSlides.BINH_THUONG);
+
+                string text = "";
+                string textNote = "";
+
+                if (slideMoBai != null)
+                {
+                    text = slideMoBai.NoiDung ?? "";
+                    textNote = slideMoBai.Note ?? "";
+                }
+
                 return new GetSinhVienDangTraoBangInforDto
                 {
                     TenSubPlan = subPlan.Ten,
@@ -689,8 +705,8 @@ namespace traobang.be.application.TraoBang.Implements
                     ThanhTich = string.Empty,
                     CapBang = string.Empty,
                     Note = string.Empty,
-                    Text = subPlan.MoBai,
-                    TextNote = subPlan.MoBaiNote,
+                    Text = text,
+                    TextNote = textNote,
                     InfoType = ViewSvTypeConstants.MO_BAI,
                 };
             }
@@ -704,11 +720,12 @@ namespace traobang.be.application.TraoBang.Implements
 
             if (tienDo != null)
             {
-                var sinhVien = await _tbDbContext.DanhSachSinhVienNhanBangs
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync(x => x.Id == tienDo.IdSinhVienNhanBang
-                                            && x.IdSubPlan == subPlan.Id
-                                            && !x.Deleted);
+                var sinhVien = await (
+                                    from sv in _tbDbContext.DanhSachSinhVienNhanBangs.AsNoTracking().Where(x => !x.Deleted)
+                                    join sl in _tbDbContext.Slides.AsNoTracking().Where(x => !x.Deleted) on sv.Id equals sl.IdSinhVienNhanBang
+                                    where sv.Id == tienDo.IdSinhVienNhanBang && sl.IdSubPlan == subPlan.Id
+                                    select sv
+                                ).FirstOrDefaultAsync();
 
                 if (sinhVien != null)
                 {

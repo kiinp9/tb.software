@@ -31,7 +31,7 @@
             { ErrorCodes.TraoBangErrorSinhVienTraoBangKhongThuocKhoaDangTrao,"Sinh viên đang quét không thuộc khoa đang trao bằng" },
             { ErrorCodes.ImportHeaderErrorInvalid, "Header không đúng định dạng tại dòng {0}" },
             { ErrorCodes.TraoBangErrorLoaiSlideBinhThuongPhaiCoNoiDung, "Không được bỏ trống nội dung" },
-            { ErrorCodes.TraoBangErrorLoaiSlideBinhThuongPhaiCoNoiDung, "Phải nhập thông tin sinh viên" },
+            { ErrorCodes.TraoBangErrorLoaiSlideSinhVienPhaiCoSinhVien, "Phải nhập thông tin sinh viên" },
             { ErrorCodes.TraoBangErrorSlideNotFound, "Không tìm thấy slide" },
             { ErrorCodes.TraoBangErrorGiaoDienNotFound, "Không tìm thấy giao diện" },
         };

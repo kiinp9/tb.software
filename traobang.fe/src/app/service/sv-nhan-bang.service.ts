@@ -73,7 +73,7 @@ export class TraoBangSvService {
     }
 
     getQrListSubPlan(idPlan: number) {
-        return this.http.get<IBaseResponseWithData<IViewScanQrSubPlan[]>>(`${this.api}/plan/${idPlan}/list-sub-plan-infor`);
+        return this.http.get<IBaseResponseWithData<IViewScanQrSubPlan[]>>(`${this.api}/plan/active/list-sub-plan-infor`);
     }
 
     backToDaTraoBangSubPlan(idSubPlan: number) {

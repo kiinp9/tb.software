@@ -32,7 +32,8 @@
                             }
                         ],
                         "styles": [
-                            "src/assets/styles.scss"
+                            "src/assets/styles.scss",
+                            "node_modules/@grapesjs/studio-sdk/dist/style.css"
                         ],
                         "scripts": []
                     },
@@ -42,10 +43,10 @@
                         },
                         "staging": {
                             "fileReplacements": [
-                              {
-                                "replace": "src/environments/environment.ts",
-                                "with": "src/environments/environment.staging.ts"
-                              }
+                                {
+                                    "replace": "src/environments/environment.ts",
+                                    "with": "src/environments/environment.staging.ts"
+                                }
                             ]
                         },
                         "development": {
@@ -90,7 +91,8 @@
                             }
                         ],
                         "styles": [
-                            "src/assets/styles.scss"
+                            "src/assets/styles.scss",
+                            "node_modules/@grapesjs/studio-sdk/dist/style.css"
                         ],
                         "scripts": []
                     }
@@ -99,6 +101,6 @@
         }
     },
     "cli": {
-      "analytics": false
+        "analytics": false
     }
 }

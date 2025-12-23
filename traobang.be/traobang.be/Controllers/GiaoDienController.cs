@@ -1,11 +1,9 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿    using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using traobang.be.application.TraoBang.Dtos.GiaoDien;
 using traobang.be.application.TraoBang.Interfaces;
-using traobang.be.Attributes;
 using traobang.be.Controllers.Base;
-using traobang.be.shared.Constants.Auth;
 using traobang.be.shared.HttpRequest;
 
 namespace traobang.be.Controllers
@@ -26,14 +24,14 @@ namespace traobang.be.Controllers
             _giaoDienService = giaoDienService;
         }
 
-        [Permission(PermissionKeys.GiaoDiennAdd)]
+        //[Permission(PermissionKeys.GiaoDiennAdd)]
         [HttpPost("")]
         public ApiResponse Create(CreateGiaoDienDto dto)
         {
             try
             {
-                _giaoDienService.Create(dto);
-                return new();
+                var data = _giaoDienService.Create(dto);
+                return new(data);
             }
             catch (Exception ex)
             {
@@ -41,8 +39,8 @@ namespace traobang.be.Controllers
             }
         }
 
-        [Permission(PermissionKeys.GiaoDienUpdate)]
-        [HttpPut("{id}")]
+        //[Permission(PermissionKeys.GiaoDienUpdate)]
+        [HttpPut("")]
         public ApiResponse Update(UpdateGiaoDienDto dto)
         {
             try
@@ -56,7 +54,7 @@ namespace traobang.be.Controllers
             }
         }
 
-        [Permission(PermissionKeys.GiaoDienView)]
+        //[Permission(PermissionKeys.GiaoDienView)]
         [HttpGet("")]
         public ApiResponse FindPaging([FromQuery] FindPagingGiaoDienDto dto)
         {
@@ -71,7 +69,21 @@ namespace traobang.be.Controllers
             }
         }
 
-        [Permission(PermissionKeys.GiaoDienDelete)]
+        [HttpGet("{id}")]
+        public ApiResponse FindById([FromRoute] int id)
+        {
+            try
+            {
+                var result = _giaoDienService.FindById(id);
+                return new(result);
+            }
+            catch (Exception ex)
+            {
+                return OkException(ex);
+            }
+        }
+
+        //[Permission(PermissionKeys.GiaoDienDelete)]
         [HttpDelete("{id}")]
         public ApiResponse Delete([FromRoute] int id)
         {
@@ -86,7 +98,7 @@ namespace traobang.be.Controllers
             }
         }
 
-        [Permission(PermissionKeys.GiaoDienView)]
+        //[Permission(PermissionKeys.GiaoDienView)]
         [HttpGet("list")]
         public async Task<ApiResponse> ListGiaoDien()
         {

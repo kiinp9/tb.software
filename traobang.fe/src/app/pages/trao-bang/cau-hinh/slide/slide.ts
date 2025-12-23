@@ -156,6 +156,8 @@ export class SlideScreen extends BaseComponent {
             });
     }
 
+
+
     onOpenCreate() {
         const ref = this._dialogService.open(Create, { header: 'Tạo Slide', closable: true, modal: true, styleClass: 'w-[700px]', focusOnShow: false });
         ref.onClose.subscribe((result) => {

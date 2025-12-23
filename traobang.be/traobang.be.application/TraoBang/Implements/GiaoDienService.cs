@@ -28,7 +28,7 @@ namespace traobang.be.application.TraoBang.Implements
         )
             : base(tbDbContext, logger, httpContextAccessor, mapper) { }
 
-        public void Create(CreateGiaoDienDto dto)
+        public CreateResultDto Create(CreateGiaoDienDto dto)
         {
             _logger.LogInformation($"{nameof(Create)}, dto = {JsonSerializer.Serialize(dto)}");
             var vietNameNow = GetVietnamTime();
@@ -42,6 +42,7 @@ namespace traobang.be.application.TraoBang.Implements
             };
             _tbDbContext.GiaoDiens.Add(giaoDien);
             _tbDbContext.SaveChanges();
+            return new CreateResultDto { Id = giaoDien.Id };
         }
 
         public void Delete(int id)
@@ -113,6 +114,24 @@ namespace traobang.be.application.TraoBang.Implements
                 })
                 .ToListAsync();
             return giaoDiens;
+        }
+
+        public ViewGiaoDienDto FindById(int id)
+        {
+            _logger.LogInformation($"{nameof(FindById)}, id = {JsonSerializer.Serialize(id)}");
+            var giaoDien = _tbDbContext.GiaoDiens.AsNoTracking().FirstOrDefault(e => e.Id == id && !e.Deleted);
+            if( giaoDien == null)
+            {
+                throw new UserFriendlyException(ErrorCodes.TraoBangErrorGiaoDienNotFound);
+            }
+            return new ViewGiaoDienDto
+            {
+                Id = giaoDien.Id,
+                TenGiaoDien = giaoDien.TenGiaoDien,
+                NoiDung = giaoDien.NoiDung,
+                MoTa = giaoDien.MoTa,
+                CreatedDate = giaoDien.CreatedDate,
+            };
         }
     }
 }

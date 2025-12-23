@@ -4,6 +4,7 @@ using traobang.be.application.Auth.Dtos.Role;
 using traobang.be.application.Auth.Dtos.User;
 
 using traobang.be.application.TraoBang.Dtos;
+using traobang.be.application.TraoBang.Dtos.GiaoDien;
 using traobang.be.application.TraoBang.Dtos.Slide;
 using traobang.be.domain.Auth;
 
@@ -26,6 +27,7 @@ namespace traobang.be.application.Base
             CreateMap<CreateSlideSinhVienDto, DanhSachSinhVienNhanBang>();
 
             CreateMap<Slide, ViewSlideDto>();
+            CreateMap<GiaoDien, ViewGiaoDienDto>();
         }
     }
 }

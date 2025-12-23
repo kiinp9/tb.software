@@ -13,7 +13,7 @@ import { SharedService } from '@/service/shared.service';
     selector: 'app-menu',
     standalone: true,
     imports: [CommonModule, AppMenuitem, RouterModule],
-     template: `
+    template: `
     <div class="flex flex-col h-full">
         <ul class="layout-menu flex-1">
             <ng-container *ngFor="let item of model; let i = index">
@@ -95,10 +95,15 @@ export class AppMenu {
                                     //     visible: this._sharedService.isGranted(PermissionConstants.MenuTraoBangCauHinhSinhVienNhanBang),
                                     //     routerLink: ['/trao-bang/config/sv']
                                     // },
-                                     {
+                                    {
                                         label: 'Slide',
                                         visible: this._sharedService.isGranted(PermissionConstants.MenuTraoBangCauHinhSinhVienNhanBang),
                                         routerLink: ['/trao-bang/config/slide']
+                                    },
+                                    {
+                                        label: 'Giao diện',
+                                        visible: this._sharedService.isGranted(PermissionConstants.MenuTraoBangCauHinhSinhVienNhanBang),
+                                        routerLink: ['/trao-bang/config/giao-dien']
                                     },
                                 ]
                             },

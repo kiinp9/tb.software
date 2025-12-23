@@ -96,7 +96,7 @@ export class SlideScreen extends BaseComponent {
     getListPlanActive() {
         this._traoBangPlanService.getList().subscribe((res) => {
             this.listPlanActive = res.data;
-             this.searchForm.get('idPlan')?.patchValue(this.listPlanActive.find(e => e.trangThai == PlanTrangThai.DANG_HOAT_DONG)?.id)
+            this.searchForm.get('idPlan')?.patchValue(this.listPlanActive.find(e => e.trangThai == PlanTrangThai.DANG_HOAT_DONG)?.id)
         });
 
     }
@@ -123,34 +123,32 @@ export class SlideScreen extends BaseComponent {
     getData() {
         this.loading = true;
         let dataFilter = { idPlan: this.searchForm.get('idPlan')?.value ?? '', idSubPlan: this.searchForm.get('idSubPlan')?.value ?? '' };
-        if (dataFilter) {
-            this._slideService
-                .findPaging({ ...this.query, keyword: this.searchForm.get('search')?.value }, dataFilter)
-                .subscribe({
-                    next: (res) => {
-                        if (this.isResponseSucceed(res, false)) {
-                            this.data = res.data.items.map((item) => {
-                                let loai = this.listLoaiSlide.find((x) => x.code == item.loaiSlide);
-                                let trangThaiText = SvNhanBangStatuses.List.find((x) => x.code == item.trangThai);
-                                return {
-                                    ...item,
-                                    loaiSlideName: loai?.name ?? '',
-                                    trangThaiText: trangThaiText?.name
-                                };
-                            });
-                            // console.log(this.data);
-                            this.totalRecords = res.data.totalItems;
-                        }
-                    }
-                })
-                .add(() => {
-                    this.loading = false;
-                });
-        }
-        else {
 
-        }
+        this._slideService
+            .findPaging({ ...this.query, keyword: this.searchForm.get('search')?.value }, dataFilter)
+            .subscribe({
+                next: (res) => {
+                    if (this.isResponseSucceed(res, false)) {
+                        this.data = res.data.items.map((item) => {
+                            let loai = this.listLoaiSlide.find((x) => x.code == item.loaiSlide);
+                            let trangThaiText = SvNhanBangStatuses.List.find((x) => x.code == item.trangThai);
+                            return {
+                                ...item,
+                                loaiSlideName: loai?.name ?? '',
+                                trangThaiText: trangThaiText?.name
+                            };
+                        });
+                        // console.log(this.data);
+                        this.totalRecords = res.data.totalItems;
+                    }
+                }
+            })
+            .add(() => {
+                this.loading = false;
+            });
     }
+
+
 
     onOpenCreate() {
         const ref = this._dialogService.open(Create, { header: 'Tạo Slide', closable: true, modal: true, styleClass: 'w-[700px]', focusOnShow: false });

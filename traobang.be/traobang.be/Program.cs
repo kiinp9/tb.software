@@ -222,6 +222,7 @@ builder.Services.AddScoped<IExcelService, ExcelService>();
 builder.Services.AddScoped<IPlanService, PlanService>();
 builder.Services.AddScoped<ISubPlanService, SubPlanService>();
 builder.Services.AddScoped<ISlideService, SlideService>();
+builder.Services.AddScoped<IGiaoDienService, GiaoDienService>();    
 
 #endregion
 

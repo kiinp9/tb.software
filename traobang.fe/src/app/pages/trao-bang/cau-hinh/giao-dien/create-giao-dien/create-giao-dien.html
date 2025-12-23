@@ -1,0 +1,30 @@
+<div class="card h-full">
+    <div class="flex flex-row justify-between items-center mb-4">
+        <div class="font-semibold text-xl uppercase">Cấu hình giao diện</div>
+        <div class="flex gap-2 items-center">
+            <form [formGroup]="form">
+                <input pInputText formControlName="tenGiaoDien" id="tenGiaoDien" placeholder="Tên giao diện" type="text"
+                    class="w-full mt-7" />
+                <div style="min-height: 24px;">
+                    @if (form.get('tenGiaoDien')?.hasError('required') && (form.get('tenGiaoDien')?.touched ||
+                    submitted)) {
+                    <p-message severity="error" variant="simple" size="small">{{ getError('tenGiaoDien') }} </p-message>
+                    }
+                </div>
+            </form>
+            <p-button *ngIf="!this.idGiaoDien" label="Thêm mới" icon="pi pi-plus" size="small" (click)="saveTemplate()">
+            </p-button>
+            <p-button *ngIf="this.idGiaoDien" label="Cập nhật" icon="pi pi-save" size="small" (click)="saveTemplate()">
+            </p-button>
+            <p-button label="Quay về  " icon="pi pi-arrow-left" severity="contrast" size="small" (click)="back()">
+            </p-button>
+        </div>
+    </div>
+
+    <app-breadcrumb [home]="home" [items]="items" />
+    <div class="cnt">
+        <div class="cnt-body">
+            <div #editorEl class="editor"></div>
+        </div>
+    </div>
+</div>

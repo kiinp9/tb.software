@@ -1,4 +1,3 @@
-
 import { IFindPagingConfigSubPlan, IViewRowConfigSubPlan, ICreateConfigSubPlan, IUpdateConfigSubPlan } from '@/models/traobang/sub-plan.models';
 import { IBaseResponse, IBaseResponsePaging, IBaseResponseWithData } from '@/shared/models/request-paging.base.models';
 import { HttpClient } from '@angular/common/http';
@@ -49,4 +48,7 @@ export class TraoBangSubPlanService {
         return this.http.get<IBaseResponseWithData<IViewRowConfigSubPlan[]>>(`${this.api}/plan/active/list-sub-plan-infor`);
     }
 
+    getListSubPlanByPlanActiveId(id: number) {
+        return this.http.get<IBaseResponseWithData<IViewRowConfigSubPlan[]>>(`${this.api}/plan/${id}/list`);
+    }
 }

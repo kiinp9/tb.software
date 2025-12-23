@@ -61,7 +61,7 @@ namespace traobang.be.application.TraoBang.Implements
             {
                 if (plan.TrangThai != dto.TrangThai && dto.TrangThai == TrangThaiPlan.DangHoatDong)
                 {
-                    var planDangHoatDong = _tbDbContext.Plans.AsNoTracking().Where(x => x.TrangThai == TrangThaiPlan.DangHoatDong && !x.Deleted);
+                    var planDangHoatDong = _tbDbContext.Plans.Where(x => x.TrangThai == TrangThaiPlan.DangHoatDong && !x.Deleted);
                     foreach (var pl in planDangHoatDong)
                     {
                         pl.TrangThai = TrangThaiPlan.KhoiTao;

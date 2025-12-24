@@ -7,5 +7,8 @@
         public string? NoiDung { get; set; }
         public string? MoTa { get; set; }
         public DateTime? CreatedDate { get; set; }
+        public string? Html { get; set; }
+        public string? Css { get; set; }
+        public string? Js { get; set; }
     }
 }

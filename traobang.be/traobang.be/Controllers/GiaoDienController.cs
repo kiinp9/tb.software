@@ -1,4 +1,4 @@
-﻿    using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using traobang.be.application.TraoBang.Dtos.GiaoDien;
@@ -75,6 +75,24 @@ namespace traobang.be.Controllers
             try
             {
                 var result = _giaoDienService.FindById(id);
+                return new(result);
+            }
+            catch (Exception ex)
+            {
+                return OkException(ex);
+            }
+        }
+
+        /// <summary>
+        /// Lấy giao diện cho chương trình đang hoạt động
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("active-plan")]
+        public ApiResponse FindByActivePlan()
+        {
+            try
+            {
+                var result = _giaoDienService.FindByActivePlan();
                 return new(result);
             }
             catch (Exception ex)

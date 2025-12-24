@@ -1,13 +1,14 @@
-﻿using System.Text.Json;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Text.Json;
 using traobang.be.application.Base;
 using traobang.be.application.TraoBang.Dtos.GiaoDien;
 using traobang.be.application.TraoBang.Interfaces;
 using traobang.be.domain.TraoBang;
 using traobang.be.infrastructure.data;
+using traobang.be.shared.Constants.TraoBang;
 using traobang.be.shared.HttpRequest.AppException;
 using traobang.be.shared.HttpRequest.BaseRequest;
 using traobang.be.shared.HttpRequest.Error;
@@ -39,6 +40,9 @@ namespace traobang.be.application.TraoBang.Implements
                 MoTa = dto.MoTa,
                 CreatedDate = vietNameNow,
                 Deleted = false,
+                Html = dto.Html,
+                Css = dto.Css,
+                Js = dto.Js,
             };
             _tbDbContext.GiaoDiens.Add(giaoDien);
             _tbDbContext.SaveChanges();
@@ -88,6 +92,9 @@ namespace traobang.be.application.TraoBang.Implements
             giaoDien.TenGiaoDien = dto.TenGiaoDien;
             giaoDien.NoiDung = dto.NoiDung;
             giaoDien.MoTa = dto.MoTa;
+            giaoDien.Html = dto.Html;
+            giaoDien.Css = dto.Css;
+            giaoDien.Js = dto.Js;
             _tbDbContext.GiaoDiens.Update(giaoDien);
             _tbDbContext.SaveChanges();
         }
@@ -120,7 +127,7 @@ namespace traobang.be.application.TraoBang.Implements
         {
             _logger.LogInformation($"{nameof(FindById)}, id = {JsonSerializer.Serialize(id)}");
             var giaoDien = _tbDbContext.GiaoDiens.AsNoTracking().FirstOrDefault(e => e.Id == id && !e.Deleted);
-            if( giaoDien == null)
+            if (giaoDien == null)
             {
                 throw new UserFriendlyException(ErrorCodes.TraoBangErrorGiaoDienNotFound);
             }
@@ -131,7 +138,20 @@ namespace traobang.be.application.TraoBang.Implements
                 NoiDung = giaoDien.NoiDung,
                 MoTa = giaoDien.MoTa,
                 CreatedDate = giaoDien.CreatedDate,
+                Html = giaoDien.Html,
+                Css = giaoDien.Css,
+                Js = giaoDien.Js,
             };
+        }
+
+        public ViewGiaoDienDto FindByActivePlan()
+        {
+            _logger.LogInformation($"{nameof(FindByActivePlan)}");
+
+            var plan = _tbDbContext.Plans.AsNoTracking().FirstOrDefault(x => x.TrangThai == TrangThaiPlan.DangHoatDong && !x.Deleted);
+            var giaoDien = plan?.GiaoDien;
+
+            return _mapper.Map<ViewGiaoDienDto>(giaoDien);
         }
     }
 }

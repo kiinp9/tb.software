@@ -11,5 +11,6 @@ namespace traobang.be.application.TraoBang.Interfaces
         public BaseResponsePagingDto<ViewGiaoDienDto> FindPaging(FindPagingGiaoDienDto dto);
         public Task<List<ViewGiaoDienDto>> GetListGiaoDien();
         public void Delete(int id);
+        public ViewGiaoDienDto FindByActivePlan();
     }
 }

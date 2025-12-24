@@ -75,6 +75,7 @@ export class Plan extends BaseComponent {
                                 trangThaiText: trangThaiText?.name ?? ''
                             };
                         });
+                        console.log(this.data)
                         this.totalRecords = res.data.totalItems;
                     }
                 }

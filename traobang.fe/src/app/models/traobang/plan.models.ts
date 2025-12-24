@@ -9,6 +9,7 @@ export interface IViewRowConfigPlan {
     thoiGianBatDau?: string;
     thoiGianKetThuc?: string;
     createdDate?: string;
+    idGiaoDien?: number;
 }
 
 export interface IFindPagingConfigPlan extends IBaseRequestPaging { }
@@ -17,6 +18,7 @@ export interface ICreateConfigPlan {
     ten: string;
     moTa?: string;
     trangThai?: number;
+    idGiaoDien?: number;
     thoiGianBatDau?: string;
     thoiGianKetThuc?: string;
 }

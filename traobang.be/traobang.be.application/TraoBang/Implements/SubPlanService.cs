@@ -1926,6 +1926,8 @@ namespace traobang.be.application.TraoBang.Implements
                             Order = rowIndex,
                             CreatedBy = username,
                             IsShow = true,
+                            IsShowKetBai = true,
+                            IsShowMoBai = true,
                             TrangThai = TrangThaiSubPlan.ChuanBi,
                         };
                         listSubPlan.Add(tmpSubPlan);

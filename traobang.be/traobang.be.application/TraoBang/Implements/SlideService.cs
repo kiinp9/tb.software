@@ -193,13 +193,17 @@ namespace traobang.be.application.TraoBang.Implements
             var query = from s in _tbDbContext.Slides.AsNoTracking().Where(x => !x.Deleted)
                         join sp in _tbDbContext.SubPlans.AsNoTracking().Where(x => !x.Deleted) on s.IdSubPlan equals sp.Id
                         join p in _tbDbContext.Plans.AsNoTracking().Where(x => !x.Deleted) on sp.IdPlan equals p.Id
-                        from sv in _tbDbContext.DanhSachSinhVienNhanBangs.AsNoTracking().Where(x => x.Id == s.IdSinhVienNhanBang && !x.Deleted).DefaultIfEmpty()
+                        join sinhVien in _tbDbContext.DanhSachSinhVienNhanBangs.AsNoTracking().Where(x => !x.Deleted) on s.IdSinhVienNhanBang equals sinhVien.Id into sinhVienGroup
+                        from sv in sinhVienGroup.DefaultIfEmpty()
+                            //from sv in _tbDbContext.DanhSachSinhVienNhanBangs.AsNoTracking().Where(x => x.Id == s.IdSinhVienNhanBang && !x.Deleted).DefaultIfEmpty()
                         where (string.IsNullOrEmpty(dto.Keyword) || (
                             (s.NoiDung ?? "").Trim().ToLower().Contains(dto.Keyword.Trim().ToLower()) ||
                             (sv.HoVaTen ?? "").Trim().ToLower().Contains(dto.Keyword.Trim().ToLower())
                         )) &&
                         (dto.IdPlan == null || dto.IdPlan == p.Id) &&
+                        //(sp.Id == 2)
                         (dto.IdSubPlan == null || dto.IdSubPlan == sp.Id)
+                        orderby s.Id
                         select new ViewSlideDto()
                         {
                             Id = s.Id,
@@ -235,6 +239,7 @@ namespace traobang.be.application.TraoBang.Implements
                         };
 #pragma warning restore CS8601 // Possible null reference assignment.
             var items = query.Paging(dto).ToList();
+
             return new BaseResponsePagingDto<ViewSlideDto>
             {
                 TotalItems = query.Count(),

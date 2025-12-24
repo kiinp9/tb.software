@@ -756,6 +756,18 @@ namespace traobang.be.application.TraoBang.Implements
 
             if (!coSinhVienChuanBi && subPlan.IsShowKetBai)
             {
+                var slideMoBai = _tbDbContext.Slides.AsNoTracking().OrderByDescending(x => x.Id)
+                                        .FirstOrDefault(x => !x.Deleted && x.IdSubPlan == subPlan.Id && x.IsShow && x.LoaiSlide == LoaiSlides.BINH_THUONG);
+
+                string text = "";
+                string textNote = "";
+
+                if (slideMoBai != null)
+                {
+                    text = slideMoBai.NoiDung ?? "";
+                    textNote = slideMoBai.Note ?? "";
+                }
+
                 return new GetSinhVienDangTraoBangInforDto
                 {
                     TenSubPlan = subPlan.Ten,
@@ -767,8 +779,8 @@ namespace traobang.be.application.TraoBang.Implements
                     ThanhTich = string.Empty,
                     CapBang = string.Empty,
                     Note = string.Empty,
-                    Text = subPlan.KetBai,
-                    TextNote = subPlan.KetBaiNote,
+                    Text = text,
+                    TextNote = textNote,
                     InfoType = ViewSvTypeConstants.KET_BAI,
                 };
             }

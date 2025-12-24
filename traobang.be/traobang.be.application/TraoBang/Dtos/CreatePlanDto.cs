@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace traobang.be.application.TraoBang.Dtos
+﻿namespace traobang.be.application.TraoBang.Dtos
 {
     public class CreatePlanDto
     {
@@ -12,5 +6,6 @@ namespace traobang.be.application.TraoBang.Dtos
         public string MoTa { get; set; } = String.Empty;
         public DateTime ThoiGianBatDau { get; set; }
         public DateTime ThoiGianKetThuc { get; set; }
+        public int? IdGiaoDien { get; set; }
     }
 }

@@ -148,7 +148,7 @@ namespace traobang.be.application.TraoBang.Implements
         {
             _logger.LogInformation($"{nameof(FindByActivePlan)}");
 
-            var plan = _tbDbContext.Plans.AsNoTracking().FirstOrDefault(x => x.TrangThai == TrangThaiPlan.DangHoatDong && !x.Deleted);
+            var plan = _tbDbContext.Plans.AsNoTracking().Include(x => x.GiaoDien).FirstOrDefault(x => x.TrangThai == TrangThaiPlan.DangHoatDong && !x.Deleted);
             var giaoDien = plan?.GiaoDien;
 
             return _mapper.Map<ViewGiaoDienDto>(giaoDien);

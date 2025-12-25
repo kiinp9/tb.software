@@ -8,6 +8,7 @@ import { authGuard } from '@/shared/guard/auth-guard';
 import { GuestProfile } from '@/pages/trao-bang/guest-profile/guest-profile';
 import { MainScreen } from '@/pages/trao-bang/main-screen/main-screen';
 import { SideScreen } from '@/pages/trao-bang/side-screen/side-screen';
+import { SanKhauMain } from '@/pages/trao-bang/san-khau-main/san-khau-main';
 
 
 export const appRoutes: Routes = [
@@ -34,7 +35,7 @@ export const appRoutes: Routes = [
     {
         path: 'guest',
         children: [
-            { path: 'trao-bang/main-screen', component: MainScreen, title: 'Sân khấu' }
+            { path: 'trao-bang/main-screen', component: SanKhauMain, title: 'Sân khấu' }
         ]
     },
     {

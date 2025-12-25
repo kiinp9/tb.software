@@ -13,6 +13,7 @@ export const TblActionTypes = {
     update: 'update',
     delete: 'delete',
     config: 'config',
+    delete_config: 'delete_config'
 
 }
 
@@ -25,7 +26,7 @@ export const TblActionTypes = {
 export class TblAction extends BaseComponent {
     private static currentOpenMenu: Menu | null = null;
     tblEmit = inject(TBL_CUSTOM_COMP_EMIT);
-     private readonly MENU_OFFSET_X = 5;
+    private readonly MENU_OFFSET_X = 5;
     private readonly MENU_WIDTH = 180;
     @Input() row: IViewRowConfigPlan = {};
     @Input() rowIndex: number = 0;
@@ -49,9 +50,14 @@ export class TblAction extends BaseComponent {
                 command: () => this.onClick(TblActionTypes.delete)
             },
             {
+                label: 'Cài đặt giao diện',
+                icon: 'pi pi-cog',
+                command: () => this.onClick(TblActionTypes.config)
+            },
+            {
                 label: 'Xóa cấu hình',
                 icon: 'pi pi-trash',
-                command: () => this.onClick(TblActionTypes.config)
+                command: () => this.onClick(TblActionTypes.delete_config)
             }
         ];
     }
@@ -63,7 +69,7 @@ export class TblAction extends BaseComponent {
         });
     }
 
-     onMenuClick(event: any) {
+    onMenuClick(event: any) {
         event?.stopPropagation();
         event?.preventDefault();
 

@@ -5,6 +5,9 @@ export interface IViewGiaoDien {
     tenGiaoDien?: string;
     moTa?: string;
     noiDung?: string;
+    html?: string;
+    css?: string;
+    js?: string;
 }
 
 export interface ICreateGiaoDien {

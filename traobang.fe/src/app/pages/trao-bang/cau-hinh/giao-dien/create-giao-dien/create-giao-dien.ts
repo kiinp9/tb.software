@@ -161,12 +161,18 @@ export class CreateGiaoDien extends BaseComponent {
             body = {
                 id: this.idGiaoDien,
                 tenGiaoDien: this.form.get('tenGiaoDien')?.value,
-                noiDung: this.designToString(projectData)
+                noiDung: this.designToString(projectData),
+                html: this.editor.getHtml(),
+                css: this.editor.getCss(),
+                js: this.editor.getJs()
             };
         } else {
             body = {
                 tenGiaoDien: this.form.get('tenGiaoDien')?.value,
-                noiDung: this.designToString(projectData)
+                noiDung: this.designToString(projectData),
+                html: this.editor.getHtml(),
+                css: this.editor.getCss(),
+                js: this.editor.getJs()
             };
         }
 

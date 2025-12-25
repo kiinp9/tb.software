@@ -188,6 +188,7 @@ namespace traobang.be.application.TraoBang.Implements
                     subplan.DeletedDate = DateTime.Now;
                 }
 
+                _tbDbContext.SaveChanges();
                 tran.Commit();
             }
         }

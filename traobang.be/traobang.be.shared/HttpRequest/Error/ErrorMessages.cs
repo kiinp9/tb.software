@@ -34,6 +34,7 @@
             { ErrorCodes.TraoBangErrorLoaiSlideSinhVienPhaiCoSinhVien, "Phải nhập thông tin sinh viên" },
             { ErrorCodes.TraoBangErrorSlideNotFound, "Không tìm thấy slide" },
             { ErrorCodes.TraoBangErrorGiaoDienNotFound, "Không tìm thấy giao diện" },
+            { ErrorCodes.TraoBangErrorCannotDeleteActivePlan, "Không xóa được chương trình đang hoạt động" },
         };
         public static string GetMessage(int code)
         {

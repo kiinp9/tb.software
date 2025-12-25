@@ -124,15 +124,23 @@ namespace traobang.be.application.TraoBang.Implements
 
             return plans;
         }
+
         public void Delete(int id)
         {
             _logger.LogInformation($"{nameof(Delete)}, id = {id}");
             var vietnameNow = GetVietnamTime();
             var plan = _tbDbContext.Plans.FirstOrDefault(x => x.Id == id && !x.Deleted);
+
             if (plan == null)
             {
                 throw new UserFriendlyException(ErrorCodes.TraoBangErrorPlanNotFound);
             }
+
+            if (plan.TrangThai == TrangThaiPlan.DangHoatDong)
+            {
+                throw new UserFriendlyException(ErrorCodes.TraoBangErrorCannotDeleteActivePlan);
+            }
+
             plan.DeletedDate = vietnameNow;
             plan.Deleted = true;
             _tbDbContext.Plans.Update(plan);

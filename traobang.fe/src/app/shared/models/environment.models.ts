@@ -6,4 +6,5 @@ export interface IEnvironment {
   authClientSecret: string,
   authScope: string,
   appUrl: string,
+  grapeJsLicense: string,
 }

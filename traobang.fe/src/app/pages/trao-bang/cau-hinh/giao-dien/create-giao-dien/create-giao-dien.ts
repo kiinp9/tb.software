@@ -8,6 +8,7 @@ import { tableComponent, dialogComponent, rteTinyMce, canvasAbsoluteMode, layout
 import { Breadcrumb } from '@/shared/components/breadcrumb/breadcrumb';
 import { MenuItem } from 'primeng/api';
 import { IViewGiaoDien } from '@/models/traobang/giao-dien.models';
+import { environment } from 'src/environments/environment';
 @Component({
     selector: 'app-create-giao-dien',
     imports: [SharedImports, Breadcrumb],
@@ -38,7 +39,8 @@ export class CreateGiaoDien extends BaseComponent {
 
     async ngAfterViewInit() {
         await createStudioEditor({
-            licenseKey: '25678fc14abc44f1824d13156e1b355f53988497d8354604a7cb3176a076c8e',
+            // licenseKey: '25678fc14abc44f1824d13156e1b355f53988497d8354604a7cb3176a076c8e',
+            licenseKey: environment.grapeJsLicense,
             root: this.editorEl.nativeElement,
             fonts: {
                 enableFontManager: true

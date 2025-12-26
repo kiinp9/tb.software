@@ -78,6 +78,11 @@ export class CreateGiaoDien extends BaseComponent {
                             content: `<span>{{texepHangxt}}<span/>`,
                             category: 'Data',
                         }),
+                        editor.Blocks.add('variable6', {
+                            label: "Text",
+                            content: `<span>{{text}}<span/>`,
+                            category: 'Data',
+                        }),
                         editor.onReady(() => {
                             const textCmp = editor.getWrapper()?.find('p')[0];
                             editor.select(textCmp);

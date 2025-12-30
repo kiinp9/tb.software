@@ -115,4 +115,8 @@ export class TraoBangSvService {
             params: { ...query }
         });
     }
+
+    cutSlideThuong(id: number) {
+        return this.http.post<IBaseResponseWithData<any>>(`${this.api}/sinh-vien-nhan-bang/hang-doi/slide-thuong`, { idSubPlan: id });
+    }
 }

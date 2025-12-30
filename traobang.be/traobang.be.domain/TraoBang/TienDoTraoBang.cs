@@ -1,14 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 using thongbao.be.shared.Interfaces;
 using traobang.be.shared.Constants.Db;
+using traobang.be.shared.Constants.TraoBang;
 
 namespace traobang.be.domain.TraoBang
 {
@@ -23,7 +18,9 @@ namespace traobang.be.domain.TraoBang
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+        public int IdPlan { get; set; }
         public int IdSubPlan { get; set; }
+        public int IdSlide { get; set; }
         public int IdSinhVienNhanBang { get; set; }
         public string HoVaTen { get; set; } = String.Empty;
         public string MaSoSinhVien { get; set; } = String.Empty;
@@ -32,6 +29,10 @@ namespace traobang.be.domain.TraoBang
         public int Order { get; set; }
         public bool IsShow { get; set; }
         public bool TrackingDangTrao { get; set; }
+        /// <summary>
+        /// <see cref="LoaiSlides"/>
+        /// </summary>
+        public int LoaiSlide { get; set; }
         public string? CreatedBy { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? DeletedDate { get; set; }

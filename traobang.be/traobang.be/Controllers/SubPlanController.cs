@@ -397,6 +397,7 @@ namespace traobang.be.Controllers
                 return OkException(ex);
             }
         }
+
         [AllowAnonymous]
         [HttpPost("{idSubPlan}/sinh-vien-nhan-bang/prev-trao-bang")]
         public async Task<ApiResponse> PrevSinhVienTraoBang([FromRoute] int idSubPlan)
@@ -439,6 +440,7 @@ namespace traobang.be.Controllers
                 return OkException(ex);
             }
         }
+
         [Permission(PermissionKeys.SubPlanAdd)]
         [HttpPost("sinh-vien-nhan-bang/hang-doi/truong-hop-dac-biet")]
         public async Task<ApiResponse> DiemDanhNhanBangTruongHopDacBiet([FromQuery] string mssv)
@@ -453,6 +455,27 @@ namespace traobang.be.Controllers
                 return OkException(ex);
             }
         }
+
+        /// <summary>
+        /// Đẩy slide thường vào hàng đợi cho mc đọc
+        /// </summary>
+        /// <param name="idSubPlan"></param>
+        /// <returns></returns>
+        [Permission(PermissionKeys.SubPlanAdd)]
+        [HttpPost("sinh-vien-nhan-bang/hang-doi/slide-thuong")]
+        public ApiResponse ChuanBiSlideNormal([FromQuery] int idSubPlan)
+        {
+            try
+            {
+                var data = _subPlanService.ChuanBiSlideNormal(idSubPlan);
+                return new(data);
+            }
+            catch (Exception ex)
+            {
+                return OkException(ex);
+            }
+        }
+
         [Permission(PermissionKeys.SubPlanDelete)]
         [HttpPost("restart")]
         public async Task<ApiResponse> Restart()

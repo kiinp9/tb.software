@@ -931,7 +931,7 @@ namespace traobang.be.application.TraoBang.Implements
             }
 
             var nextSubPlan = _tbDbContext.SubPlans
-                .Where(x => x.TrangThai == TrangThaiSubPlan.ChuanBi && !x.Deleted)
+                .Where(x => x.TrangThai == TrangThaiSubPlan.ChuanBi && !x.Deleted && x.IdPlan == activePlan.Id)
                 .OrderBy(x => x.Order)
                 .FirstOrDefault();
 
@@ -1245,16 +1245,15 @@ namespace traobang.be.application.TraoBang.Implements
                 var subPlan = query.sp;
 
                 var slideDaChay = _tbDbContext.TienDoTraoBangs
-                                        .Where(x => !x.Deleted && x.IdSubPlan == idSubPlan &&
-                                                    x.TrangThai == TraoBangConstants.DaTraoBang
+                                        .Where(x => !x.Deleted && x.IdSubPlan == idSubPlan
                                                     && x.LoaiSlide == LoaiSlides.BINH_THUONG)
                                         .Select(x => x.IdSlide)
                                         .ToList();
 
                 var maxOrder = _tbDbContext.TienDoTraoBangs
-                                        .Where(x => !x.Deleted && x.IdSubPlan == idSubPlan &&
-                                                    x.TrangThai == TraoBangConstants.DaTraoBang)
-                                        .Max(x => x.Order);
+                                        .Where(x => !x.Deleted && x.IdSubPlan == idSubPlan)
+                                        .Select(x => (int?)x.Order)
+                                        .Max() ?? 0;
 
                 var slideIncomming = _tbDbContext.Slides.Where(x => !x.Deleted && x.IdSubPlan == idSubPlan &&
                                                     !slideDaChay.Contains(x.Id) &&

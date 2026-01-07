@@ -51,6 +51,7 @@ export class SlideScreen extends BaseComponent {
     columns: IColumn[] = [
         { header: 'STT', cellViewType: CellViewTypes.INDEX, headerContainerStyle: 'width: 6rem' },
         { header: 'Nội dung', field: 'noiDung', headerContainerStyle: 'min-width: 10rem' },
+        { header: 'Mã Sinh viên', field: 'sinhVien.maSoSinhVien', headerContainerStyle: 'min-width: 10rem' },
         { header: 'Note', field: 'note', headerContainerStyle: 'min-width: 10rem' },
         {
             header: 'Loại Slide',

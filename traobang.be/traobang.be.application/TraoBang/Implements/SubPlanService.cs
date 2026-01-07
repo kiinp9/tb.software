@@ -626,8 +626,12 @@ namespace traobang.be.application.TraoBang.Implements
                 TrangThai = TraoBangConstants.ChuanBi,
                 Order = maxOrder + 1,
                 IsShow = true,
+                IdPlan = subPlan.IdPlan,
+                IdSlide = slide.Id,
+                LoaiSlide = slide.LoaiSlide,
+                Note = slide.Note,
                 CreatedDate = DateTime.Now,
-                Deleted = false
+                Deleted = false,
             };
             _tbDbContext.TienDoTraoBangs.Add(tienDoTraoBang);
             _tbDbContext.SaveChanges();
@@ -645,6 +649,7 @@ namespace traobang.be.application.TraoBang.Implements
                 IsShow = true
             };
         }
+
         public async Task UpdateTrangThaiSinhVienNhanBang(int idSubPlan, int id)
         {
             _logger.LogInformation($"{nameof(UpdateTrangThaiSinhVienNhanBang)} ");
@@ -674,42 +679,42 @@ namespace traobang.be.application.TraoBang.Implements
                 return null;
             }
 
-            var coSinhVienDaTraoHoacDangTrao = await _tbDbContext.TienDoTraoBangs
-                .AsNoTracking()
-                .AnyAsync(x => x.IdSubPlan == subPlan.Id
-                            && (x.TrangThai == TraoBangConstants.DaTraoBang || x.TrangThai == TraoBangConstants.DangTraoBang)
-                            && !x.Deleted);
+            //var coSinhVienDaTraoHoacDangTrao = await _tbDbContext.TienDoTraoBangs
+            //    .AsNoTracking()
+            //    .AnyAsync(x => x.IdSubPlan == subPlan.Id
+            //                && (x.TrangThai == TraoBangConstants.DaTraoBang || x.TrangThai == TraoBangConstants.DangTraoBang)
+            //                && !x.Deleted);
 
-            if (!coSinhVienDaTraoHoacDangTrao && subPlan.IsShowMoBai)
-            {
-                var slideMoBai = _tbDbContext.Slides.AsNoTracking().OrderBy(x => x.Id)
-                                        .FirstOrDefault(x => !x.Deleted && x.IdSubPlan == subPlan.Id && x.IsShow && x.LoaiSlide == LoaiSlides.BINH_THUONG);
+            //if (!coSinhVienDaTraoHoacDangTrao && subPlan.IsShowMoBai)
+            //{
+            //    var slideMoBai = _tbDbContext.Slides.AsNoTracking().OrderBy(x => x.Id)
+            //                            .FirstOrDefault(x => !x.Deleted && x.IdSubPlan == subPlan.Id && x.IsShow && x.LoaiSlide == LoaiSlides.BINH_THUONG);
 
-                string text = "";
-                string textNote = "";
+            //    string text = "";
+            //    string textNote = "";
 
-                if (slideMoBai != null)
-                {
-                    text = slideMoBai.NoiDung ?? "";
-                    textNote = slideMoBai.Note ?? "";
-                }
+            //    if (slideMoBai != null)
+            //    {
+            //        text = slideMoBai.NoiDung ?? "";
+            //        textNote = slideMoBai.Note ?? "";
+            //    }
 
-                return new GetSinhVienDangTraoBangInforDto
-                {
-                    TenSubPlan = subPlan.Ten,
-                    Id = 0,
-                    HoVaTen = string.Empty,
-                    MaSoSinhVien = string.Empty,
-                    TenNganhDaoTao = string.Empty,
-                    XepHang = string.Empty,
-                    ThanhTich = string.Empty,
-                    CapBang = string.Empty,
-                    Note = string.Empty,
-                    Text = text,
-                    TextNote = textNote,
-                    InfoType = ViewSvTypeConstants.MO_BAI,
-                };
-            }
+            //    return new GetSinhVienDangTraoBangInforDto
+            //    {
+            //        TenSubPlan = subPlan.Ten,
+            //        Id = 0,
+            //        HoVaTen = string.Empty,
+            //        MaSoSinhVien = string.Empty,
+            //        TenNganhDaoTao = string.Empty,
+            //        XepHang = string.Empty,
+            //        ThanhTich = string.Empty,
+            //        CapBang = string.Empty,
+            //        Note = string.Empty,
+            //        Text = text,
+            //        TextNote = textNote,
+            //        InfoType = ViewSvTypeConstants.MO_BAI,
+            //    };
+            //}
 
             var tienDo = await _tbDbContext.TienDoTraoBangs
                 .AsNoTracking()
@@ -720,19 +725,19 @@ namespace traobang.be.application.TraoBang.Implements
 
             if (tienDo != null)
             {
-                var sinhVien = await (
+                if (tienDo.LoaiSlide == LoaiSlides.SINH_VIEN)
+                {
+                    var sinhVien = await (
                                     from sv in _tbDbContext.DanhSachSinhVienNhanBangs.AsNoTracking().Where(x => !x.Deleted)
                                     join sl in _tbDbContext.Slides.AsNoTracking().Where(x => !x.Deleted) on sv.Id equals sl.IdSinhVienNhanBang
                                     where sv.Id == tienDo.IdSinhVienNhanBang && sl.IdSubPlan == subPlan.Id
                                     select sv
                                 ).FirstOrDefaultAsync();
 
-                if (sinhVien != null)
-                {
                     return new GetSinhVienDangTraoBangInforDto
                     {
                         TenSubPlan = subPlan.Ten,
-                        Id = sinhVien.Id,
+                        Id = sinhVien!.Id,
                         HoVaTen = sinhVien.HoVaTen,
                         MaSoSinhVien = sinhVien.MaSoSinhVien,
                         TenNganhDaoTao = sinhVien.TenNganhDaoTao,
@@ -745,45 +750,70 @@ namespace traobang.be.application.TraoBang.Implements
                         InfoType = ViewSvTypeConstants.SV,
                     };
                 }
-            }
-
-
-            var coSinhVienChuanBi = await _tbDbContext.TienDoTraoBangs
-                .AsNoTracking()
-                .AnyAsync(x => x.IdSubPlan == subPlan.Id
-                            && x.TrangThai == TraoBangConstants.ChuanBi
-                            && !x.Deleted);
-
-            if (!coSinhVienChuanBi && subPlan.IsShowKetBai)
-            {
-                var slideMoBai = _tbDbContext.Slides.AsNoTracking().OrderByDescending(x => x.Id)
-                                        .FirstOrDefault(x => !x.Deleted && x.IdSubPlan == subPlan.Id && x.IsShow && x.LoaiSlide == LoaiSlides.BINH_THUONG);
-
-                string text = "";
-                string textNote = "";
-
-                if (slideMoBai != null)
+                else
                 {
-                    text = slideMoBai.NoiDung ?? "";
-                    textNote = slideMoBai.Note ?? "";
+                    var slide = _tbDbContext.Slides.FirstOrDefault(x => x.Id == tienDo.IdSlide && !x.Deleted && x.IsShow);
+
+                    if (slide == null)
+                    {
+                        return null;
+                    }
+
+                    return new GetSinhVienDangTraoBangInforDto
+                    {
+                        TenSubPlan = subPlan.Ten,
+                        Id = tienDo.Id,
+                        HoVaTen = tienDo.HoVaTen,
+                        MaSoSinhVien = tienDo.MaSoSinhVien,
+                        //TenNganhDaoTao = tienDo.TenNganhDaoTao,
+                        //XepHang = sinhVien.XepHang,
+                        //ThanhTich = sinhVien.ThanhTich,
+                        //CapBang = sinhVien.CapBang,
+                        Note = tienDo.Note ?? string.Empty,
+                        Text = slide.NoiDung,
+                        TextNote = slide.Note,
+                        InfoType = ViewSvTypeConstants.MO_BAI,
+                    };
                 }
-
-                return new GetSinhVienDangTraoBangInforDto
-                {
-                    TenSubPlan = subPlan.Ten,
-                    Id = 0,
-                    HoVaTen = string.Empty,
-                    MaSoSinhVien = string.Empty,
-                    TenNganhDaoTao = string.Empty,
-                    XepHang = string.Empty,
-                    ThanhTich = string.Empty,
-                    CapBang = string.Empty,
-                    Note = string.Empty,
-                    Text = text,
-                    TextNote = textNote,
-                    InfoType = ViewSvTypeConstants.KET_BAI,
-                };
             }
+
+
+            //var coSinhVienChuanBi = await _tbDbContext.TienDoTraoBangs
+            //    .AsNoTracking()
+            //    .AnyAsync(x => x.IdSubPlan == subPlan.Id
+            //                && x.TrangThai == TraoBangConstants.ChuanBi
+            //                && !x.Deleted);
+
+            //if (!coSinhVienChuanBi && subPlan.IsShowKetBai)
+            //{
+            //    var slideMoBai = _tbDbContext.Slides.AsNoTracking().OrderByDescending(x => x.Id)
+            //                            .FirstOrDefault(x => !x.Deleted && x.IdSubPlan == subPlan.Id && x.IsShow && x.LoaiSlide == LoaiSlides.BINH_THUONG);
+
+            //    string text = "";
+            //    string textNote = "";
+
+            //    if (slideMoBai != null)
+            //    {
+            //        text = slideMoBai.NoiDung ?? "";
+            //        textNote = slideMoBai.Note ?? "";
+            //    }
+
+            //    return new GetSinhVienDangTraoBangInforDto
+            //    {
+            //        TenSubPlan = subPlan.Ten,
+            //        Id = 0,
+            //        HoVaTen = string.Empty,
+            //        MaSoSinhVien = string.Empty,
+            //        TenNganhDaoTao = string.Empty,
+            //        XepHang = string.Empty,
+            //        ThanhTich = string.Empty,
+            //        CapBang = string.Empty,
+            //        Note = string.Empty,
+            //        Text = text,
+            //        TextNote = textNote,
+            //        InfoType = ViewSvTypeConstants.KET_BAI,
+            //    };
+            //}
 
             return null;
         }
@@ -887,8 +917,12 @@ namespace traobang.be.application.TraoBang.Implements
         public async Task<GetNextSubPlanResponseDto?> NextSubPlan()
         {
             _logger.LogInformation($"{nameof(NextSubPlan)}");
+
+            var activePlan = _tbDbContext.Plans.FirstOrDefault(x => !x.Deleted && x.TrangThai == TrangThaiPlan.DangHoatDong)
+                ?? throw new UserFriendlyException(ErrorCodes.TraoBangErrorPlanNotFound);
+
             var currentSubPlan = _tbDbContext.SubPlans
-                .FirstOrDefault(x => x.TrangThai == TrangThaiSubPlan.DangTraoBang && !x.Deleted);
+                .FirstOrDefault(x => x.TrangThai == TrangThaiSubPlan.DangTraoBang && activePlan.Id == x.IdPlan && !x.Deleted);
 
             if (currentSubPlan != null)
             {
@@ -907,10 +941,38 @@ namespace traobang.be.application.TraoBang.Implements
                 return null;
             }
 
-            nextSubPlan.TrangThai = TrangThaiSubPlan.DangTraoBang;
-            _tbDbContext.SubPlans.Update(nextSubPlan);
+            using (var tran = _tbDbContext.Database.BeginTransaction())
+            {
+                nextSubPlan.TrangThai = TrangThaiSubPlan.DangTraoBang;
+                _tbDbContext.SubPlans.Update(nextSubPlan);
 
-            _tbDbContext.SaveChanges();
+                #region lay slide dau tien
+                var firstSlide = _tbDbContext.Slides.FirstOrDefault(x => !x.Deleted && x.IdSubPlan == nextSubPlan.Id && x.IsShow && x.LoaiSlide == LoaiSlides.BINH_THUONG);
+                if (firstSlide != null)
+                {
+                    var isFirstSlideOnQueue = _tbDbContext.TienDoTraoBangs.Any(x => !x.Deleted && x.IdSlide == firstSlide.Id);
+                    if (!isFirstSlideOnQueue)
+                    {
+                        var newTienDo = new TienDoTraoBang()
+                        {
+                            IdPlan = nextSubPlan.IdPlan,
+                            IdSubPlan = nextSubPlan.Id,
+                            IdSlide = firstSlide.Id,
+                            HoVaTen = firstSlide.NoiDung!,
+                            IdSinhVienNhanBang = firstSlide.IdSinhVienNhanBang ?? -1,
+                            LoaiSlide = firstSlide.LoaiSlide,
+                            TrackingDangTrao = true,
+                            Order = 1,
+                            TrangThai = TraoBangConstants.ChuanBi,
+                        };
+                        _tbDbContext.TienDoTraoBangs.Add(newTienDo);
+                    }
+                }
+                #endregion
+
+                _tbDbContext.SaveChanges();
+                tran.Commit();
+            }
             await _traoBangService.NotifyChonKhoa();
 
             return new GetNextSubPlanResponseDto
@@ -1183,11 +1245,22 @@ namespace traobang.be.application.TraoBang.Implements
                 var subPlan = query.sp;
 
                 var slideDaChay = _tbDbContext.TienDoTraoBangs
-                                        .Where(x => !x.Deleted && x.IdSubPlan == idSubPlan && x.TrangThai == TraoBangConstants.DaTraoBang && x.LoaiSlide == LoaiSlides.BINH_THUONG)
-                                        .Select(x => x.IdSlide).ToList();
+                                        .Where(x => !x.Deleted && x.IdSubPlan == idSubPlan &&
+                                                    x.TrangThai == TraoBangConstants.DaTraoBang
+                                                    && x.LoaiSlide == LoaiSlides.BINH_THUONG)
+                                        .Select(x => x.IdSlide)
+                                        .ToList();
 
-                var slideIncomming = _tbDbContext.Slides.Where(x => !x.Deleted && !slideDaChay.Contains(x.Id) && x.LoaiSlide == LoaiSlides.BINH_THUONG && x.IsShow)
-                                                .OrderBy(x => x.Order).FirstOrDefault();
+                var maxOrder = _tbDbContext.TienDoTraoBangs
+                                        .Where(x => !x.Deleted && x.IdSubPlan == idSubPlan &&
+                                                    x.TrangThai == TraoBangConstants.DaTraoBang)
+                                        .Max(x => x.Order);
+
+                var slideIncomming = _tbDbContext.Slides.Where(x => !x.Deleted && x.IdSubPlan == idSubPlan &&
+                                                    !slideDaChay.Contains(x.Id) &&
+                                                    x.LoaiSlide == LoaiSlides.BINH_THUONG && x.IsShow)
+                                                .OrderBy(x => x.Order)
+                                                .FirstOrDefault();
 
                 if (slideIncomming != null)
                 {
@@ -1196,23 +1269,27 @@ namespace traobang.be.application.TraoBang.Implements
                         IdSubPlan = slideIncomming.IdSubPlan,
                         IdSinhVienNhanBang = slideIncomming.IdSinhVienNhanBang ?? -1,
                         TrangThai = TraoBangConstants.ChuanBi,
-                        Order = slideDaChay.Count + 1,
+                        HoVaTen = slideIncomming.NoiDung ?? "",
+                        Order = maxOrder + 1,
                         IdSlide = slideIncomming.Id,
                         IdPlan = plan.Id,
                         LoaiSlide = LoaiSlides.BINH_THUONG,
                         IsShow = true,
                         CreatedBy = userid,
+                        TrackingDangTrao = true,
+                        Note = slideIncomming.Note,
                     };
 
                     _tbDbContext.TienDoTraoBangs.Add(tienDo);
+                    _tbDbContext.SaveChanges();
                 }
 
                 return new DiemDanhNhanBangDto
                 {
-                    TenKhoa = subPlan?.Ten ?? String.Empty,
-                    Id = slideIncomming.Id,
+                    TenKhoa = subPlan?.Ten ?? string.Empty,
+                    Id = slideIncomming != null ? slideIncomming.Id : -1,
                     TrangThai = TraoBangConstants.ChuanBi,
-                    Order = slideDaChay.Count + 1,
+                    Order = maxOrder + 1,
                     IsShow = true
                 };
 

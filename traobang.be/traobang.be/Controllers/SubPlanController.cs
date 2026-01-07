@@ -463,11 +463,11 @@ namespace traobang.be.Controllers
         /// <returns></returns>
         [Permission(PermissionKeys.SubPlanAdd)]
         [HttpPost("sinh-vien-nhan-bang/hang-doi/slide-thuong")]
-        public ApiResponse ChuanBiSlideNormal([FromQuery] int idSubPlan)
+        public ApiResponse ChuanBiSlideNormal([FromBody] CutSlideDto dto)
         {
             try
             {
-                var data = _subPlanService.ChuanBiSlideNormal(idSubPlan);
+                var data = _subPlanService.ChuanBiSlideNormal(dto.IdSubPlan);
                 return new(data);
             }
             catch (Exception ex)

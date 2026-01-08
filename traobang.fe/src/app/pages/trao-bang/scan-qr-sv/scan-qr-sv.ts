@@ -84,6 +84,7 @@ export class ScanQrSv extends BaseComponent implements OnDestroy {
             next: (res) => {
                 if (this.isResponseSucceed(res, true, 'Cắt silde thành công ')) {
                     this.currentSubPlanInfo = res.data;
+                    this.onOpenDialogMssv();
                 }
             }
         });

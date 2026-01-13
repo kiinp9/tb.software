@@ -1833,7 +1833,7 @@ namespace traobang.be.application.TraoBang.Implements
             await _tbDbContext.Database.ExecuteSqlRawAsync("DELETE FROM tb.TienDoTraoBang");
             await _tbDbContext.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('tb.TienDoTraoBang', RESEED, 0)");
 
-            await _tbDbContext.Database.ExecuteSqlRawAsync("UPDATE [tbS_MARKETING_DEV].[tb].[SubPlan] SET [TrangThai] = 2");
+            await _tbDbContext.Database.ExecuteSqlRawAsync("UPDATE [tb].[SubPlan] SET [TrangThai] = 2");
 
             await _tbDbContext.Database.ExecuteSqlRawAsync("DELETE FROM tb.TraoBangLog");
             await _tbDbContext.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('tb.TraoBangLog', RESEED, 0)");

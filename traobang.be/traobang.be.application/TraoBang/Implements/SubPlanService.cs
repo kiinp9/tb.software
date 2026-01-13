@@ -1227,9 +1227,9 @@ namespace traobang.be.application.TraoBang.Implements
             };
         }
 
-        public DiemDanhNhanBangDto ChuanBiSlideNormal(int idSubPlan)
+        public async Task<DiemDanhNhanBangDto> CutSlideNormal(int idSubPlan)
         {
-            _logger.LogInformation($"{nameof(ChuanBiSlideNormal)} idSubPlan={idSubPlan}");
+            _logger.LogInformation($"{nameof(CutSlideNormal)} idSubPlan={idSubPlan}");
 
             var userid = getCurrentUserId();
 
@@ -1282,6 +1282,8 @@ namespace traobang.be.application.TraoBang.Implements
                     _tbDbContext.TienDoTraoBangs.Add(tienDo);
                     _tbDbContext.SaveChanges();
                 }
+
+                await _traoBangService.NotifyCheckIn();
 
                 return new DiemDanhNhanBangDto
                 {

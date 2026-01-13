@@ -36,7 +36,7 @@ namespace traobang.be.application.TraoBang.Interface
         public Task<GetTienDoTraoBangResponseDto> GetTienDoTraoBang();
         public Task<GetSinhVienDangTraoBangInforDto> NextSinhVienTraoBang(int idSubPlan);
 
-        public DiemDanhNhanBangDto ChuanBiSlideNormal(int idSubPlan);
+        public Task<DiemDanhNhanBangDto> CutSlideNormal(int idSubPlan);
 
         public Task<GetSinhVienDangTraoBangInforDto?> PrevSinhVienTraoBang(int idSubPlan);
         public Task<GetInforSinhVienChuanBiDuocTraoBangResponseDto?> GetInforSinhVienChuanBiDuocTraoBang(int idSubPlan);

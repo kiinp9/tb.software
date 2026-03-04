@@ -1675,9 +1675,12 @@ namespace traobang.be.application.TraoBang.Implements
             int chuanBiTrao = 5;
             _logger.LogInformation($"{nameof(GetInforSubPlanDangTrao)} ");
 
+            var plan = await _tbDbContext.Plans.Where(x => !x.Deleted && x.TrangThai == TrangThaiPlan.DangHoatDong).FirstOrDefaultAsync()
+                ?? throw new UserFriendlyException(ErrorCodes.TraoBangErrorPlanNotFound);
+
             var subPlan = await _tbDbContext.SubPlans
                 .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.TrangThai == TraoBangConstants.DangTraoBang && !x.Deleted)
+                .FirstOrDefaultAsync(x => x.TrangThai == TraoBangConstants.DangTraoBang && x.IdPlan == plan.Id && !x.Deleted)
                 ?? throw new UserFriendlyException(ErrorCodes.TraoBangErrorSubPlanNotFound);
 
             var tienDoList = new List<TienDoTraoBang>();
@@ -1768,9 +1771,16 @@ namespace traobang.be.application.TraoBang.Implements
                 .AsNoTracking()
                 .CountAsync(x => x.IdSubPlan == subPlan.Id && !x.Deleted && x.TrangThai == TraoBangConstants.DaTraoBang);
 
-            var tongSinhVienThamGiaTraoBang = await _tbDbContext.DanhSachSinhVienNhanBangs
-                .AsNoTracking()
-                .CountAsync(x => x.IdSubPlan == subPlan.Id && !x.Deleted && x.TrangThai == TraoBangConstants.ThamGiaTraoBang);
+            //var tongSinhVienThamGiaTraoBang = await _tbDbContext.DanhSachSinhVienNhanBangs
+            //    .AsNoTracking()
+            //    .CountAsync(x => x.IdSubPlan == subPlan.Id && !x.Deleted && x.TrangThai == TraoBangConstants.ThamGiaTraoBang);
+
+            var tongSinhVienThamGiaTraoBang = (from slide in _tbDbContext.Slides.AsNoTracking().Where(x => x.IdSubPlan == subPlan.Id && x.IsShow && !x.Deleted)
+                                               join sv in _tbDbContext.DanhSachSinhVienNhanBangs.AsNoTracking().Where(x => !x.Deleted) on slide.IdSinhVienNhanBang equals sv.Id
+                                               where slide.TrangThai == TraoBangConstants.ChuanBi
+                                               select sv.Id
+                                               ).Count();
+
 
             var itemsFromTienDo = (from tienDo in tienDoList
                                    join sv in danhSachSinhViens on tienDo.IdSinhVienNhanBang equals sv.Id
@@ -1826,6 +1836,7 @@ namespace traobang.be.application.TraoBang.Implements
                 Items = items
             };
         }
+
         public async Task Restart()
         {
             _logger.LogInformation($"{nameof(Restart)}");

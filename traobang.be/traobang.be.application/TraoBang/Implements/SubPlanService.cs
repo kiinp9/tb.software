@@ -1043,46 +1043,22 @@ namespace traobang.be.application.TraoBang.Implements
                                     from slide in _tbDbContext.Slides.AsNoTracking()
                                     join sv in _tbDbContext.DanhSachSinhVienNhanBangs.AsNoTracking() on slide.IdSinhVienNhanBang equals sv.Id
                                     where slide.IdSubPlan == subPlan.Id && !slide.Deleted && !sv.Deleted && slide.IsShow
-                                        && slide.TrangThai == TraoBangConstants.ThamGiaTraoBang
+                                        && slide.LoaiSlide == LoaiSlides.SINH_VIEN
+                                        && slide.TrangThai == TraoBangConstants.ChuanBi
                                     select sv.Id
                                     ).Count();
             var soLuongVangMat = (
                                     from slide in _tbDbContext.Slides.AsNoTracking()
                                     join sv in _tbDbContext.DanhSachSinhVienNhanBangs.AsNoTracking() on slide.IdSinhVienNhanBang equals sv.Id
                                     where slide.IdSubPlan == subPlan.Id && !slide.Deleted && !sv.Deleted && slide.IsShow
+                                        && slide.LoaiSlide == LoaiSlides.SINH_VIEN
                                         && slide.TrangThai == TraoBangConstants.VangMat
                                     select sv.Id
                                     ).Count();
-            var soLuongDaTrao = (
-                                    from slide in _tbDbContext.Slides.AsNoTracking()
-                                    join sv in _tbDbContext.DanhSachSinhVienNhanBangs.AsNoTracking() on slide.IdSinhVienNhanBang equals sv.Id
-                                    where slide.IdSubPlan == subPlan.Id && !slide.Deleted && !sv.Deleted && slide.IsShow
-                                        && slide.TrangThai == TraoBangConstants.DaTraoBang
-                                    select sv.Id
-                                    ).Count();
-            var soLuongConLai = (
-                                    from slide in _tbDbContext.Slides.AsNoTracking()
-                                    join sv in _tbDbContext.DanhSachSinhVienNhanBangs.AsNoTracking() on slide.IdSinhVienNhanBang equals sv.Id
-                                    where slide.IdSubPlan == subPlan.Id && !slide.Deleted && !sv.Deleted && slide.IsShow
-                                        && slide.TrangThai == TraoBangConstants.ChuanBi
-                                    select sv.Id
-                                    ).Count();
 
-            //    await _tbDbContext.DanhSachSinhVienNhanBangs
-            //    .AsNoTracking()
-            //    .CountAsync(x => x.IdSubPlan == idSubPlan && !x.Deleted && x.TrangThai == TraoBangConstants.ThamGiaTraoBang);
-
-            //var soLuongVangMat = await _tbDbContext.DanhSachSinhVienNhanBangs
-            //    .AsNoTracking()
-            //    .CountAsync(x => x.IdSubPlan == idSubPlan && !x.Deleted && x.TrangThai == TraoBangConstants.VangMat);
-
-            //var soLuongDaTrao = await _tbDbContext.TienDoTraoBangs
-            //    .AsNoTracking()
-            //    .CountAsync(x => x.IdSubPlan == idSubPlan && !x.Deleted && x.TrangThai == TraoBangConstants.DaTraoBang);
-
-            //var soLuongConLai = await _tbDbContext.TienDoTraoBangs
-            //    .AsNoTracking()
-            //    .CountAsync(x => x.IdSubPlan == idSubPlan && !x.Deleted && x.TrangThai == TraoBangConstants.ChuanBi);
+            var soLuongDaTrao = await _tbDbContext.TienDoTraoBangs
+                .AsNoTracking()
+                .CountAsync(x => x.IdSubPlan == idSubPlan && !x.Deleted && x.TrangThai == TraoBangConstants.DaTraoBang);
 
 
             return new GetInforSubPlanDto
@@ -1091,7 +1067,7 @@ namespace traobang.be.application.TraoBang.Implements
                 SoLuongThamGia = soLuongThamGia,
                 SoLuongVangMat = soLuongVangMat,
                 SoLuongDaTrao = soLuongDaTrao,
-                SoLuongConLai = soLuongConLai
+                SoLuongConLai = soLuongThamGia - soLuongDaTrao
             };
 
         }

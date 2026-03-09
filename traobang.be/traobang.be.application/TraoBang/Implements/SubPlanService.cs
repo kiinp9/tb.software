@@ -410,6 +410,7 @@ namespace traobang.be.application.TraoBang.Implements
             sinhVien.Order = newOrder;
             await _tbDbContext.SaveChangesAsync();
         }
+
         public void DeleteSinhVienNhanBang(int idSubPlan, int id)
         {
             _logger.LogInformation($"{nameof(DeleteSinhVienNhanBang)}, idSubPlan= {idSubPlan}, id= {id} ");
@@ -423,35 +424,52 @@ namespace traobang.be.application.TraoBang.Implements
             _tbDbContext.DanhSachSinhVienNhanBangs.Update(sinhVien);
             _tbDbContext.SaveChanges();
         }
+
         public async Task<ViewSinhVienNhanBangDto> ShowSinhVienNhanBangInfor(string mssv)
         {
             _logger.LogInformation($"{nameof(ShowSinhVienNhanBangInfor)}, mssv= {mssv} ");
 
-            var sinhVien = await _tbDbContext.DanhSachSinhVienNhanBangs
-                .FirstOrDefaultAsync(x => !x.Deleted && x.MaSoSinhVien.ToLower() == mssv.ToLower() && x.TrangThai == TraoBangConstants.ThamGiaTraoBang)
-                ?? throw new UserFriendlyException(ErrorCodes.TraoBangErrorSinhVienNotFound);
+            var activePlan = await _tbDbContext.Plans.AsNoTracking().Where(x => x.TrangThai == TrangThaiPlan.DangHoatDong && !x.Deleted).FirstOrDefaultAsync();
+            if (activePlan == null)
+            {
+                return null;
+            }
+
+            var sinhVienSlide = await (
+                               from slide in _tbDbContext.Slides.AsNoTracking()
+                               join sp in _tbDbContext.SubPlans.AsNoTracking() on slide.IdSubPlan equals sp.Id
+                               join sv in _tbDbContext.DanhSachSinhVienNhanBangs.AsNoTracking() on slide.IdSinhVienNhanBang equals sv.Id
+                               where !slide.Deleted && !sv.Deleted && !sp.Deleted && sp.IsShow
+                                    && sp.IdPlan == activePlan.Id
+                                    && slide.LoaiSlide == LoaiSlides.SINH_VIEN && slide.TrangThai == TraoBangConstants.ChuanBi
+                                    //&& slide.LoaiSlide == LoaiSlides.SINH_VIEN && slide.TrangThai == TraoBangConstants.ThamGiaTraoBang
+                                    && sv.MaSoSinhVien.ToLower() == mssv.ToLower()
+                               select new { sv, slide }
+                            ).FirstOrDefaultAsync()
+                            ?? throw new UserFriendlyException(ErrorCodes.TraoBangErrorSinhVienNotFound);
+
 
             var subPlan = await _tbDbContext.SubPlans
-                .FirstOrDefaultAsync(x => x.Id == sinhVien.IdSubPlan && !x.Deleted)
+                .FirstOrDefaultAsync(x => x.Id == sinhVienSlide.slide.IdSubPlan && !x.Deleted)
                 ?? throw new UserFriendlyException(ErrorCodes.TraoBangErrorSinhVienTraoBangKhongThuocKhoaDangTrao);
 
-            var maxOrder = await _tbDbContext.DanhSachSinhVienNhanBangs
-                .Where(x => x.IdSubPlan == sinhVien.IdSubPlan && !x.Deleted)
+            var maxOrder = await _tbDbContext.Slides.AsNoTracking()
+                .Where(x => x.IdSubPlan == sinhVienSlide.slide.IdSubPlan && !x.Deleted)
                 .MaxAsync(x => (int?)x.Order) ?? 0;
 
-            var minOrder = await _tbDbContext.DanhSachSinhVienNhanBangs
-                .Where(x => x.IdSubPlan == sinhVien.IdSubPlan && !x.Deleted)
+            var minOrder = await _tbDbContext.Slides.AsNoTracking()
+                .Where(x => x.IdSubPlan == sinhVienSlide.slide.IdSubPlan && !x.Deleted)
                 .MinAsync(x => (int?)x.Order) ?? 0;
 
             var totalSubPlans = await _tbDbContext.SubPlans
-                .Where(x => x.IdPlan == subPlan.IdPlan && !x.Deleted)
+                .Where(x => x.IdPlan == subPlan.IdPlan && x.IsShow && x.IdPlan == activePlan.Id && !x.Deleted)
                 .CountAsync();
 
-            var result = _mapper.Map<ViewSinhVienNhanBangDto>(sinhVien);
+            var result = _mapper.Map<ViewSinhVienNhanBangDto>(sinhVienSlide.sv);
             result.OrderSubPlan = $"{subPlan.Order}/{totalSubPlans}";
-            result.Order = $"{sinhVien.Order}/{maxOrder}";
-            result.IsShowNext = sinhVien.Order < maxOrder;
-            result.IsShowPrev = sinhVien.Order > minOrder;
+            result.Order = $"{sinhVienSlide.slide.Order}/{maxOrder}";
+            result.IsShowNext = sinhVienSlide.slide.Order < maxOrder;
+            result.IsShowPrev = sinhVienSlide.slide.Order > minOrder;
 
             return result;
         }

@@ -185,6 +185,7 @@ namespace traobang.be.Controllers
                 return OkException(ex);
             }
         }
+
         [Permission(PermissionKeys.SubPlanDelete)]
         [HttpDelete("{idSubPlan}/sinh-vien-nhan-bang/{id}")]
         public ApiResponse DeleteSinhVienNhanBang([FromRoute] int idSubPlan, [FromRoute] int id)
@@ -199,6 +200,7 @@ namespace traobang.be.Controllers
                 return OkException(ex);
             }
         }
+
         [AllowAnonymous]
         [HttpGet("sinh-vien-nhan-bang/{mssv}")]
         public async Task<ApiResponse> GetByMssv([FromRoute] string mssv)
@@ -213,6 +215,7 @@ namespace traobang.be.Controllers
                 return OkException(ex);
             }
         }
+
         [AllowAnonymous]
         [HttpGet("sinh-vien-nhan-bang/{mssv}/next")]
         public async Task<ApiResponse> GetNextByMssv([FromRoute] string mssv)
@@ -227,6 +230,7 @@ namespace traobang.be.Controllers
                 return OkException(ex);
             }
         }
+
         [AllowAnonymous]
         [HttpGet("sinh-vien-nhan-bang/{mssv}/prev")]
         public async Task<ApiResponse> GetPrevMssv([FromRoute] string mssv)
@@ -241,6 +245,7 @@ namespace traobang.be.Controllers
                 return OkException(ex);
             }
         }
+
         [Permission(PermissionKeys.SubPlanAdd)]
         [HttpPost("sinh-vien-nhan-bang/hang-doi")]
         public async Task<ApiResponse> DiemDanhNhanBang([FromQuery] string mssv)

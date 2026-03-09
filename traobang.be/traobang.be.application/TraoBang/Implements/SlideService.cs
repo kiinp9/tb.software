@@ -332,6 +332,9 @@ namespace traobang.be.application.TraoBang.Implements
                         oldSv.DeletedDate = DateTime.Now;
                     }
 
+                    var slideSvOrderDict = new Dictionary<int, int>();
+                    var slideTextOrderDict = new Dictionary<int, int>();
+
                     // insert vao map
                     for (int i = 0; i < data.Count; i++)
                     {
@@ -366,6 +369,32 @@ namespace traobang.be.application.TraoBang.Implements
                             continue;
                         }
 
+                        int tmpOrder = 0;
+                        if (loaiSlide == LoaiSlides.SINH_VIEN)
+                        {
+                            if (slideSvOrderDict.ContainsKey(subplan.Id))
+                            {
+                                slideSvOrderDict[subplan.Id]++;
+                            }
+                            else
+                            {
+                                slideSvOrderDict[subplan.Id] = 1;
+                            }
+                            tmpOrder = slideSvOrderDict[subplan.Id];
+                        }
+                        else if (loaiSlide == LoaiSlides.BINH_THUONG)
+                        {
+                            if (slideTextOrderDict.ContainsKey(subplan.Id))
+                            {
+                                slideTextOrderDict[subplan.Id]++;
+                            }
+                            else
+                            {
+                                slideTextOrderDict[subplan.Id] = 1;
+                            }
+                            tmpOrder = slideTextOrderDict[subplan.Id];
+                        }
+
                         var tmpMap = new ImportExcelMapSlideSinhVienDto();
 
                         if (loaiSlide == LoaiSlides.SINH_VIEN)
@@ -389,6 +418,8 @@ namespace traobang.be.application.TraoBang.Implements
                             };
                         }
 
+
+
                         tmpMap.Slide = new Slide
                         {
                             IdSubPlan = subplan.Id,
@@ -396,7 +427,7 @@ namespace traobang.be.application.TraoBang.Implements
                             LoaiSlide = loaiSlide,
                             NoiDung = hoTenNoiDung,
                             Note = noteChoMC,
-                            Order = rowIndex,
+                            Order = tmpOrder,
                             TrangThai = TraoBangConstants.ChuanBi,
                             CreatedBy = username,
                         };

@@ -35,7 +35,7 @@ export const appRoutes: Routes = [
     {
         path: 'guest',
         children: [
-            { path: 'trao-bang/main-screen', component: SanKhauMain, title: 'Sân khấu' }
+            { path: 'trao-bang/main-screen', component: MainScreen, title: 'Sân khấu' }
         ]
     },
     {

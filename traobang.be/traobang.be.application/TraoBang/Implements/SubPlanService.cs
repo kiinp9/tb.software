@@ -1122,7 +1122,7 @@ namespace traobang.be.application.TraoBang.Implements
 
             var soLuongDaTrao = await _tbDbContext.TienDoTraoBangs
                 .AsNoTracking()
-                .CountAsync(x => x.IdSubPlan == idSubPlan && !x.Deleted && x.TrangThai == TraoBangConstants.DaTraoBang);
+                .CountAsync(x => x.IdSubPlan == idSubPlan && !x.Deleted && x.TrangThai == TraoBangConstants.DaTraoBang && x.LoaiSlide == LoaiSlides.SINH_VIEN);
 
 
             return new GetInforSubPlanDto

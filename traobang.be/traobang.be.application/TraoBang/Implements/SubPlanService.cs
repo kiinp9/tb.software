@@ -454,11 +454,11 @@ namespace traobang.be.application.TraoBang.Implements
                 ?? throw new UserFriendlyException(ErrorCodes.TraoBangErrorSinhVienTraoBangKhongThuocKhoaDangTrao);
 
             var maxOrder = await _tbDbContext.Slides.AsNoTracking()
-                .Where(x => x.IdSubPlan == sinhVienSlide.slide.IdSubPlan && !x.Deleted)
+                .Where(x => x.IdSubPlan == sinhVienSlide.slide.IdSubPlan && x.LoaiSlide == LoaiSlides.SINH_VIEN && !x.Deleted)
                 .MaxAsync(x => (int?)x.Order) ?? 0;
 
             var minOrder = await _tbDbContext.Slides.AsNoTracking()
-                .Where(x => x.IdSubPlan == sinhVienSlide.slide.IdSubPlan && !x.Deleted)
+                .Where(x => x.IdSubPlan == sinhVienSlide.slide.IdSubPlan && x.LoaiSlide == LoaiSlides.SINH_VIEN && !x.Deleted)
                 .MinAsync(x => (int?)x.Order) ?? 0;
 
             var totalSubPlans = await _tbDbContext.SubPlans
@@ -505,6 +505,7 @@ namespace traobang.be.application.TraoBang.Implements
                         && slide.IdSubPlan == currentSinhVienSlide.slide.IdSubPlan
                         && slide.Order > currentSinhVienSlide.slide.Order
                         && slide.TrangThai != TraoBangConstants.VangMat
+                        && slide.LoaiSlide == LoaiSlides.SINH_VIEN
                     select new { sv, slide }
                 ).FirstOrDefaultAsync();
 
@@ -518,11 +519,11 @@ namespace traobang.be.application.TraoBang.Implements
                 ?? throw new UserFriendlyException(ErrorCodes.TraoBangErrorSinhVienTraoBangKhongThuocKhoaDangTrao);
 
             var maxOrder = await _tbDbContext.Slides
-                .Where(x => x.IdSubPlan == nextSinhVienSlide.slide.IdSubPlan && !x.Deleted && x.TrangThai != TraoBangConstants.VangMat)
+                .Where(x => x.IdSubPlan == nextSinhVienSlide.slide.IdSubPlan && !x.Deleted && x.LoaiSlide == LoaiSlides.SINH_VIEN && x.TrangThai != TraoBangConstants.VangMat)
                 .MaxAsync(x => (int?)x.Order) ?? 0;
 
             var minOrder = await _tbDbContext.Slides
-                .Where(x => x.IdSubPlan == nextSinhVienSlide.slide.IdSubPlan && !x.Deleted && x.TrangThai != TraoBangConstants.VangMat)
+                .Where(x => x.IdSubPlan == nextSinhVienSlide.slide.IdSubPlan && !x.Deleted && x.LoaiSlide == LoaiSlides.SINH_VIEN && x.TrangThai != TraoBangConstants.VangMat)
                 .MinAsync(x => (int?)x.Order) ?? 0;
 
             var totalSubPlans = await _tbDbContext.SubPlans
@@ -569,6 +570,7 @@ namespace traobang.be.application.TraoBang.Implements
                         && slide.IdSubPlan == currentSinhVienSlide.slide.IdSubPlan
                         && slide.Order < currentSinhVienSlide.slide.Order
                         && slide.TrangThai != TraoBangConstants.VangMat
+                        && slide.LoaiSlide == LoaiSlides.SINH_VIEN
                     select new { sv, slide }
                 ).FirstOrDefaultAsync();
 
@@ -582,11 +584,11 @@ namespace traobang.be.application.TraoBang.Implements
                 ?? throw new UserFriendlyException(ErrorCodes.TraoBangErrorSinhVienTraoBangKhongThuocKhoaDangTrao);
 
             var maxOrder = await _tbDbContext.Slides
-                .Where(x => x.IdSubPlan == prevSinhVienSlide.slide.IdSubPlan && !x.Deleted && x.TrangThai != TraoBangConstants.VangMat)
+                .Where(x => x.IdSubPlan == prevSinhVienSlide.slide.IdSubPlan && !x.Deleted && x.LoaiSlide == LoaiSlides.SINH_VIEN && x.TrangThai != TraoBangConstants.VangMat)
                 .MaxAsync(x => (int?)x.Order) ?? 0;
 
             var minOrder = await _tbDbContext.Slides
-                .Where(x => x.IdSubPlan == prevSinhVienSlide.slide.IdSubPlan && !x.Deleted && x.TrangThai != TraoBangConstants.VangMat)
+                .Where(x => x.IdSubPlan == prevSinhVienSlide.slide.IdSubPlan && !x.Deleted && x.LoaiSlide == LoaiSlides.SINH_VIEN && x.TrangThai != TraoBangConstants.VangMat)
                 .MinAsync(x => (int?)x.Order) ?? 0;
 
             var totalSubPlans = await _tbDbContext.SubPlans

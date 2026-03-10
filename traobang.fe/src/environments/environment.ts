@@ -9,4 +9,5 @@ export const environment: IEnvironment = {
     authScope: 'openid offline_access',
     appUrl: 'https://traobang.huce.edu.vn',
     grapeJsLicense: '',
+    minioUrl:'https://s3-2.huce.edu.vn:9000'
 };

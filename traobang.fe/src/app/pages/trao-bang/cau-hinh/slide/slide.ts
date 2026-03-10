@@ -18,6 +18,7 @@ import { TraoBangPlanService } from '@/service/plan.service';
 import { IViewRowConfigPlan, PlanTrangThai } from '@/models/traobang/plan.models';
 import { TraoBangSubPlanService } from '@/service/sub-plan.service';
 import { IViewRowConfigSubPlan } from '@/models/traobang/sub-plan.models';
+import { GenQrCode } from './gen-qr-code/gen-qr-code';
 @Component({
     selector: 'app-slide',
     imports: [SharedImports, DataTable, FileUploadModule],
@@ -232,6 +233,15 @@ export class SlideScreen extends BaseComponent {
 
     onUpload() {
         const ref = this._dialogService.open(Upload, { header: 'Import từ file', closable: true, modal: true, styleClass: 'w-[700px]', focusOnShow: false });
+        ref.onClose.subscribe((result) => {
+            if (result) {
+                this.getData();
+            }
+        });
+    }
+
+    onGenQR() {
+        const ref = this._dialogService.open(GenQrCode, { header: 'Tạo mã QR', closable: true, modal: true, styleClass: 'w-[700px]', focusOnShow: false });
         ref.onClose.subscribe((result) => {
             if (result) {
                 this.getData();

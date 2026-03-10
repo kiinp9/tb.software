@@ -1,7 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
 using QRCoder;
-using System.Drawing;
-using System.Drawing.Imaging;
+using SixLabors.Fonts;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Drawing.Processing;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
 
 namespace traobang.be.infrastructure.external.QrCode
 {
@@ -31,50 +34,47 @@ namespace traobang.be.infrastructure.external.QrCode
 
         public Stream GenerateQrWithText(string qrText, string textBelow)
         {
-            using QRCodeGenerator qrGenerator = new QRCodeGenerator();
-            using QRCodeData qrCodeData = qrGenerator.CreateQrCode(qrText, QRCodeGenerator.ECCLevel.Q);
-            using QRCode qrCode = new QRCode(qrCodeData);
+            // Generate QR PNG bytes
+            using var qrGenerator = new QRCodeGenerator();
+            using var qrData = qrGenerator.CreateQrCode(qrText, QRCodeGenerator.ECCLevel.Q);
+            var qrCode = new PngByteQRCode(qrData);
+            byte[] qrBytes = qrCode.GetGraphic(20);
 
-            using Bitmap qrImage = qrCode.GetGraphic(20);
+            using Image<Rgba32> qrImage = Image.Load<Rgba32>(qrBytes);
 
-            using Font font = new Font("Arial", 32);
+            int padding = 20;
 
-            // measure text
-            using Bitmap tempBmp = new Bitmap(1, 1);
-            using Graphics tempGraphics = Graphics.FromImage(tempBmp);
+            var font = SystemFonts.CreateFont("Arial", 32);
 
-            SizeF textSize = tempGraphics.MeasureString(textBelow, font);
-
-            int width = Math.Max(qrImage.Width, (int)textSize.Width + 20);
-            int textHeight = (int)textSize.Height + 10;
-            int height = qrImage.Height + textHeight;
-
-            Bitmap finalImage = new Bitmap(width, height);
-
-            using (Graphics g = Graphics.FromImage(finalImage))
+            var options = new TextOptions(font)
             {
-                g.Clear(Color.White);
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
 
-                // center QR
+            var size = TextMeasurer.MeasureSize(textBelow, options);
+
+            int width = Math.Max(qrImage.Width, (int)size.Width + padding * 2);
+            int height = qrImage.Height + (int)size.Height + padding * 2;
+
+            var finalImage = new Image<Rgba32>(width, height, Color.White);
+
+            finalImage.Mutate(ctx =>
+            {
                 int qrX = (width - qrImage.Width) / 2;
-                g.DrawImage(qrImage, qrX, 0);
 
-                StringFormat sf = new StringFormat
-                {
-                    Alignment = StringAlignment.Center,
-                    FormatFlags = StringFormatFlags.NoWrap
-                };
+                ctx.DrawImage(qrImage, new Point(qrX, 0), 1f);
 
-                Rectangle textRect = new Rectangle(0, qrImage.Height, width, textHeight);
-
-                g.DrawString(textBelow, font, Brushes.Black, textRect, sf);
-            }
+                ctx.DrawText(
+                    textBelow,
+                    font,
+                    Color.Black,
+                    new PointF(width / 2, qrImage.Height + padding)
+                );
+            });
 
             MemoryStream ms = new MemoryStream();
-            finalImage.Save(ms, ImageFormat.Png);
+            finalImage.SaveAsPng(ms);
             ms.Position = 0;
-
-            finalImage.Dispose();
 
             return ms;
         }

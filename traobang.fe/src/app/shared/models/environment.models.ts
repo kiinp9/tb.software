@@ -7,4 +7,5 @@ export interface IEnvironment {
   authScope: string,
   appUrl: string,
   grapeJsLicense: string,
+  minioUrl:string,
 }

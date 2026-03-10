@@ -21,6 +21,7 @@ using traobang.be.infrastructure.external.BackgroundJob;
 using traobang.be.infrastructure.external.Excel;
 using traobang.be.infrastructure.external.File;
 using traobang.be.infrastructure.external.File.Dtos;
+using traobang.be.infrastructure.external.QrCode;
 using traobang.be.infrastructure.external.SignalR.Hub.Implements;
 using traobang.be.infrastructure.external.SignalR.Service.Implements;
 using traobang.be.infrastructure.external.SignalR.Service.Interfaces;
@@ -224,6 +225,12 @@ builder.Services.AddMinio(configureClient => configureClient
     .WithCredentials(accessKey, s3SecretKey));
 
 builder.Services.AddScoped<IFileS3Services, FileS3Services>();
+#endregion
+
+builder.Services.Configure<TemplateSettings>(builder.Configuration.GetSection("Template"));
+
+#region qrcode
+builder.Services.AddScoped<IQrCodeService, QrCodeService>();
 #endregion
 
 // Add services to the container.

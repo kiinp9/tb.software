@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System.Text;
+using Microsoft.Extensions.Options;
 using System.Text.Json;
 using traobang.be.application.Base;
 using traobang.be.application.TraoBang.Dtos;
@@ -12,10 +12,13 @@ using traobang.be.domain.TraoBang;
 using traobang.be.infrastructure.data;
 using traobang.be.infrastructure.external.Excel;
 using traobang.be.infrastructure.external.File;
+using traobang.be.infrastructure.external.File.Dtos;
+using traobang.be.infrastructure.external.QrCode;
 using traobang.be.shared.Constants.TraoBang;
 using traobang.be.shared.HttpRequest.AppException;
 using traobang.be.shared.HttpRequest.BaseRequest;
 using traobang.be.shared.HttpRequest.Error;
+using traobang.be.shared.Settings;
 using traobang.be.shared.Utils;
 
 namespace traobang.be.application.TraoBang.Implements
@@ -24,17 +27,27 @@ namespace traobang.be.application.TraoBang.Implements
     {
         private readonly IExcelService _excelService;
         private readonly IFileS3Services _fileS3Service;
+        private readonly IQrCodeService _qrCodeService;
+        private readonly FileS3Config _fileS3Config;
+        private readonly TemplateSettings _templateSettings;
+
         public SlideService(
             TbDbContext tbDbContext,
             ILogger<SlideService> logger,
             IHttpContextAccessor httpContextAccessor,
             IExcelService excelService,
             IFileS3Services fileS3Service,
+            IQrCodeService qrCodeService,
+            IOptions<FileS3Config> fileS3Config,
+            IOptions<TemplateSettings> templateSettings,
             IMapper mapper)
         : base(tbDbContext, logger, httpContextAccessor, mapper)
         {
             _excelService = excelService;
             _fileS3Service = fileS3Service;
+            _qrCodeService = qrCodeService;
+            _fileS3Config = fileS3Config.Value;
+            _templateSettings = templateSettings.Value;
         }
 
         public void Create(CreateSlideDto dto)
@@ -472,11 +485,46 @@ namespace traobang.be.application.TraoBang.Implements
             var plan = _tbDbContext.Plans.AsNoTracking().Where(x => x.Id == dto.IdPlan && !x.Deleted).FirstOrDefault()
                 ?? throw new UserFriendlyException(ErrorCodes.TraoBangErrorPlanNotFound);
 
-            string text = "Hello World";
+            var listSv = (
+                    from sl in _tbDbContext.Slides
+                    join sv in _tbDbContext.DanhSachSinhVienNhanBangs on sl.IdSinhVienNhanBang equals sv.Id
+                    join sp in _tbDbContext.SubPlans on sl.IdSubPlan equals sp.Id
+                    where !sl.Deleted && !sv.Deleted && !sp.Deleted
+                        && sl.LoaiSlide == LoaiSlides.SINH_VIEN
+                        && sp.IdPlan == plan.Id
+                        && !string.IsNullOrEmpty(sv.MaSoSinhVien)
+                    select new { sv, sp }
+                ).ToList();
 
-            var stream = new MemoryStream(Encoding.UTF8.GetBytes(text));
+            string templateContent = _templateSettings.UrlSvInfo;
+            string folder = "QrSinhVien";
+            foreach (var item in listSv)
+            {
+                var sv = item.sv;
+                var content = templateContent.Replace("[mssv]", sv.MaSoSinhVien);
 
-            var rslt = await _fileS3Service.WriteStreamFileAsync("test.txt", stream);
+                //var qrcode = _qrCodeService.GenQrCodeByText(content);
+                string notice = $@"Họ tên: {sv.HoVaTen} - Mã số sinh viên: {sv.MaSoSinhVien}
+Khoa: {item.sp.Ten}";
+
+                var qrcode = _qrCodeService.GenerateQrWithText(content, notice);
+                string filename = $"{folder}/{sv.MaSoSinhVien}.jpg";
+
+                try
+                {
+                    _logger.LogInformation($"Sinh qr cho SV mssv = {sv.MaSoSinhVien}");
+
+                    var upload = await _fileS3Service.WriteStreamFileAsync(filename, qrcode);
+                    sv.LinkQR = $"{_fileS3Config.BucketName}/{filename}";
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex.Message);
+                }
+
+            }
+
+            _tbDbContext.SaveChanges();
         }
     }
 }

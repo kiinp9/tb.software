@@ -3,7 +3,7 @@
         <div class="mb-3">
             <label for="IdPlan" class="block text-surface-900 dark:text-surface-0 font-medium mb-2">Chương trình<span
                     class="text-red-500">*</span></label>
-            <p-select id="IdPlan" formControlName="IdPlan" [options]="listPlan" optionLabel="ten" optionValue="id"
+            <p-select id="IdPlan" formControlName="idPlan" [options]="listPlan" optionLabel="ten" optionValue="id"
                 [filter]="true" placeholder="Chọn chương trình" class="w-full mb-2" appendTo="body" />
             @if (form.get('IdPlan')?.hasError('required') && form.get('IdPlan')?.touched) {
             <p-message severity="error" variant="simple" size="small">{{ getError('IdPlan') }} </p-message>

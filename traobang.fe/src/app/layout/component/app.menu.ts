@@ -50,14 +50,17 @@ export class AppMenu {
                     {
                         label: 'Trao bằng',
                         visible: this._sharedService.isGranted(PermissionConstants.MenuTraoBang),
+                        expanded: true,
                         items: [
                             {
                                 label: 'Màn hình',
+                                expanded: true,
                                 items: [
                                     {
                                         label: 'Sân khấu',
                                         routerLink: ['/guest/trao-bang/main-screen'],
                                         visible: true,
+
                                     },
                                     {
                                         label: 'Cánh gà',
@@ -79,6 +82,7 @@ export class AppMenu {
                             {
                                 label: 'Cấu hình',
                                 visible: this._sharedService.isGranted(PermissionConstants.MenuTraoBangCauHinh),
+                                expanded: true,
                                 items: [
                                     {
                                         label: 'Chương trình',
@@ -117,6 +121,7 @@ export class AppMenu {
                     {
                         label: 'QL Tài khoản',
                         visible: this._sharedService.isGranted(PermissionConstants.MenuUserManagement),
+                        expanded: true,
                         items: [
                             {
                                 label: 'Người dùng',

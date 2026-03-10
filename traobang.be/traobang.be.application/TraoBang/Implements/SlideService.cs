@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Text;
 using System.Text.Json;
 using traobang.be.application.Base;
 using traobang.be.application.TraoBang.Dtos;
@@ -10,6 +11,7 @@ using traobang.be.application.TraoBang.Interfaces;
 using traobang.be.domain.TraoBang;
 using traobang.be.infrastructure.data;
 using traobang.be.infrastructure.external.Excel;
+using traobang.be.infrastructure.external.File;
 using traobang.be.shared.Constants.TraoBang;
 using traobang.be.shared.HttpRequest.AppException;
 using traobang.be.shared.HttpRequest.BaseRequest;
@@ -21,15 +23,18 @@ namespace traobang.be.application.TraoBang.Implements
     public class SlideService : BaseService, ISlideService
     {
         private readonly IExcelService _excelService;
+        private readonly IFileS3Services _fileS3Service;
         public SlideService(
             TbDbContext tbDbContext,
             ILogger<SlideService> logger,
             IHttpContextAccessor httpContextAccessor,
             IExcelService excelService,
+            IFileS3Services fileS3Service,
             IMapper mapper)
         : base(tbDbContext, logger, httpContextAccessor, mapper)
         {
             _excelService = excelService;
+            _fileS3Service = fileS3Service;
         }
 
         public void Create(CreateSlideDto dto)
@@ -276,7 +281,7 @@ namespace traobang.be.application.TraoBang.Implements
 
         public void ImportSlide(ImportExcelSlideDto dto)
         {
-            _logger.LogInformation($"{nameof(ImportSlide)}");
+            _logger.LogInformation($"{nameof(ImportSlide)}, dto = {JsonSerializer.Serialize(dto)}");
 
             var username = getCurrentName();
             var data = _excelService.ReadExcelFile(dto.File, "Sheet1");
@@ -458,6 +463,20 @@ namespace traobang.be.application.TraoBang.Implements
                     tran.Commit();
                 }
             }
+        }
+
+        public async Task GenerateQr(GenerateSinhVienQrDto dto)
+        {
+            _logger.LogInformation($"{nameof(GenerateQr)}, dto = {JsonSerializer.Serialize(dto)}");
+
+            var plan = _tbDbContext.Plans.AsNoTracking().Where(x => x.Id == dto.IdPlan && !x.Deleted).FirstOrDefault()
+                ?? throw new UserFriendlyException(ErrorCodes.TraoBangErrorPlanNotFound);
+
+            string text = "Hello World";
+
+            var stream = new MemoryStream(Encoding.UTF8.GetBytes(text));
+
+            var rslt = await _fileS3Service.WriteStreamFileAsync("test.txt", stream);
         }
     }
 }

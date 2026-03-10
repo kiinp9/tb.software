@@ -146,5 +146,24 @@ namespace traobang.be.Controllers.Config
                 return OkException(ex);
             }
         }
+
+        /// <summary>
+        /// Sinh mã QR cho SV nhận bằng
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        [HttpPost("qr")]
+        public async Task<ApiResponse> GenerateQr(GenerateSinhVienQrDto dto)
+        {
+            try
+            {
+                await _slideService.GenerateQr(dto);
+                return new();
+            }
+            catch (Exception ex)
+            {
+                return OkException(ex);
+            }
+        }
     }
 }

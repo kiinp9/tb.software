@@ -20,7 +20,7 @@ import { PopoverModule } from 'primeng/popover';
                 <i class="pi pi-bars"></i>
             </button>
             <a class="layout-topbar-logo flex items-center gap-3 text-white hover:text-gray-200 transition-colors duration-200" routerLink="/">
-                <img src="traobang_icon.png" class="h-8 w-8" />
+                <!-- <img src="traobang_icon.png" class="h-8 w-8" /> -->
                 <span class="font-semibold text-lg">TRAO BẰNG</span>
             </a>
         </div>

@@ -35,7 +35,7 @@
     </div>
     <!--  -->
     <div class="mb-4">
-        <label for="note" class="block text-surface-900 dark:text-surface-0 font-medium mb-2">Ghi chú<span class="text-red-500">*</span></label>
+        <label for="note" class="block text-surface-900 dark:text-surface-0 font-medium mb-2">Ghi chú</label>
         <textarea rows="3" pInputTextarea formControlName="note" id="note" type="text" class="w-full mb-2"></textarea>
         @if (form.get('note')?.hasError('required') && form.get('note')?.touched) {
         <p-message severity="error" variant="simple" size="small">{{ getError('note') }} </p-message>

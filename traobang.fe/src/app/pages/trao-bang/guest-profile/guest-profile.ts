@@ -5,6 +5,7 @@ import { BaseComponent } from '@/shared/components/base/base-component';
 import { SharedImports } from '@/shared/import.shared';
 import { Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { environment } from 'src/environments/environment';
 
 const STEPS = {
   PREV: -1,
@@ -27,6 +28,7 @@ export class GuestProfile extends BaseComponent {
   step: number = STEPS.CURRENT;
   originSv: IViewGuestSvNhanBang = {}
   data: IViewGuestSvNhanBang = {}
+  urlFile = environment.minioUrl
 
   override ngOnInit(): void {
     this.mssv = this._route.snapshot.queryParamMap.get('mssv');

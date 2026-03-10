@@ -28,6 +28,7 @@
                 <!-- <p-button label="Tìm kiếm" type="submit" styleClass="w-32" /> -->
             </div>
             <div class="flex">
+                <p-button icon="pi pi-qrcode" (onClick)="onGenQR()" class="mr-3" label="Tạo mã QR" />
                 <p-button icon="pi pi-download" (onClick)="downloadTemplate()" class="mr-3" label="Template excel" />
                 <p-button icon="pi pi-file-import" label="Import excel" (onClick)="onUpload()" />
             </div>

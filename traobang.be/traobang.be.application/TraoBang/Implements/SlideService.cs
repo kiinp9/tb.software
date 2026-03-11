@@ -537,12 +537,12 @@ namespace traobang.be.application.TraoBang.Implements
 
             string notice = $@"{sv.QrTenKhoa}
 {sv.QrHoTen}
-{sv.MaSoSinhVien}";
+MSSV: {sv.MaSoSinhVien}";
 
             if (sp.Order <= 2)
             {
                 notice = $@"{sv.QrHoTen}
-{sv.MaSoSinhVien}";
+MSSV: {sv.MaSoSinhVien}";
             }
 
             var qrcode = _qrCodeService.GenerateQrWithText(content, notice);

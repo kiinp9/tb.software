@@ -44,7 +44,11 @@ export class SlideService {
         return this.http.post<IBaseResponse>(`${this.api}/import/slide`, body);
     }
 
-    GenQrCode(body: any) {
+    genQrCodeBySlide(body: any) {
         return this.http.post<IBaseResponse>(`${this.api}/qr`, body);
+    }
+
+    genQrCode(id: number) {
+        return this.http.post<IBaseResponse>(`${this.api}/qr/slide/${id}`, {});
     }
 }

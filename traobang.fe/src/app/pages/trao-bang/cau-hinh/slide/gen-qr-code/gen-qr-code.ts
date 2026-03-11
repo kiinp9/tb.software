@@ -52,7 +52,7 @@ export class GenQrCode extends BaseComponent {
         }
         let body = this.form.value
         this.loading = true;
-        this._slideService.GenQrCode(body).subscribe({
+        this._slideService.genQrCodeBySlide(body).subscribe({
             next: (res) => {
                 if (this.isResponseSucceed(res, true, 'Tạo mã QR thành công')) {
                     this._ref?.close(true);

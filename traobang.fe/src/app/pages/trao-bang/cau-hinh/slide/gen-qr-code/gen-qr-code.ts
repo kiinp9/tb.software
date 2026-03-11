@@ -22,11 +22,11 @@ export class GenQrCode extends BaseComponent {
     listPlan: IViewRowConfigPlan[] = [];
 
     override form: FormGroup = new FormGroup({
-        IdPlan: new FormControl('', [Validators.required])
+        idPlan: new FormControl('', [Validators.required])
     });
 
     override ValidationMessages: Record<string, Record<string, string>> = {
-        IdPlan: {
+        idPlan: {
             required: 'Vui lòng chọn chương trình'
         }
     };
@@ -50,12 +50,9 @@ export class GenQrCode extends BaseComponent {
             this.messageError('Vui lòng điền đầy đủ thông tin bắt buộc');
             return;
         }
-
-        const formData = new FormData();
-        formData.append('idPlan', this.form.get('IdPlan')?.value.toString());
-
+        let body = this.form.value
         this.loading = true;
-        this._slideService.GenQrCode(formData).subscribe({
+        this._slideService.GenQrCode(body).subscribe({
             next: (res) => {
                 if (this.isResponseSucceed(res, true, 'Tạo mã QR thành công')) {
                     this._ref?.close(true);

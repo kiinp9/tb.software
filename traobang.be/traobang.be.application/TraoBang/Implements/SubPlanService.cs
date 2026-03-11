@@ -1924,7 +1924,6 @@ namespace traobang.be.application.TraoBang.Implements
                 Items = items
             };
         }
-
         public async Task Restart()
         {
             _logger.LogInformation($"{nameof(Restart)}");

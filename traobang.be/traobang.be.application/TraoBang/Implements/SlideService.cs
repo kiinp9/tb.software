@@ -531,9 +531,13 @@ namespace traobang.be.application.TraoBang.Implements
 
             var content = templateContent.Replace("[mssv]", sv.MaSoSinhVien);
 
-            //var qrcode = _qrCodeService.GenQrCodeByText(content);
-            string notice = $@"Họ tên: {sv.HoVaTen} - Mã số sinh viên: {sv.MaSoSinhVien}
-Khoa: {sp.Ten}";
+            string notice = $@"Khoa: {sp.Ten}
+{sv.CapBang} {sv.HoVaTen} - {sv.MaSoSinhVien}";
+
+            if (sp.Order <= 2)
+            {
+                notice = $@"{sv.CapBang} {sv.HoVaTen} - {sv.MaSoSinhVien}";
+            }
 
             var qrcode = _qrCodeService.GenerateQrWithText(content, notice);
             string filename = $"{folder}/{sv.MaSoSinhVien}.jpg";

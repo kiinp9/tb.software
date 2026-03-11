@@ -36,60 +36,51 @@ namespace traobang.be.infrastructure.external.QrCode
         {
             using var qrGenerator = new QRCodeGenerator();
             using var qrData = qrGenerator.CreateQrCode(qrText, QRCodeGenerator.ECCLevel.Q);
-
             var qrCode = new PngByteQRCode(qrData);
             byte[] qrBytes = qrCode.GetGraphic(20);
-
             using Image<Rgba32> qrImage = Image.Load<Rgba32>(qrBytes);
 
-            int padding = 20;
-            Font font = SystemFonts.CreateFont("Arial", 32);
-
+            int padding = 5;
+            float lineSpacing = 5;
+            float fontSize = 64;
+            Font font = SystemFonts.CreateFont("Arial", fontSize, FontStyle.Bold);
             var lines = textBelow.Split('\n');
 
-            float totalTextHeight = 0;
+            // Use font size as fixed line height — reliable across all lines
+            float lineHeight = fontSize * 1.2f;
+            float totalTextHeight = lines.Length * lineHeight + (lines.Length - 1) * lineSpacing;
+
             float maxTextWidth = 0;
-
-            List<FontRectangle> sizes = new();
-
+            List<float> lineWidths = new();
             foreach (var line in lines)
             {
-                var rect = TextMeasurer.MeasureBounds(line, new TextOptions(font));
-
-                sizes.Add(rect);
-
-                totalTextHeight += rect.Height;
-
-                if (rect.Width > maxTextWidth)
-                    maxTextWidth = rect.Width;
+                var size = TextMeasurer.MeasureSize(line, new TextOptions(font));
+                lineWidths.Add(size.Width);
+                if (size.Width > maxTextWidth)
+                    maxTextWidth = size.Width;
             }
 
             int width = (int)Math.Max(qrImage.Width, maxTextWidth + padding * 2);
             int height = (int)(qrImage.Height + totalTextHeight + padding * 2);
 
             var finalImage = new Image<Rgba32>(width, height, Color.White);
-
             finalImage.Mutate(ctx =>
             {
                 int qrX = (width - qrImage.Width) / 2;
                 ctx.DrawImage(qrImage, new Point(qrX, 0), 1f);
 
                 float currentY = qrImage.Height + padding;
-
                 for (int i = 0; i < lines.Length; i++)
                 {
-                    float textX = (width - sizes[i].Width) / 2;
-
+                    float textX = (width - lineWidths[i]) / 2;
                     ctx.DrawText(lines[i], font, Color.Black, new PointF(textX, currentY));
-
-                    currentY += sizes[i].Height;
+                    currentY += lineHeight + lineSpacing; // lineHeight advances, lineSpacing adds gap
                 }
             });
 
             MemoryStream ms = new MemoryStream();
             finalImage.SaveAsPng(ms);
             ms.Position = 0;
-
             return ms;
         }
     }

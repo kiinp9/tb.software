@@ -43,10 +43,16 @@ namespace traobang.be.application.TraoBang.Interfaces
         /// <param name="dto"></param>
         public void ImportSlide(ImportExcelSlideDto dto);
         /// <summary>
-        /// Generate QR cho sv nhận bằng
+        /// Generate QR cho sv nhận bằng theo plan
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
         public Task GenerateQr(GenerateSinhVienQrDto dto);
+        /// <summary>
+        /// Generate qr cho 1 sv nhận bằng
+        /// </summary>
+        /// <param name="idSlide"></param>
+        /// <returns></returns>
+        public Task GenerateQrOneSv(int idSlide);
     }
 }

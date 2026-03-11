@@ -496,35 +496,59 @@ namespace traobang.be.application.TraoBang.Implements
                     select new { sv, sp }
                 ).ToList();
 
-            string templateContent = _templateSettings.UrlSvInfo;
-            string folder = "QrSinhVien";
             foreach (var item in listSv)
             {
-                var sv = item.sv;
-                var content = templateContent.Replace("[mssv]", sv.MaSoSinhVien);
-
-                //var qrcode = _qrCodeService.GenQrCodeByText(content);
-                string notice = $@"Họ tên: {sv.HoVaTen} - Mã số sinh viên: {sv.MaSoSinhVien}
-Khoa: {item.sp.Ten}";
-
-                var qrcode = _qrCodeService.GenerateQrWithText(content, notice);
-                string filename = $"{folder}/{sv.MaSoSinhVien}.jpg";
-
-                try
-                {
-                    _logger.LogInformation($"Sinh qr cho SV mssv = {sv.MaSoSinhVien}");
-
-                    var upload = await _fileS3Service.WriteStreamFileAsync(filename, qrcode);
-                    sv.LinkQR = $"{_fileS3Config.BucketName}/{filename}";
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex.Message);
-                }
-
+                await _generateQrCommon(item.sv, item.sp);
             }
 
             _tbDbContext.SaveChanges();
+        }
+
+        public async Task GenerateQrOneSv(int idSlide)
+        {
+            _logger.LogInformation($"{nameof(GenerateQrOneSv)}, idSlide = {idSlide}");
+
+            var svSlide = (
+                    from sl in _tbDbContext.Slides
+                    join sv in _tbDbContext.DanhSachSinhVienNhanBangs on sl.IdSinhVienNhanBang equals sv.Id
+                    join sp in _tbDbContext.SubPlans on sl.IdSubPlan equals sp.Id
+                    where !sl.Deleted && !sv.Deleted && !sp.Deleted
+                        && sl.LoaiSlide == LoaiSlides.SINH_VIEN
+                        && sl.Id == idSlide
+                        && !string.IsNullOrEmpty(sv.MaSoSinhVien)
+                    select new { sv, sp }
+                ).FirstOrDefault()
+                ?? throw new UserFriendlyException(ErrorCodes.TraoBangErrorSinhVienNotFound);
+
+            await _generateQrCommon(svSlide.sv, svSlide.sp);
+            _tbDbContext.SaveChanges();
+        }
+
+        private async Task _generateQrCommon(DanhSachSinhVienNhanBang sv, SubPlan sp)
+        {
+            string templateContent = _templateSettings.UrlSvInfo;
+            string folder = "QrSinhVien";
+
+            var content = templateContent.Replace("[mssv]", sv.MaSoSinhVien);
+
+            //var qrcode = _qrCodeService.GenQrCodeByText(content);
+            string notice = $@"Họ tên: {sv.HoVaTen} - Mã số sinh viên: {sv.MaSoSinhVien}
+Khoa: {sp.Ten}";
+
+            var qrcode = _qrCodeService.GenerateQrWithText(content, notice);
+            string filename = $"{folder}/{sv.MaSoSinhVien}.jpg";
+
+            try
+            {
+                _logger.LogInformation($"Sinh qr cho SV mssv = {sv.MaSoSinhVien}");
+
+                var upload = await _fileS3Service.WriteStreamFileAsync(filename, qrcode);
+                sv.LinkQR = $"{_fileS3Config.BucketName}/{filename}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+            }
         }
     }
 }

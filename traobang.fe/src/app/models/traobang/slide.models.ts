@@ -16,7 +16,7 @@ export interface SinhVien {
     ngayQuyetDinh?: Date;
     note?: string;
     linkQR?: string;
-    id?:number;
+    id?: number;
 }
 export interface IViewRowSlide {
     id: number;
@@ -28,8 +28,8 @@ export interface IViewRowSlide {
     trangThai?: number;
     isShow?: boolean;
     sinhVien?: SinhVien;
-    loaiSlideName?:string;
-    trangThaiText?:string;
+    loaiSlideName?: string;
+    trangThaiText?: string;
 }
 export interface ICreateSlide {
     idSubPlan?: number;
@@ -46,4 +46,20 @@ export interface IUpdateSlide extends ICreateSlide {
     id: string
 }
 
-export interface IFindPagingSlide extends IBaseRequestPaging {}
+export interface IFindPagingSlide extends IBaseRequestPaging { }
+
+export enum ELoaiSlide {
+    TEXT = 1,
+    SINH_VIEN = 2,
+}
+
+export const listLoaiSlide = [
+    {
+        code: 1,
+        name: 'Text'
+    },
+    {
+        code: 2,
+        name: 'Sinh viên'
+    }
+];

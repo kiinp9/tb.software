@@ -8,7 +8,7 @@ import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { TblAction, TblActionTypes } from './tbl-action/tbl-action';
-import { IFindPagingSlide, IViewRowSlide } from '@/models/traobang/slide.models';
+import { IFindPagingSlide, IViewRowSlide, listLoaiSlide } from '@/models/traobang/slide.models';
 import { PaginatorState } from 'primeng/paginator';
 import { SvNhanBangStatuses } from '@/shared/constants/sv-nhan-bang.constants';
 import { Create } from './create/create';
@@ -38,16 +38,7 @@ export class SlideScreen extends BaseComponent {
     dataFilter: any = {};
     listPlanActive: IViewRowConfigPlan[] = [];
     listSubPlan: IViewRowConfigSubPlan[] = [];
-    listLoaiSlide = [
-        {
-            code: 1,
-            name: 'Text'
-        },
-        {
-            code: 2,
-            name: 'Sinh viên'
-        }
-    ];
+    listLoaiSlide = listLoaiSlide;
 
     columns: IColumn[] = [
         { header: 'STT', cellViewType: CellViewTypes.INDEX, headerContainerStyle: 'width: 6rem' },
@@ -176,6 +167,9 @@ export class SlideScreen extends BaseComponent {
         } else if (data.type === TblActionTypes.delete) {
             this.onDelete(data.data);
         }
+        else if (data.type === TblActionTypes.qrCode) {
+            this.genQrCode(data.data)
+        }
     }
 
     onOpenUpdate(data: IViewRowSlide) {
@@ -247,5 +241,18 @@ export class SlideScreen extends BaseComponent {
                 this.getData();
             }
         });
+    }
+
+    genQrCode(data: IViewRowSlide) {
+        this._slideService.genQrCode(data.id).subscribe(
+            (res) => {
+                if (this.isResponseSucceed(res, true, 'Đã tạo mã QR')) {
+                    this.getData();
+                }
+            },
+            (err) => {
+                this.messageError(err?.message);
+            }
+        );
     }
 }

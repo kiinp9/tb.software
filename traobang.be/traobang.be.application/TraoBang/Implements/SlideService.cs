@@ -317,6 +317,8 @@ namespace traobang.be.application.TraoBang.Implements
             int indexSoQuyetDinhTotNghiep = col++;
             int indexNgayQuyetDinh = col++;
             int indexNoteChoMC = col++;
+            int indexQrTenKhoa = col++;
+            int indexQrHoTen = col++;
 
             if (data != null && data.Count > 0)
             {
@@ -379,6 +381,8 @@ namespace traobang.be.application.TraoBang.Implements
                         var soQuyetDinhTotNghiep = row[indexSoQuyetDinhTotNghiep];
                         var ngayQuyetDinh = row[indexNgayQuyetDinh];
                         var noteChoMC = row[indexNoteChoMC];
+                        var qrTenKhoa = row[indexQrTenKhoa];
+                        var qrHoTen = row[indexQrHoTen];
 
                         var subplan = _tbDbContext.SubPlans.FirstOrDefault(x => x.IdPlan == dto.IdPlan && x.Ten == tenSubPlan && !x.Deleted);
 
@@ -433,10 +437,10 @@ namespace traobang.be.application.TraoBang.Implements
                                 TenNganhDaoTao = tenNganhDaoTao,
                                 ThanhTich = thanhTich,
                                 XepHang = xepHang,
+                                QrHoTen = qrHoTen,
+                                QrTenKhoa = qrTenKhoa,
                             };
                         }
-
-
 
                         tmpMap.Slide = new Slide
                         {
@@ -531,12 +535,14 @@ namespace traobang.be.application.TraoBang.Implements
 
             var content = templateContent.Replace("[mssv]", sv.MaSoSinhVien);
 
-            string notice = $@"Khoa: {sp.Ten}
-{sv.CapBang} {sv.HoVaTen} - {sv.MaSoSinhVien}";
+            string notice = $@"{sv.QrTenKhoa}
+{sv.QrHoTen}
+{sv.MaSoSinhVien}";
 
             if (sp.Order <= 2)
             {
-                notice = $@"{sv.CapBang} {sv.HoVaTen} - {sv.MaSoSinhVien}";
+                notice = $@"{sv.QrHoTen}
+{sv.MaSoSinhVien}";
             }
 
             var qrcode = _qrCodeService.GenerateQrWithText(content, notice);

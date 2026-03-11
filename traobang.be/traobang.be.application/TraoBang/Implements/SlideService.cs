@@ -450,7 +450,7 @@ namespace traobang.be.application.TraoBang.Implements
                             NoiDung = hoTenNoiDung,
                             Note = noteChoMC,
                             Order = tmpOrder,
-                            TrangThai = TraoBangConstants.ChuanBi,
+                            TrangThai = TraoBangConstants.ThamGiaTraoBang,
                             CreatedBy = username,
                         };
 

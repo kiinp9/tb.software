@@ -59,7 +59,7 @@ export class GuestProfile extends BaseComponent {
 
   downloadQr() {
     const imageUrl = `${this.urlFile}/${this.data.linkQR || ''}`;
-    this._guestService.downloadQr(imageUrl);
+    this._guestService.downloadQr(imageUrl, `${this.mssv}.jpg`);
   }
 
   onPrev() {

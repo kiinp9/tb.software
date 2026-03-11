@@ -24,12 +24,12 @@ export class GuestSvNhanBangService {
         return this.http.get<IBaseResponseWithData<IViewGuestSvNhanBang>>(`${this.api}/${mssv}/prev`);
     }
 
-    downloadQr(imageUrl: string) {
+    downloadQr(imageUrl: string, fileName: string) {
         this.http.get(imageUrl, { responseType: 'blob' }).subscribe((blob) => {
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'image.jpg'; // file name
+            a.download = fileName; // file name
             a.click();
             window.URL.revokeObjectURL(url);
         });

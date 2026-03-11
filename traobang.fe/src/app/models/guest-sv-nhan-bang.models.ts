@@ -3,6 +3,7 @@ export interface IViewGuestSvNhanBang {
     idSubPlan?: number;
     tenSubPlan?: string;
     hoVaTen?: string;
+    qrHoTen?: string;
     maSoSinhVien?: string;
     ngaySinh?: string;
     email?: string;

@@ -10,7 +10,7 @@ import * as signalR from '@microsoft/signalr';
 import { TraoBangSvService } from '@/service/sv-nhan-bang.service';
 import { ScanQrService } from '@/service/scan-qr.service';
 import { SystemTraoBangService } from '@/service/system-trao-bang';
-import { TraoBangHubConst } from '@/shared/constants/sv-nhan-bang.constants';
+import { SubPlanStatuses, TraoBangHubConst } from '@/shared/constants/sv-nhan-bang.constants';
 
 const STEPS = {
     PREV: -1,
@@ -37,6 +37,7 @@ export class GuestProfile extends BaseComponent implements OnDestroy {
     originSv: IViewGuestSvNhanBang = {}
     data: IViewGuestSvNhanBang = {}
     urlFile = environment.minioUrl
+    subPlanStatuses = SubPlanStatuses
 
     override ngOnInit(): void {
         this.mssv = this._route.snapshot.queryParamMap.get('mssv');

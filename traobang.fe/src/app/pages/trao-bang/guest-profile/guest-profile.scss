@@ -3,15 +3,15 @@
 }
 .p-accordionheader{
     background: none !important;
+    padding: 7px;
     width: 100%;
 }
 
-::ng-deep .p-accordionheader svg {
-    position: relative;
-    width: 18px;
-    height: 18px;
+// ::ng-deep .p-accordionheader svg {
+//     position: relative;
 
-}
+
+// }
 .header-accordion{
     background-color: #00ccd6;
 }

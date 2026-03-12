@@ -1916,7 +1916,7 @@ namespace traobang.be.application.TraoBang.Implements
             {
                 TenSubPlan = subPlan.Ten,
                 Id = x.sv.Id,
-                HoVaTen = x.sv.QrHoTen,
+                HoVaTen = x.sv.HoVaTen,
                 MaSoSinhVien = x.sv.MaSoSinhVien,
                 TenNganhDaoTao = x.sv.TenNganhDaoTao,
                 TrangThai = TraoBangConstants.XepHang,

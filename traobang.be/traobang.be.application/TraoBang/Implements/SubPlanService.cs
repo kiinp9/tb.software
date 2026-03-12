@@ -1793,7 +1793,7 @@ namespace traobang.be.application.TraoBang.Implements
         ///Get khoa tiến độ , list sinh viên đang trao màn cánh gà 
         public async Task<GetInforSubPlanDangTraoResponseDto> GetInforSubPlanDangTrao(int SoLuong)
         {
-            int chuanBiTrao = 5;
+            //int chuanBiTrao = 5;
             _logger.LogInformation($"{nameof(GetInforSubPlanDangTrao)} ");
 
             var plan = await _tbDbContext.Plans.Where(x => !x.Deleted && x.TrangThai == TrangThaiPlan.DangHoatDong).FirstOrDefaultAsync()
@@ -1828,7 +1828,7 @@ namespace traobang.be.application.TraoBang.Implements
                 .AsNoTracking()
                 .Where(x => x.IdSubPlan == subPlan.Id && !x.Deleted && x.TrangThai == TraoBangConstants.ChuanBi && x.LoaiSlide == LoaiSlides.SINH_VIEN)
                 .OrderBy(x => x.Order)
-                .Take(chuanBiTrao)
+                //.Take(chuanBiTrao)
                 .ToListAsync();
 
             tienDoList.AddRange(sinhVienChuanBi);

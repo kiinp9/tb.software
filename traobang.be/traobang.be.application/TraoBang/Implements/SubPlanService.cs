@@ -622,15 +622,31 @@ namespace traobang.be.application.TraoBang.Implements
         public async Task<DiemDanhNhanBangDto> DiemDanhNhanBang(string mssv)
         {
             _logger.LogInformation($"{nameof(DiemDanhNhanBang)}, mssv= {mssv} ");
-            var sinhVien = _tbDbContext.DanhSachSinhVienNhanBangs
-                .FirstOrDefault(x => !x.Deleted && x.MaSoSinhVien.ToLower() == mssv.ToLower() && x.TrangThai == TraoBangConstants.ThamGiaTraoBang)
-                ?? throw new UserFriendlyException(ErrorCodes.TraoBangErrorSinhVienNotFound);
+            var activePlan = _tbDbContext.Plans.AsNoTracking().Where(x => !x.Deleted && x.TrangThai == TrangThaiPlan.DangHoatDong).FirstOrDefault()
+                ?? throw new UserFriendlyException(ErrorCodes.TraoBangErrorPlanNotFound);
+
+            var query = (from sl in _tbDbContext.Slides
+                         join sv in _tbDbContext.DanhSachSinhVienNhanBangs on sl.IdSinhVienNhanBang equals sv.Id
+                         join sp in _tbDbContext.SubPlans on sl.IdSubPlan equals sp.Id
+                         where !sl.Deleted && !sv.Deleted && !sp.Deleted
+                             && sp.IsShow && sv.MaSoSinhVien.ToLower() == mssv.ToLower()
+                             && sl.TrangThai == TraoBangConstants.ThamGiaTraoBang
+                         select new { sl, sv, sp }).FirstOrDefault()
+                           ?? throw new UserFriendlyException(ErrorCodes.TraoBangErrorSinhVienNotFound);
+
+            var sinhVien = query.sv;
+            //var sinhVien = _tbDbContext.DanhSachSinhVienNhanBangs
+            //    .FirstOrDefault(x => !x.Deleted && x.MaSoSinhVien.ToLower() == mssv.ToLower() && x.TrangThai == TraoBangConstants.ThamGiaTraoBang)
+            //    ?? throw new UserFriendlyException(ErrorCodes.TraoBangErrorSinhVienNotFound);
+
             var subPlan = _tbDbContext.SubPlans
-               .FirstOrDefault(x => x.Id == sinhVien.IdSubPlan && x.TrangThai == TraoBangConstants.DangTraoBang && !x.Deleted)
+               .FirstOrDefault(x => x.Id == query.sp.Id && x.TrangThai == TraoBangConstants.DangTraoBang && !x.Deleted)
                ?? throw new UserFriendlyException(ErrorCodes.TraoBangErrorSinhVienTraoBangKhongThuocKhoaDangTrao);
+
             var maxOrder = _tbDbContext.TienDoTraoBangs
-                .Where(x => x.IdSubPlan == sinhVien.IdSubPlan && !x.Deleted)
+                .Where(x => x.IdSubPlan == query.sp.Id && !x.Deleted)
                 .Max(x => (int?)x.Order) ?? 0;
+
             var mssvexisting = _tbDbContext.TienDoTraoBangs.Any(x => !x.Deleted && x.MaSoSinhVien.ToLower() == mssv.ToLower());
             if (mssvexisting)
             {
@@ -639,7 +655,7 @@ namespace traobang.be.application.TraoBang.Implements
 
             var tienDoTraoBang = new TienDoTraoBang
             {
-                IdSubPlan = sinhVien.IdSubPlan,
+                IdSubPlan = query.sp.Id,
                 IdSinhVienNhanBang = sinhVien.Id,
                 HoVaTen = sinhVien.HoVaTen,
                 MaSoSinhVien = sinhVien.MaSoSinhVien,

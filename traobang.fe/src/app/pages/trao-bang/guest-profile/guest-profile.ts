@@ -11,7 +11,7 @@ import { TraoBangSvService } from '@/service/sv-nhan-bang.service';
 import { ScanQrService } from '@/service/scan-qr.service';
 import { SystemTraoBangService } from '@/service/system-trao-bang';
 import { SubPlanStatuses, TraoBangHubConst } from '@/shared/constants/sv-nhan-bang.constants';
-
+import { AccordionModule } from 'primeng/accordion';
 const STEPS = {
     PREV: -1,
     CURRENT: 0,
@@ -20,12 +20,11 @@ const STEPS = {
 
 @Component({
     selector: 'app-guest-profile',
-    imports: [SharedImports],
+    imports: [SharedImports, AccordionModule],
     templateUrl: './guest-profile.html',
     styleUrl: './guest-profile.scss'
 })
 export class GuestProfile extends BaseComponent implements OnDestroy {
-
 
     hubConnection: signalR.HubConnection | undefined;
 

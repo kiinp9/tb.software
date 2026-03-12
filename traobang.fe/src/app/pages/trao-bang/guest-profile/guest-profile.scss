@@ -1,0 +1,20 @@
+::ng-deep .p-accordion-header-toggle-icon {
+    display: none;
+}
+.p-accordionheader{
+    background: none !important;
+    width: 100%;
+}
+
+::ng-deep .p-accordionheader svg {
+    position: relative;
+    width: 18px;
+    height: 18px;
+
+}
+.header-accordion{
+    background-color: #00ccd6;
+}
+.header-title{
+    margin: 0;
+}

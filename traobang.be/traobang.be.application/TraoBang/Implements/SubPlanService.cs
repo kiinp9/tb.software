@@ -631,13 +631,12 @@ namespace traobang.be.application.TraoBang.Implements
                          where !sl.Deleted && !sv.Deleted && !sp.Deleted
                              && sp.IsShow && sv.MaSoSinhVien.ToLower() == mssv.ToLower()
                              && sl.TrangThai == TraoBangConstants.ThamGiaTraoBang
+                             && sp.IdPlan == activePlan.Id
+                             && sl.LoaiSlide == LoaiSlides.SINH_VIEN
                          select new { sl, sv, sp }).FirstOrDefault()
                            ?? throw new UserFriendlyException(ErrorCodes.TraoBangErrorSinhVienNotFound);
 
             var sinhVien = query.sv;
-            //var sinhVien = _tbDbContext.DanhSachSinhVienNhanBangs
-            //    .FirstOrDefault(x => !x.Deleted && x.MaSoSinhVien.ToLower() == mssv.ToLower() && x.TrangThai == TraoBangConstants.ThamGiaTraoBang)
-            //    ?? throw new UserFriendlyException(ErrorCodes.TraoBangErrorSinhVienNotFound);
 
             var subPlan = _tbDbContext.SubPlans
                .FirstOrDefault(x => x.Id == query.sp.Id && x.TrangThai == TraoBangConstants.DangTraoBang && !x.Deleted)

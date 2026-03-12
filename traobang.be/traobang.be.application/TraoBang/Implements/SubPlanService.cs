@@ -442,7 +442,6 @@ namespace traobang.be.application.TraoBang.Implements
                                where !slide.Deleted && !sv.Deleted && !sp.Deleted && sp.IsShow
                                     && sp.IdPlan == activePlan.Id
                                     && slide.LoaiSlide == LoaiSlides.SINH_VIEN && slide.TrangThai == TraoBangConstants.ThamGiaTraoBang
-                                    //&& slide.LoaiSlide == LoaiSlides.SINH_VIEN && slide.TrangThai == TraoBangConstants.ThamGiaTraoBang
                                     && sv.MaSoSinhVien.ToLower() == mssv.ToLower()
                                select new { sv, slide }
                             ).FirstOrDefaultAsync()
@@ -466,10 +465,26 @@ namespace traobang.be.application.TraoBang.Implements
                 .CountAsync();
 
             var result = _mapper.Map<ViewSinhVienNhanBangDto>(sinhVienSlide.sv);
+            result.TrangThai = TraoBangConstants.ThamGiaTraoBang;
             result.OrderSubPlan = $"{subPlan.Order}/{totalSubPlans}";
             result.Order = $"{sinhVienSlide.slide.Order}/{maxOrder}";
             result.IsShowNext = sinhVienSlide.slide.Order < maxOrder;
             result.IsShowPrev = sinhVienSlide.slide.Order > minOrder;
+
+
+            var tienDo = _tbDbContext.TienDoTraoBangs.AsNoTracking().Where(x => !x.Deleted && x.IdSinhVienNhanBang == sinhVienSlide.sv.Id && x.LoaiSlide == LoaiSlides.SINH_VIEN)
+                                .FirstOrDefault();
+            if (tienDo != null)
+            {
+                if (tienDo.TrangThai == TraoBangConstants.DaTraoBang)
+                {
+                    result.TrangThai = tienDo.TrangThai;
+                }
+                else
+                {
+                    result.TrangThai = TraoBangConstants.ChuanBi;
+                }
+            }
 
             return result;
         }

@@ -358,6 +358,7 @@ namespace traobang.be.Controllers
                 return OkException(ex);
             }
         }
+
         [AllowAnonymous]
         [HttpGet("infor-sinh-vien-dang-trao")]
         public async Task<ApiResponse> GetInforSinhVienDangTrao()

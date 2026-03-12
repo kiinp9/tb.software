@@ -663,6 +663,10 @@ namespace traobang.be.application.TraoBang.Implements
                 Order = maxOrder + 1,
                 IsShow = true,
                 CreatedDate = DateTime.Now,
+                IdSlide = query.sl.Id,
+                LoaiSlide = query.sl.LoaiSlide,
+                Note = query.sv.Note,
+                IdPlan = query.sp.IdPlan,
                 Deleted = false
             };
             _tbDbContext.TienDoTraoBangs.Add(tienDoTraoBang);

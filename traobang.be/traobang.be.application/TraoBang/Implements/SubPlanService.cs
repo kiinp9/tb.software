@@ -1903,7 +1903,7 @@ namespace traobang.be.application.TraoBang.Implements
                                    {
                                        TenSubPlan = subPlan.Ten,
                                        Id = sv.Id,
-                                       HoVaTen = sv.HoVaTen,
+                                       HoVaTen = sv.QrHoTen,
                                        MaSoSinhVien = sv.MaSoSinhVien,
                                        TenNganhDaoTao = sv.TenNganhDaoTao,
                                        TrangThai = tienDo.TrangThai,
@@ -1916,7 +1916,7 @@ namespace traobang.be.application.TraoBang.Implements
             {
                 TenSubPlan = subPlan.Ten,
                 Id = x.sv.Id,
-                HoVaTen = x.sv.HoVaTen,
+                HoVaTen = x.sv.QrHoTen,
                 MaSoSinhVien = x.sv.MaSoSinhVien,
                 TenNganhDaoTao = x.sv.TenNganhDaoTao,
                 TrangThai = TraoBangConstants.XepHang,

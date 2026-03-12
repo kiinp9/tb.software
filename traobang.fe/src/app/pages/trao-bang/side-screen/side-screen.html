@@ -16,7 +16,7 @@
                     <th class="!font-bold !text-white !bg-[#2c3f50] w-[10px] rounded-tl-lg !text-center">STT</th>
                     <th class="!font-bold !text-white !bg-[#2c3f50] !text-center">MSSV</th>
                     <th class="!font-bold !text-white !bg-[#2c3f50]">Họ và Tên</th>
-                    <th class="!font-bold !text-white !bg-[#2c3f50] ">Cấp bằng</th>
+                    <!-- <th class="!font-bold !text-white !bg-[#2c3f50] ">Cấp bằng</th> -->
                     <th class="!font-bold !text-white !bg-[#2c3f50] w-[300px]">Ngành/Chuyên ngành</th>
                     <th class="!font-bold !text-white !bg-[#2c3f50] rounded-tr-lg status-column">Trạng thái</th>
                 </tr>
@@ -44,8 +44,8 @@
                         student.maSoSinhVien }}</td>
                     <td [class]="student.trangThai === constStatuses.DANG_TRAO_BANG ? 'bg-orange-200' : ''">{{
                         student.hoVaTen }}</td>
-                    <td [class]="student.trangThai === constStatuses.DANG_TRAO_BANG ? 'bg-orange-200' : ''">{{
-                        student.capBang }}</td>
+                    <!-- <td [class]="student.trangThai === constStatuses.DANG_TRAO_BANG ? 'bg-orange-200' : ''">{{
+                        student.capBang }}</td> -->
                     <td [class]="student.trangThai === constStatuses.DANG_TRAO_BANG ? 'bg-orange-200' : ''">{{
                         student.tenNganhDaoTao }}</td>
                     <td [ngClass]="{'bg-orange-200': student.trangThai === constStatuses.DANG_TRAO_BANG, 'status-column': true}">

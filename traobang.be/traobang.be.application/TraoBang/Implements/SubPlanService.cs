@@ -988,7 +988,7 @@ namespace traobang.be.application.TraoBang.Implements
                                 && x.IdSubPlan == khoaDangTrao.Id
                                 && x.TrangThai != TraoBangConstants.DaTraoBang)
                     .OrderBy(x => x.Order)
-                    .Take(soLuongConLai)
+                    //.Take(soLuongConLai)
                     .ToListAsync();
 
                 results.AddRange(sinhVienChuanBi);

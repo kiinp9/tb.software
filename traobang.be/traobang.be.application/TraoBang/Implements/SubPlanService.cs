@@ -1998,12 +1998,8 @@ namespace traobang.be.application.TraoBang.Implements
                                    }).ToList();
 
             var listTienDoSv = _tbDbContext.TienDoTraoBangs.AsNoTracking().Where(x => !x.Deleted && x.LoaiSlide == LoaiSlides.SINH_VIEN && x.IdSubPlan == subPlan.Id)
-                                            .OrderBy(x => x.Order)
-                                            .Select((x, i) => new
-                                            {
-                                                RowNumber = i + 1,
-                                                x.IdSinhVienNhanBang
-                                            }).ToList();
+                                            .OrderBy(x => x.Order).Select(x => x.IdSinhVienNhanBang).ToList()
+                                            .Select((IdSinhVienNhanBang, index) => new { IdSinhVienNhanBang, RowNumber = index + 1 });
 
             foreach (var item in itemsFromTienDo)
             {

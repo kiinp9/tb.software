@@ -982,14 +982,32 @@ namespace traobang.be.application.TraoBang.Implements
             var soLuongConLai = dto.SoLuong - results.Count;
             if (soLuongConLai > 0)
             {
-                var sinhVienChuanBi = await _tbDbContext.TienDoTraoBangs
-                    .AsNoTracking()
-                    .Where(x => !x.Deleted
-                                && x.IdSubPlan == khoaDangTrao.Id
-                                && x.TrangThai != TraoBangConstants.DaTraoBang)
-                    .OrderBy(x => x.Order)
-                    //.Take(soLuongConLai)
-                    .ToListAsync();
+                var sinhVienChuanBi = (from td in _tbDbContext.TienDoTraoBangs
+                                       join sv in _tbDbContext.DanhSachSinhVienNhanBangs on td.IdSinhVienNhanBang equals sv.Id
+                                       orderby td.Order
+                                       where !td.Deleted && !sv.Deleted
+                                         && td.IdSubPlan == khoaDangTrao.Id
+                                         && td.TrangThai != TraoBangConstants.DaTraoBang
+                                       select new TienDoTraoBang
+                                       {
+                                           Id = td.Id,
+                                           HoVaTen = sv.QrHoTen,
+                                           MaSoSinhVien = td.MaSoSinhVien,
+                                           TrangThai = td.TrangThai,
+                                           Order = td.Order,
+                                           IsShow = td.IsShow,
+                                           LoaiSlide = td.LoaiSlide,
+                                       }).ToList();
+
+
+                //var sinhVienChuanBi = await _tbDbContext.TienDoTraoBangs
+                //    .AsNoTracking()
+                //    .Where(x => !x.Deleted
+                //                && x.IdSubPlan == khoaDangTrao.Id
+                //                && x.TrangThai != TraoBangConstants.DaTraoBang)
+                //    .OrderBy(x => x.Order)
+                //    //.Take(soLuongConLai)
+                //    .ToListAsync();
 
                 results.AddRange(sinhVienChuanBi);
             }

@@ -15,6 +15,7 @@ import { TagModule } from 'primeng/tag';
 })
 export class StudentList {
   students = input.required<IViewScanQrTienDoSv[]>();
+  highlightLast = input<boolean>(false);
   constStatuses = SvNhanBangStatuses;
   loaiSlide = ELoaiSlide
 }

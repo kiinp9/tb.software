@@ -983,9 +983,9 @@ namespace traobang.be.application.TraoBang.Implements
             if (soLuongConLai > 0)
             {
                 var sinhVienChuanBi = (from td in _tbDbContext.TienDoTraoBangs.AsNoTracking()
-                                       from sv in _tbDbContext.DanhSachSinhVienNhanBangs.AsNoTracking().Where(x => x.Id == td.IdSinhVienNhanBang).DefaultIfEmpty()
+                                       from sv in _tbDbContext.DanhSachSinhVienNhanBangs.AsNoTracking().Where(x => x.Id == td.IdSinhVienNhanBang && !x.Deleted).DefaultIfEmpty()
                                        orderby td.Order
-                                       where !td.Deleted && !sv.Deleted
+                                       where !td.Deleted
                                          && td.IdSubPlan == khoaDangTrao.Id
                                          && td.TrangThai != TraoBangConstants.DaTraoBang
                                        select new TienDoTraoBang

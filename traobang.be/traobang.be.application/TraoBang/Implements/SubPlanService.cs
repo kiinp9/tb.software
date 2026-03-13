@@ -1984,7 +1984,6 @@ namespace traobang.be.application.TraoBang.Implements
 
             var itemsFromTienDo = (from tienDo in tienDoList
                                    join sv in danhSachSinhViens on tienDo.IdSinhVienNhanBang equals sv.Id
-
                                    select new ListSinhVienDto
                                    {
                                        TenSubPlan = subPlan.Ten,
@@ -1998,30 +1997,47 @@ namespace traobang.be.application.TraoBang.Implements
                                        OrderDanhSachNhanBang = sv.Order,
                                    }).ToList();
 
-            var itemsFromXepHangHopLe = sinhVienXepHangHopLe.Select(x => new ListSinhVienDto
+            var listTienDoSv = _tbDbContext.TienDoTraoBangs.AsNoTracking().Where(x => !x.Deleted && x.LoaiSlide == LoaiSlides.SINH_VIEN && x.IdSubPlan == subPlan.Id)
+                                            .OrderBy(x => x.Order)
+                                            .Select((x, i) => new
+                                            {
+                                                RowNumber = i + 1,
+                                                x.IdSinhVienNhanBang
+                                            }).ToList();
+
+            foreach (var item in itemsFromTienDo)
             {
-                TenSubPlan = subPlan.Ten,
-                Id = x.sv.Id,
-                HoVaTen = x.sv.QrHoTen,
-                MaSoSinhVien = x.sv.MaSoSinhVien,
-                TenNganhDaoTao = x.sv.TenNganhDaoTao,
-                TrangThai = TraoBangConstants.XepHang,
-                CapBang = x.sv.CapBang,
-                OrderDanhSachNhanBang = x.sl.Order,
-            }).ToList();
+                var ord = listTienDoSv.Where(x => x.IdSinhVienNhanBang == item.Id).FirstOrDefault();
+                if (ord != null)
+                {
+                    item.OrderTienDo = ord.RowNumber;
+                }
+            }
+
+            //var itemsFromXepHangHopLe = sinhVienXepHangHopLe.Select(x => new ListSinhVienDto
+            //{
+            //    TenSubPlan = subPlan.Ten,
+            //    Id = x.sv.Id,
+            //    HoVaTen = x.sv.QrHoTen,
+            //    MaSoSinhVien = x.sv.MaSoSinhVien,
+            //    TenNganhDaoTao = x.sv.TenNganhDaoTao,
+            //    TrangThai = TraoBangConstants.XepHang,
+            //    CapBang = x.sv.CapBang,
+            //    OrderDanhSachNhanBang = x.sl.Order,
+            //}).ToList();
 
 
-            var itemsFromSinhVienBiBoQua = sinhVienBiBoQua.Select(x => new ListSinhVienDto
-            {
-                TenSubPlan = subPlan.Ten,
-                Id = x.sv.Id,
-                HoVaTen = x.sv.QrHoTen,
-                MaSoSinhVien = x.sv.MaSoSinhVien,
-                TenNganhDaoTao = x.sv.TenNganhDaoTao,
-                TrangThai = TraoBangConstants.XepHang,
-                CapBang = x.sv.CapBang,
-                OrderDanhSachNhanBang = x.sl.Order,
-            }).ToList();
+            //var itemsFromSinhVienBiBoQua = sinhVienBiBoQua.Select(x => new ListSinhVienDto
+            //{
+            //    TenSubPlan = subPlan.Ten,
+            //    Id = x.sv.Id,
+            //    HoVaTen = x.sv.QrHoTen,
+            //    MaSoSinhVien = x.sv.MaSoSinhVien,
+            //    TenNganhDaoTao = x.sv.TenNganhDaoTao,
+            //    TrangThai = TraoBangConstants.XepHang,
+            //    CapBang = x.sv.CapBang,
+            //    OrderDanhSachNhanBang = x.sl.Order,
+            //}).ToList();
 
             var items = itemsFromTienDo
                 //.Concat(itemsFromXepHangHopLe)

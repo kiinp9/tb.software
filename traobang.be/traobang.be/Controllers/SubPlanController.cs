@@ -433,6 +433,7 @@ namespace traobang.be.Controllers
                 return OkException(ex);
             }
         }
+
         [AllowAnonymous]
         [HttpGet("danh-sach-sinh-vien-nhan-bang-khoa")]
         public async Task<ApiResponse> GetInforSubPlanDangTrao([FromQuery] int soLuong)

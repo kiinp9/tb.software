@@ -1158,8 +1158,10 @@ namespace traobang.be.application.TraoBang.Implements
                 .AsNoTracking()
                 .CountAsync(x => x.IdSubPlan == idSubPlan && !x.Deleted && x.TrangThai == TraoBangConstants.DaTraoBang && x.LoaiSlide == LoaiSlides.SINH_VIEN);
 
-            // Lấy slide text
-            var listSlide = _tbDbContext.Slides.Where(x => !x.Deleted && x.IsShow && x.IdSubPlan == idSubPlan && x.LoaiSlide == LoaiSlides.BINH_THUONG)
+            // Lấy slide text ko ở trong hàng đợi
+            var listSlideTrongHangDoi = _tbDbContext.TienDoTraoBangs.Where(x => !x.Deleted && x.LoaiSlide == LoaiSlides.BINH_THUONG).Select(x => x.IdSlide).ToList();
+            var listSlide = _tbDbContext.Slides
+                                    .Where(x => !x.Deleted && x.IsShow && x.IdSubPlan == idSubPlan && x.LoaiSlide == LoaiSlides.BINH_THUONG && !listSlideTrongHangDoi.Contains(x.Id))
                                     .OrderBy(x => x.Order)
                                     .ToList();
 
@@ -1315,7 +1317,7 @@ namespace traobang.be.application.TraoBang.Implements
                                           && !x.Deleted);
             if (existingLog == null)
             {
-                var traoBangLog = new domain.TraoBang.TraoBangLog
+                var traoBangLog = new TraoBangLog
                 {
                     IdSubPlan = idSubPlan,
                     IdSinhVien = sinhVienDangTrao.IdSinhVienNhanBang,

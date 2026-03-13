@@ -12,6 +12,7 @@
         public int Order { get; set; }
         public bool IsShow { get; set; }
         public int LoaiSlide { get; set; }
+        public bool IsSlideDauCuoi { get; set; }
 
     }
 }

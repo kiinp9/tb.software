@@ -997,19 +997,10 @@ namespace traobang.be.application.TraoBang.Implements
                                            Order = td.Order,
                                            IsShow = td.IsShow,
                                            LoaiSlide = td.LoaiSlide,
+                                           IdSlide = td.IdSlide,
                                            // gán tạm tên ngành đào tạo
                                            Note = sv != null ? sv.TenNganhDaoTao : string.Empty
                                        }).ToList();
-
-
-                //var sinhVienChuanBi = await _tbDbContext.TienDoTraoBangs
-                //    .AsNoTracking()
-                //    .Where(x => !x.Deleted
-                //                && x.IdSubPlan == khoaDangTrao.Id
-                //                && x.TrangThai != TraoBangConstants.DaTraoBang)
-                //    .OrderBy(x => x.Order)
-                //    //.Take(soLuongConLai)
-                //    .ToListAsync();
 
                 results.AddRange(sinhVienChuanBi);
             }
@@ -1018,6 +1009,14 @@ namespace traobang.be.application.TraoBang.Implements
             {
                 return null;
             }
+
+            var slideDau = _tbDbContext.Slides.AsNoTracking()
+                                    .Where(x => !x.Deleted && x.IdSubPlan == khoaDangTrao.Id && x.LoaiSlide == LoaiSlides.TEXT)
+                                    .OrderBy(x => x.Order).FirstOrDefault()?.Id;
+
+            var slideCuoi = _tbDbContext.Slides.AsNoTracking()
+                                .Where(x => !x.Deleted && x.IdSubPlan == khoaDangTrao.Id && x.LoaiSlide == LoaiSlides.TEXT)
+                                .OrderByDescending(x => x.Order).FirstOrDefault()?.Id;
 
             return results.Select(result => new ViewTienDoNhanBangResponseDto
             {
@@ -1030,7 +1029,8 @@ namespace traobang.be.application.TraoBang.Implements
                 Note = sinhVien.Note ?? "",
                 Order = result.Order,
                 IsShow = result.IsShow,
-                LoaiSlide = result.LoaiSlide
+                LoaiSlide = result.LoaiSlide,
+                IsSlideDauCuoi = result.IdSlide == slideDau || result.IdSlide == slideCuoi
             }).ToList();
         }
         public async Task<GetNextSubPlanResponseDto?> NextSubPlan()

@@ -81,6 +81,7 @@ export interface IViewScanQrTienDoSv {
     capBang?: string;
     tenKhoa?: string;
     loaiSlide?:number;
+    isSlideDauCuoi?:Boolean
 }
 
 export interface IViewScanQrSubPlan {

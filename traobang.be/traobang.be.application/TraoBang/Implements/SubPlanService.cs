@@ -1158,6 +1158,10 @@ namespace traobang.be.application.TraoBang.Implements
                 .AsNoTracking()
                 .CountAsync(x => x.IdSubPlan == idSubPlan && !x.Deleted && x.TrangThai == TraoBangConstants.DaTraoBang && x.LoaiSlide == LoaiSlides.SINH_VIEN);
 
+            // Lấy slide text
+            var listSlide = _tbDbContext.Slides.Where(x => !x.Deleted && x.IsShow && x.IdSubPlan == idSubPlan && x.LoaiSlide == LoaiSlides.BINH_THUONG)
+                                    .OrderBy(x => x.Order)
+                                    .ToList();
 
             return new GetInforSubPlanDto
             {
@@ -1165,7 +1169,8 @@ namespace traobang.be.application.TraoBang.Implements
                 SoLuongThamGia = soLuongThamGia,
                 SoLuongVangMat = soLuongVangMat,
                 SoLuongDaTrao = soLuongDaTrao,
-                SoLuongConLai = soLuongThamGia - soLuongDaTrao
+                SoLuongConLai = soLuongThamGia - soLuongDaTrao,
+                SlideTexts = _mapper.Map<List<ViewSlideDto>>(listSlide)
             };
 
         }

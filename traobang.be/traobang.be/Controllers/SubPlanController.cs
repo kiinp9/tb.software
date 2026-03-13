@@ -295,6 +295,7 @@ namespace traobang.be.Controllers
                 return OkException(ex);
             }
         }
+
         [Permission(PermissionKeys.SubPlanUpdate)]
         [HttpPut("{id}/trang-thai-sub-plan")]
         public ApiResponse UpdateTrangThaiSubPlan([FromRoute] int id)
@@ -568,5 +569,7 @@ namespace traobang.be.Controllers
                 return OkException(ex);
             }
         }
+
+
     }
 }

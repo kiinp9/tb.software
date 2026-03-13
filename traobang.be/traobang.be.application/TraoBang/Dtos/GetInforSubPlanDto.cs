@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using traobang.be.application.TraoBang.Dtos.Slide;
 
 namespace traobang.be.application.TraoBang.Dtos
 {
@@ -13,5 +9,6 @@ namespace traobang.be.application.TraoBang.Dtos
         public int SoLuongVangMat { get; set; }
         public int SoLuongDaTrao { get; set; }
         public int SoLuongConLai { get; set; }
+        public List<ViewSlideDto> SlideTexts { get; set; } = new List<ViewSlideDto>();
     }
 }

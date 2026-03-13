@@ -1,7 +1,8 @@
 <div class="flex flex-col lg:flex-row gap-3 p-3">
     <!-- LEFT SIDEBAR -->
     <div class="w-full lg:w-1/4 bg-white rounded-xl shadow p-3">
-        <app-left-sidebar [allowChangeSubPlan]="true" [data]="listSubPlan" (onChangeSubPlan)="onChangeSubPlan($event)" />
+        <app-left-sidebar [allowChangeSubPlan]="true" [data]="listSubPlan"
+            (onChangeSubPlan)="onChangeSubPlan($event)" />
     </div>
 
     <!-- MAIN CONTENT -->
@@ -11,15 +12,18 @@
 
         <div class="flex flex-col lg:flex-row gap-3">
             <!-- QR + INPUT -->
-            <div class="w-full lg:w-2/5 bg-white rounded-xl shadow p-4">
+            <div class="w-full lg:w-2/6 bg-white rounded-xl shadow p-4">
                 <div class="flex flex-row justify-between mb-3">
                     <div class="flex gap-2">
                         <button pButton label="QUÉT QR" class="p-button-sm p-button"></button>
-                        <button pButton label="NHẬP MSSV" class="p-button-sm p-button-outlined" (click)="onOpenDialogMssv()"></button>
-                        <button pButton label="CẮT" class="p-button-sm p-button-danger button-cut" (click)="cutSlide()"></button>
+                        <button pButton label="NHẬP MSSV" class="p-button-sm p-button-outlined"
+                            (click)="onOpenDialogMssv()"></button>
+                        <button pButton label="CẮT" class="p-button-sm p-button-danger button-cut"
+                            (click)="cutSlide()"></button>
                     </div>
                     <div>
-                        <button pButton icon="pi pi-power-off" class="p-button-sm p-button-danger" (click)="onResetData()"></button>
+                        <button pButton icon="pi pi-power-off" class="p-button-sm p-button-danger"
+                            (click)="onResetData()"></button>
                     </div>
                 </div>
 
@@ -41,10 +45,13 @@
                     </div>
                 </div>
                 }
+
+                <app-slide-list [slides]="this.currentSubPlanInfo?.slideTexts ?? []" />
+
             </div>
 
             <!-- STUDENT LIST -->
-            <div class="w-full lg:w-3/5 bg-white rounded-xl shadow p-4 min-h-[600px]">
+            <div class="w-full lg:w-4/6 bg-white rounded-xl shadow p-4 min-h-[600px]">
                 <app-student-list [students]="students" />
             </div>
         </div>

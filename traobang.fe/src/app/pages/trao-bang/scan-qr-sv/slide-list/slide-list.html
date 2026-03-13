@@ -1,0 +1,33 @@
+<p-table [value]="slides() || []" class="!text-1xl w-full">
+    <ng-template pTemplate="header">
+        <tr class="font-bold">
+            <th class="!text-center w-20">STT</th>
+            <th class="w-1/2">Nội dung</th>
+            <th class="w-1/2">Ghi chú</th>
+        </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-slide>
+        <tr class="h-20 !bg-[#ffedd5] text-1xl">
+            <!-- STT -->
+            <td class="!text-center align-middle !bg-[#ffedd5]"
+                [class.bg-orange-200]="slide.trangThai === constStatuses.DANG_TRAO_BANG">
+                {{ slide.order }}
+            </td>
+
+            <!-- Nội dung -->
+            <td class="align-middle" [class.bg-orange-200]="slide.trangThai === constStatuses.DANG_TRAO_BANG">
+                <div class="h-15 overflow-hidden line-clamp-2 !bg-[#ffedd5]">
+                    {{ slide.noiDung }}
+                </div>
+            </td>
+
+            <!-- Ghi chú -->
+            <td class="align-middle !bg-[#ffedd5]" [class.bg-orange-200]="slide.trangThai === constStatuses.DANG_TRAO_BANG">
+                <div class="h-15 overflow-hidden line-clamp-2">
+                    {{ slide.note }}
+                </div>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>

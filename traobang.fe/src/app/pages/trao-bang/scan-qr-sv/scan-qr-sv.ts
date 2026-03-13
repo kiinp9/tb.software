@@ -14,14 +14,15 @@ import * as signalR from '@microsoft/signalr';
 
 import { NgIcon } from '@ng-icons/core';
 import { TagModule } from 'primeng/tag';
-import { IViewScanQrCurrentSubPlan, IViewScanQrTienDoSv, IViewScanQrSubPlan } from '@/models/traobang/sv-nhan-bang.models';
+import { IViewScanQrCurrentSubPlan, IViewScanQrTienDoSv, IViewScanQrSubPlan, ISlideItem } from '@/models/traobang/sv-nhan-bang.models';
 import { ScanQrService } from '@/service/scan-qr.service';
 import { TraoBangSvService } from '@/service/sv-nhan-bang.service';
 import { SystemTraoBangService } from '@/service/system-trao-bang';
+import { SlideList } from './slide-list/slide-list';
 
 @Component({
     selector: 'app-scan-qr-sv',
-    imports: [SharedImports, TableModule, LeftSidebar, Header, StudentList, Footer, NgIcon, TagModule],
+    imports: [SharedImports, TableModule, LeftSidebar, Header, StudentList, Footer, NgIcon, TagModule, SlideList],
     templateUrl: './scan-qr-sv.html',
     styleUrl: './scan-qr-sv.scss'
 })
@@ -36,6 +37,7 @@ export class ScanQrSv extends BaseComponent implements OnDestroy {
     students: IViewScanQrTienDoSv[] = [];
     listSubPlan: IViewScanQrSubPlan[] = [];
     pushedSuccessSv: IViewScanQrTienDoSv = {};
+    listSlide : ISlideItem[] = [];
 
     override ngOnInit(): void {
         this.initData();

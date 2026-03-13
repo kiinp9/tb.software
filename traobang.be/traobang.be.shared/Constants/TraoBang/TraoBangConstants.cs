@@ -47,7 +47,7 @@
 
     public static class LoaiSlides
     {
-        public const int BINH_THUONG = 1;
+        public const int TEXT = 1;
         public const int SINH_VIEN = 2;
     }
 

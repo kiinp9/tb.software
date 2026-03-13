@@ -84,7 +84,7 @@ export class ScanQrSv extends BaseComponent implements OnDestroy {
     cutSlide() {
         this._svTraoBangService.cutSlideThuong(this.idSubPlan).subscribe({
             next: (res) => {
-                if (this.isResponseSucceed(res, true, 'Cắt silde thành công ')) {
+                if (this.isResponseSucceed(res, true, 'Chuyển loại slide thành công ')) {
                     this.currentSubPlanInfo = res.data;
                     this.getHangDoi();
                     this.getCurrentSubPlan();

@@ -8,22 +8,22 @@
     </ng-template>
 
     <ng-template pTemplate="body" let-slide>
-        <tr class="h-20 !bg-[#ffedd5] text-1xl">
+        <tr class="h-20 !bg-[#d4ffd1] text-1xl">
             <!-- STT -->
-            <td class="!text-center align-middle !bg-[#ffedd5]"
+            <td class="!text-center align-middle !bg-[#d4ffd1]"
                 [class.bg-orange-200]="slide.trangThai === constStatuses.DANG_TRAO_BANG">
                 {{ slide.order }}
             </td>
 
             <!-- Nội dung -->
             <td class="align-middle" [class.bg-orange-200]="slide.trangThai === constStatuses.DANG_TRAO_BANG">
-                <div class="h-15 overflow-hidden line-clamp-2 !bg-[#ffedd5]">
+                <div class="h-15 overflow-hidden line-clamp-2 !bg-[#d4ffd1]">
                     {{ slide.noiDung }}
                 </div>
             </td>
 
             <!-- Ghi chú -->
-            <td class="align-middle !bg-[#ffedd5]" [class.bg-orange-200]="slide.trangThai === constStatuses.DANG_TRAO_BANG">
+            <td class="align-middle !bg-[#d4ffd1]" [class.bg-orange-200]="slide.trangThai === constStatuses.DANG_TRAO_BANG">
                 <div class="h-15 overflow-hidden line-clamp-2">
                     {{ slide.note }}
                 </div>

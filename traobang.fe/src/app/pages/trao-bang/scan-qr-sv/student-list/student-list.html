@@ -18,7 +18,8 @@
             <td [ngClass]="{
                     '!text-center': true,
                     'bg-orange-200': student.trangThai === constStatuses.DANG_TRAO_BANG,
-                    '!bg-[#ffedd5]': student.loaiSlide === loaiSlide.TEXT
+                    '!bg-[#d4ffd1]': student.loaiSlide === loaiSlide.TEXT,
+                    '!bg-[#ffedd5]': student.isSlideDauCuoi
                 }">
                 {{ student.order }}
             </td>
@@ -26,28 +27,32 @@
             <td [ngClass]="{
                     '!text-center': true,
                     'bg-orange-200': student.trangThai === constStatuses.DANG_TRAO_BANG,
-                    '!bg-[#ffedd5]': student.loaiSlide === loaiSlide.TEXT
+                    '!bg-[#d4ffd1]': student.loaiSlide === loaiSlide.TEXT,
+                     '!bg-[#ffedd5]': student.isSlideDauCuoi
                 }">
                 {{ student.maSoSinhVien }}
             </td>
 
             <td [ngClass]="{
                     'bg-orange-200': student.trangThai === constStatuses.DANG_TRAO_BANG,
-                    '!bg-[#ffedd5]': student.loaiSlide === loaiSlide.TEXT
+                    '!bg-[#d4ffd1]': student.loaiSlide === loaiSlide.TEXT,
+                     '!bg-[#ffedd5]': student.isSlideDauCuoi
                 }">
                 {{ student.hoVaTen }}
             </td>
 
             <td [ngClass]="{
                     'bg-orange-200': student.trangThai === constStatuses.DANG_TRAO_BANG,
-                    '!bg-[#ffedd5]': student.loaiSlide === loaiSlide.TEXT
+                    '!bg-[#d4ffd1]': student.loaiSlide === loaiSlide.TEXT,
+                    '!bg-[#ffedd5]': student.isSlideDauCuoi
                 }">
                 {{ student.tenNganhDaoTao }}
             </td>
 
             <td [ngClass]="{
                     'bg-orange-200': student.trangThai === constStatuses.DANG_TRAO_BANG,
-                    '!bg-[#ffedd5]': student.loaiSlide === loaiSlide.TEXT
+                    '!bg-[#d4ffd1]': student.loaiSlide === loaiSlide.TEXT,
+                     '!bg-[#ffedd5]': student.isSlideDauCuoi
                 }">
                 <p-tag [severity]="constStatuses.getSeverity(student.trangThai)">
                     <span class="text-xl">

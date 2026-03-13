@@ -1238,6 +1238,7 @@ namespace traobang.be.application.TraoBang.Implements
                         var tienDoSlide = _tbDbContext.TienDoTraoBangs
                                                 .Where(x => !x.Deleted && x.LoaiSlide == LoaiSlides.TEXT && x.IdSubPlan == subPlanForKetBai.Id)
                                                 .Select(x => x.IdSlide).ToList();
+
                         var finalSlide = _tbDbContext.Slides
                                             .Where(x => !x.Deleted && x.LoaiSlide == LoaiSlides.TEXT && x.IsShow && x.IdSubPlan == subPlanForKetBai.Id && !tienDoSlide.Contains(x.Id))
                                             .OrderByDescending(x => x.Order)
@@ -1245,6 +1246,10 @@ namespace traobang.be.application.TraoBang.Implements
 
                         if (finalSlide != null)
                         {
+                            var maxOrder = _tbDbContext.TienDoTraoBangs
+                                                .Where(x => x.IdSubPlan == subPlanForKetBai.Id && !x.Deleted)
+                                                .Max(x => (int?)x.Order) ?? 0;
+
                             _tbDbContext.TienDoTraoBangs.Add(new TienDoTraoBang
                             {
                                 IdSubPlan = finalSlide.IdSubPlan,
@@ -1256,7 +1261,7 @@ namespace traobang.be.application.TraoBang.Implements
                                 IdPlan = subPlanForKetBai.IdPlan,
                                 LoaiSlide = LoaiSlides.TEXT,
                                 Note = finalSlide.Note,
-                                Order = finalSlide.Order,
+                                Order = maxOrder + 1,
                                 IdSinhVienNhanBang = -1
                             });
                             _tbDbContext.SaveChanges();

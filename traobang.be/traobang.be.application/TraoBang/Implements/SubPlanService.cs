@@ -1436,6 +1436,14 @@ namespace traobang.be.application.TraoBang.Implements
                 var plan = query.p;
                 var subPlan = query.sp;
 
+                var slideDau = _tbDbContext.Slides.AsNoTracking()
+                                    .Where(x => !x.Deleted && x.IdSubPlan == idSubPlan && x.LoaiSlide == LoaiSlides.TEXT)
+                                    .OrderBy(x => x.Order).FirstOrDefault()?.Id;
+
+                var slideCuoi = _tbDbContext.Slides.AsNoTracking()
+                                    .Where(x => !x.Deleted && x.IdSubPlan == idSubPlan && x.LoaiSlide == LoaiSlides.TEXT)
+                                    .OrderByDescending(x => x.Order).FirstOrDefault()?.Id;
+
                 var slideDaChay = _tbDbContext.TienDoTraoBangs
                                         .Where(x => !x.Deleted && x.IdSubPlan == idSubPlan
                                                     && x.LoaiSlide == LoaiSlides.TEXT)
@@ -1447,9 +1455,10 @@ namespace traobang.be.application.TraoBang.Implements
                                         .Select(x => (int?)x.Order)
                                         .Max() ?? 0;
 
-                var slideIncomming = _tbDbContext.Slides.Where(x => !x.Deleted && x.IdSubPlan == idSubPlan &&
-                                                    !slideDaChay.Contains(x.Id) &&
-                                                    x.LoaiSlide == LoaiSlides.TEXT && x.IsShow)
+                var slideIncomming = _tbDbContext.Slides.Where(x => !x.Deleted && x.IdSubPlan == idSubPlan
+                                                    && !slideDaChay.Contains(x.Id)
+                                                    && x.Id != slideDau && x.Id != slideCuoi
+                                                    && x.LoaiSlide == LoaiSlides.TEXT && x.IsShow)
                                                 .OrderBy(x => x.Order)
                                                 .FirstOrDefault();
 

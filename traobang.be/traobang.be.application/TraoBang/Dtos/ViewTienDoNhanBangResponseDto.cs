@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace traobang.be.application.TraoBang.Dtos
+﻿namespace traobang.be.application.TraoBang.Dtos
 {
     public class ViewTienDoNhanBangResponseDto
     {
@@ -13,10 +7,11 @@ namespace traobang.be.application.TraoBang.Dtos
         public string MaSoSinhVien { get; set; } = String.Empty;
         public string CapBang { get; set; } = String.Empty;
         public string TenNganhDaoTao { get; set; } = String.Empty;
-        public string ? Note { get; set; }
+        public string? Note { get; set; }
         public int TrangThai { get; set; }
         public int Order { get; set; }
         public bool IsShow { get; set; }
+        public int LoaiSlide { get; set; }
 
     }
 }

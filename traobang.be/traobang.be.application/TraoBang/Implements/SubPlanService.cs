@@ -1009,7 +1009,8 @@ namespace traobang.be.application.TraoBang.Implements
                 TrangThai = result.TrangThai,
                 Note = sinhVien.Note ?? "",
                 Order = result.Order,
-                IsShow = result.IsShow
+                IsShow = result.IsShow,
+                LoaiSlide = result.LoaiSlide
             }).ToList();
         }
         public async Task<GetNextSubPlanResponseDto?> NextSubPlan()

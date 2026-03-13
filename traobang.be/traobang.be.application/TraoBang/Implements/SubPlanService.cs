@@ -997,6 +997,8 @@ namespace traobang.be.application.TraoBang.Implements
                                            Order = td.Order,
                                            IsShow = td.IsShow,
                                            LoaiSlide = td.LoaiSlide,
+                                           // gán tạm tên ngành đào tạo
+                                           Note = sv != null ? sv.TenNganhDaoTao : string.Empty
                                        }).ToList();
 
 
@@ -1023,7 +1025,7 @@ namespace traobang.be.application.TraoBang.Implements
                 HoVaTen = result.HoVaTen,
                 MaSoSinhVien = result.MaSoSinhVien,
                 CapBang = sinhVien.CapBang,
-                TenNganhDaoTao = sinhVien.TenNganhDaoTao,
+                TenNganhDaoTao = result.Note,
                 TrangThai = result.TrangThai,
                 Note = sinhVien.Note ?? "",
                 Order = result.Order,

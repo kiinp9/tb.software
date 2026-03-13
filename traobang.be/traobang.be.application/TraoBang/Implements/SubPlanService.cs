@@ -982,8 +982,8 @@ namespace traobang.be.application.TraoBang.Implements
             var soLuongConLai = dto.SoLuong - results.Count;
             if (soLuongConLai > 0)
             {
-                var sinhVienChuanBi = (from td in _tbDbContext.TienDoTraoBangs
-                                       join sv in _tbDbContext.DanhSachSinhVienNhanBangs on td.IdSinhVienNhanBang equals sv.Id
+                var sinhVienChuanBi = (from td in _tbDbContext.TienDoTraoBangs.AsNoTracking()
+                                       from sv in _tbDbContext.DanhSachSinhVienNhanBangs.AsNoTracking().Where(x => x.Id == td.IdSinhVienNhanBang).DefaultIfEmpty()
                                        orderby td.Order
                                        where !td.Deleted && !sv.Deleted
                                          && td.IdSubPlan == khoaDangTrao.Id
@@ -991,7 +991,7 @@ namespace traobang.be.application.TraoBang.Implements
                                        select new TienDoTraoBang
                                        {
                                            Id = td.Id,
-                                           HoVaTen = sv.QrHoTen,
+                                           HoVaTen = sv != null ? sv.QrHoTen : td.HoVaTen,
                                            MaSoSinhVien = td.MaSoSinhVien,
                                            TrangThai = td.TrangThai,
                                            Order = td.Order,

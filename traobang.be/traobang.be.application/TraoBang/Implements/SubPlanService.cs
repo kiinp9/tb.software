@@ -2004,8 +2004,8 @@ namespace traobang.be.application.TraoBang.Implements
             }).ToList();
 
             var items = itemsFromTienDo
-                .Concat(itemsFromXepHangHopLe)
-                .Concat(itemsFromSinhVienBiBoQua)
+                //.Concat(itemsFromXepHangHopLe)
+                //.Concat(itemsFromSinhVienBiBoQua)
                 .ToList();
 
             return new GetInforSubPlanDangTraoResponseDto

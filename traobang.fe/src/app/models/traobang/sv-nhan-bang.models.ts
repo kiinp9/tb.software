@@ -115,6 +115,7 @@ export interface IViewSubPlanSideScreen {
     id?: number
     ten?: string
     tienDo?: string
+    orderTienDo?:number;
     items?: IViewScanQrTienDoSv[]
 }
 export interface IViewSvBatDauLuiResponse {

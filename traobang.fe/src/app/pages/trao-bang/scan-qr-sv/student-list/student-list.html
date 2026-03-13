@@ -13,8 +13,8 @@
         </tr>
     </ng-template>
 
-    <ng-template pTemplate="body" let-student>
-        <tr>
+    <ng-template pTemplate="body" let-student let-ri="rowIndex">
+        <tr [class.slide-enter-animation]="highlightLast() && ri === students().length - 1">
             <td [ngClass]="{
                     '!text-center': true,
                     'bg-orange-200': student.trangThai === constStatuses.DANG_TRAO_BANG,

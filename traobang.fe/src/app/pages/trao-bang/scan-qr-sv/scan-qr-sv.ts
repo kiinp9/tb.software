@@ -38,6 +38,8 @@ export class ScanQrSv extends BaseComponent implements OnDestroy {
     listSubPlan: IViewScanQrSubPlan[] = [];
     pushedSuccessSv: IViewScanQrTienDoSv = {};
     listSlide : ISlideItem[] = [];
+    removingFirstSlide = false;
+    highlightLastStudent = false;
 
     override ngOnInit(): void {
         this.initData();
@@ -82,15 +84,34 @@ export class ScanQrSv extends BaseComponent implements OnDestroy {
     }
 
     cutSlide() {
-        this._svTraoBangService.cutSlideThuong(this.idSubPlan).subscribe({
-            next: (res) => {
-                if (this.isResponseSucceed(res, true, 'Chuyển loại slide thành công ')) {
-                    this.currentSubPlanInfo = res.data;
-                    this.getHangDoi();
-                    this.getCurrentSubPlan();
+        this.removingFirstSlide = true;
+        setTimeout(() => {
+            this._svTraoBangService.cutSlideThuong(this.idSubPlan).subscribe({
+                next: (res) => {
+                    this.removingFirstSlide = false;
+                    if (this.isResponseSucceed(res, true, 'Chuyển loại slide thành công ')) {
+                        this.currentSubPlanInfo = res.data;
+                        this.getCurrentSubPlan();
+                        this._svTraoBangService.getHangDoi({ SoLuong: 7 }).subscribe({
+                            next: (hangDoiRes) => {
+                                if (this.isResponseSucceed(hangDoiRes)) {
+                                    this.students = hangDoiRes.data;
+                                    this.highlightLastStudent = true;
+                                    setTimeout(() => {
+                                        this.highlightLastStudent = false;
+                                    }, 420);
+                                } else {
+                                    this.students = [];
+                                }
+                            }
+                        });
+                    }
+                },
+                error: () => {
+                    this.removingFirstSlide = false;
                 }
-            }
-        });
+            });
+        }, 260);
     }
 
     getCurrentSubPlan() {

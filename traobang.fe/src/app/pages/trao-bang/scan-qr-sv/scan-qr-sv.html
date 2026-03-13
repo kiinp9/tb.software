@@ -27,7 +27,7 @@
                     </div>
                 </div>
 
-                <div class="flex flex-col justify-center items-center mt-3 border border-dashed w-full h-96">
+                <div class="flex flex-col justify-center items-center mt-3 border border-dashed w-full h-48">
                     <div>
                         <p class="!mb-0"><ng-icon [name]="'heroCamera'" class="mr-2"></ng-icon>Camera đang mở</p>
                         <p>Đưa mã QR vào khung hình để quét</p>
@@ -36,7 +36,7 @@
 
                 <!-- Added student -->
                 @if (this.pushedSuccessSv.maSoSinhVien) {
-                <div class="mt-3 p-3 border border-green-400 min-h-96 bg-green-50 rounded">
+                <div class="mt-3 p-3 border border-green-400 h-48 bg-green-50 rounded">
                     <p class="font-semibold text-green-700">✔️ ĐÃ THÊM VÀO HÀNG ĐỢI</p>
                     <div class="text-gray-800 mt-1">
                         <p><strong>{{pushedSuccessSv.hoVaTen}}</strong></p>

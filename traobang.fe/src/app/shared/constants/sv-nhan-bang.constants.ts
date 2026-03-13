@@ -10,7 +10,7 @@ export class SvNhanBangStatuses {
 
     static List = [
         { name: 'Xếp hàng', code: this.XEP_HANG, severity: 'secondary' },
-        { name: 'Chuẩn bị', code: this.CHUAN_BI, severity: 'info' },
+        { name: 'Đã checkin', code: this.CHUAN_BI, severity: 'info' },
         { name: 'Đang trao bằng', code: this.DANG_TRAO_BANG, severity: 'warn' },
         { name: 'Đã trao bằng', code: this.DA_TRAO_BANG, severity: 'success' },
         { name: 'Tham gia trao bằng', code: this.THAM_GIA_TRAO_BANG, severity: 'danger' },

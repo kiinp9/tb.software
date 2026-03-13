@@ -1179,10 +1179,19 @@ namespace traobang.be.application.TraoBang.Implements
                 .AsNoTracking()
                 .CountAsync(x => x.IdSubPlan == idSubPlan && !x.Deleted && x.TrangThai == TraoBangConstants.DaTraoBang && x.LoaiSlide == LoaiSlides.SINH_VIEN);
 
-            // Lấy slide text ko ở trong hàng đợi
+            // Lấy slide text ko ở trong hàng đợi, ko lấy slide đầu và cuối
             var listSlideTrongHangDoi = _tbDbContext.TienDoTraoBangs.Where(x => !x.Deleted && x.LoaiSlide == LoaiSlides.TEXT).Select(x => x.IdSlide).ToList();
+            var slideDau = _tbDbContext.Slides.AsNoTracking()
+                                    .Where(x => !x.Deleted && x.IdSubPlan == idSubPlan && x.LoaiSlide == LoaiSlides.TEXT)
+                                    .OrderBy(x => x.Order).FirstOrDefault()?.Id;
+
+            var slideCuoi = _tbDbContext.Slides.AsNoTracking()
+                                .Where(x => !x.Deleted && x.IdSubPlan == idSubPlan && x.LoaiSlide == LoaiSlides.TEXT)
+                                .OrderByDescending(x => x.Order).FirstOrDefault()?.Id;
             var listSlide = _tbDbContext.Slides
-                                    .Where(x => !x.Deleted && x.IsShow && x.IdSubPlan == idSubPlan && x.LoaiSlide == LoaiSlides.TEXT && !listSlideTrongHangDoi.Contains(x.Id))
+                                    .Where(x => !x.Deleted && x.IsShow && x.IdSubPlan == idSubPlan
+                                                && x.Id != slideDau && x.Id != slideCuoi
+                                                && x.LoaiSlide == LoaiSlides.TEXT && !listSlideTrongHangDoi.Contains(x.Id))
                                     .OrderBy(x => x.Order)
                                     .ToList();
 

@@ -54,9 +54,9 @@
                     '!bg-[#d4ffd1]': student.loaiSlide === loaiSlide.TEXT,
                      '!bg-[#ffedd5]': student.isSlideDauCuoi
                 }">
-                <p-tag [severity]="constStatuses.getSeverity(student.trangThai)">
+                <p-tag *ngIf="student.loaiSlide !== loaiSlide.TEXT" [severity]="constStatuses.getSeverity(student.trangThai)">
                     <span class="text-xl">
-                        {{ constStatuses.getName(student.trangThai) }}
+                        {{ student.loaiSlide !== loaiSlide.TEXT ? constStatuses.getName(student.trangThai):null }}
                     </span>
                 </p-tag>
             </td>

@@ -35,4 +35,8 @@ export class GiaoDienService {
     delete(id: number) {
         return this.http.delete<IBaseResponse>(`${this.api}/${id}`);
     }
+
+    getGiaoDienActive() {
+        return this.http.get<IBaseResponseWithData<IViewGiaoDien>>(`${this.api}/active-plan`);
+    }
 }

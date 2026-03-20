@@ -52,6 +52,10 @@ namespace traobang.be.domain.TraoBang
         [Obsolete("Sắp xóa")]
         public int TrangThai { get; set; }
         public string LinkQR { get; set; } = String.Empty;
+        [MaxLength(500)]
+        public string QrTenKhoa { get; set; } = string.Empty;
+        [MaxLength(500)]
+        public string QrHoTen { get; set; } = string.Empty;
         public string? CreatedBy { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? DeletedDate { get; set; }

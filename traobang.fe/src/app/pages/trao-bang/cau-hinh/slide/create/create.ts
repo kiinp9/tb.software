@@ -36,7 +36,7 @@ export class Create extends BaseComponent {
         idSubPlan: new FormControl('', [Validators.required]),
         loaiSlide: new FormControl(SlideConst.TEXT, [Validators.required]),
         noiDung: new FormControl([], [Validators.required]),
-        note: new FormControl('', [Validators.required]),
+        note: new FormControl(''),
         trangThai: new FormControl('', [Validators.required]),
         isShow: new FormControl(true)
     });
@@ -73,9 +73,9 @@ export class Create extends BaseComponent {
         noiDung: {
             required: 'Không được bỏ trống'
         },
-        note: {
-            required: 'Không được bỏ trống'
-        },
+        // note: {
+        //     required: 'Không được bỏ trống'
+        // },
         email: {
             required: 'Không được bỏ trống'
         },

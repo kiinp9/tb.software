@@ -107,12 +107,18 @@ export class TraoBangSvService {
     getSvNhanBangKhoa() {
         return this.http.get<IBaseResponseWithData<IViewSubPlanSideScreen>>(`${this.api}/danh-sach-sinh-vien-nhan-bang-khoa?soLuong=50`);
     }
+
     getSvBatDauLui(idSubPlan: number) {
         return this.http.post<IBaseResponseWithData<IViewSvBatDauLuiResponse>>(`${this.api}/${idSubPlan}/infor-sinh-vien-prev`, null);
     }
+
     getHangDoiSinhVienBatDauLui(query: IGetTienDoHangDoiSinhVienBatDauLui) {
         return this.http.get<IBaseResponseWithData<IViewScanQrTienDoSv[]>>(`${this.api}/sinh-vien-prev/tien-do`, {
             params: { ...query }
         });
+    }
+
+    cutSlideThuong(id: number) {
+        return this.http.post<IBaseResponseWithData<any>>(`${this.api}/sinh-vien-nhan-bang/hang-doi/slide-thuong`, { idSubPlan: id });
     }
 }

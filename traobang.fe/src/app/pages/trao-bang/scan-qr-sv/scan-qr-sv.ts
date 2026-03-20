@@ -2,10 +2,10 @@ import { BaseComponent } from '@/shared/components/base/base-component';
 import { SharedImports } from '@/shared/import.shared';
 import { Component, inject, OnDestroy } from '@angular/core';
 import { TableModule } from 'primeng/table';
-import { LeftSidebar } from "./left-sidebar/left-sidebar";
-import { Header } from "./header/header";
-import { StudentList } from "./student-list/student-list";
-import { Footer } from "./footer/footer";
+import { LeftSidebar } from './left-sidebar/left-sidebar';
+import { Header } from './header/header';
+import { StudentList } from './student-list/student-list';
+import { Footer } from './footer/footer';
 
 import { DialogMssv } from './dialog-mssv/dialog-mssv';
 
@@ -14,208 +14,251 @@ import * as signalR from '@microsoft/signalr';
 
 import { NgIcon } from '@ng-icons/core';
 import { TagModule } from 'primeng/tag';
-import { IViewScanQrCurrentSubPlan, IViewScanQrTienDoSv, IViewScanQrSubPlan } from '@/models/traobang/sv-nhan-bang.models';
+import { IViewScanQrCurrentSubPlan, IViewScanQrTienDoSv, IViewScanQrSubPlan, ISlideItem } from '@/models/traobang/sv-nhan-bang.models';
 import { ScanQrService } from '@/service/scan-qr.service';
 import { TraoBangSvService } from '@/service/sv-nhan-bang.service';
 import { SystemTraoBangService } from '@/service/system-trao-bang';
-
+import { SlideList } from './slide-list/slide-list';
 
 @Component({
-  selector: 'app-scan-qr-sv',
-  imports: [SharedImports, TableModule, LeftSidebar, Header, StudentList, Footer, NgIcon, TagModule],
-  templateUrl: './scan-qr-sv.html',
-  styleUrl: './scan-qr-sv.scss'
+    selector: 'app-scan-qr-sv',
+    imports: [SharedImports, TableModule, LeftSidebar, Header, StudentList, Footer, NgIcon, TagModule, SlideList],
+    templateUrl: './scan-qr-sv.html',
+    styleUrl: './scan-qr-sv.scss'
 })
 export class ScanQrSv extends BaseComponent implements OnDestroy {
+    hubConnection: signalR.HubConnection | undefined;
+    _svTraoBangService = inject(TraoBangSvService);
+    _scanQrService = inject(ScanQrService);
+    _systemService = inject(SystemTraoBangService);
 
-  hubConnection: signalR.HubConnection | undefined;
-  _svTraoBangService = inject(TraoBangSvService);
-  _scanQrService = inject(ScanQrService);
-  _systemService = inject(SystemTraoBangService);
+    idSubPlan: number = 0;
+    currentSubPlanInfo: IViewScanQrCurrentSubPlan | null = {};
+    students: IViewScanQrTienDoSv[] = [];
+    listSubPlan: IViewScanQrSubPlan[] = [];
+    pushedSuccessSv: IViewScanQrTienDoSv = {};
+    listSlide : ISlideItem[] = [];
+    removingFirstSlide = false;
+    highlightLastStudent = false;
 
-  idSubPlan: number = 0;
-  currentSubPlanInfo: IViewScanQrCurrentSubPlan | null = {};
-  students: IViewScanQrTienDoSv[] = [];
-  listSubPlan: IViewScanQrSubPlan[] = [];
-  pushedSuccessSv: IViewScanQrTienDoSv = {};
-
-  override ngOnInit(): void {
-    this.initData();
-    this.connectHub();
-    this._scanQrService.addListener(mssv => {
-      this.pushHangDoi(mssv)
-    })
-  }
-
-  initData() {
-    this._svTraoBangService.getQrListSubPlan(1).subscribe({
-      next: res => {
-        if (this.isResponseSucceed(res)) {
-          this.listSubPlan = res.data
-          const dangTrao = this.listSubPlan.find(x => x.trangThai === SubPlanStatuses.DANG_TRAO_BANG);
-          if (typeof dangTrao !== 'undefined') {
-            this.idSubPlan = dangTrao.id || 0;
-          } else {
-            this.idSubPlan = 0;
-          }
-          this.getCurrentSubPlan();
-          this.getHangDoi();
-        }
-      }
-    })
-  }
-
-
-  getListSubPlan() {
-    this._svTraoBangService.getQrListSubPlan(1).subscribe({
-      next: res => {
-        if (this.isResponseSucceed(res)) {
-          this.listSubPlan = res.data
-          const dangTrao = this.listSubPlan.find(x => x.trangThai === SubPlanStatuses.DANG_TRAO_BANG);
-          if (typeof dangTrao !== 'undefined') {
-            this.idSubPlan = dangTrao.id || 0;
-          } else {
-            this.idSubPlan = 1;
-          }
-        }
-      }
-    })
-  }
-
-  getCurrentSubPlan() {
-    this._svTraoBangService.getCurrentSubPlanById(this.idSubPlan).subscribe({
-      next: res => {
-        if (this.isResponseSucceed(res)) {
-          this.currentSubPlanInfo = res.data
-        }
-      }
-    })
-  }
-
-  getHangDoi() {
-    this._svTraoBangService.getHangDoi({ SoLuong: 7 }).subscribe({
-      next: res => {
-        if (this.isResponseSucceed(res)) {
-          this.students = res.data
-        } else {
-          this.students = [];
-        }
-      }
-    })
-  }
-
-  pushHangDoi(mssv: string) {
-    this.loading = true;
-    this._svTraoBangService.pushHangDoi(mssv).subscribe({
-      next: res => {
-        if (this.isResponseSucceed(res)) {
-          this.pushedSuccessSv = res.data;
-          this.getHangDoi();
-          this.getCurrentSubPlan();
-        }
-      }
-    }).add(() => {
-      this.loading = false;
-    })
-  }
-
-  pushHangDoiDacBiet(mssv: string) {
-    this.loading = true;
-    this._svTraoBangService.pushHangDoiTruongHopDacBiet(mssv).subscribe({
-      next: res => {
-        if (this.isResponseSucceed(res)) {
-          this.pushedSuccessSv = res.data;
-          this.getHangDoi();
-          this.getCurrentSubPlan();
-        }
-      }
-    }).add(() => {
-      this.loading = false;
-    })
-  }
-
-  onResetData() {
-    this.confirmAction(
-      {
-        header: 'Xóa hết dữ liệu',
-        message: `Xóa hết dữ liệu?`
-      },
-      () => {
-        // this.callApiImport();
-        this._systemService.restart().subscribe({
-          next: (res) => {
-            if (this.isResponseSucceed(res, true, 'Đã clear data')) {
-              this.initData();
-            }
-          }
-        })
-      }
-    );
-  }
-
-  onOpenDialogMssv() {
-    const ref = this._dialogService.open(DialogMssv, { header: 'Chuyển SV vào hàng đợi', closable: true, modal: true, styleClass: 'w-[500px]', focusOnShow: false });
-    ref.onClose.subscribe((mssv) => {
-      if (mssv) {
-        this.pushHangDoiDacBiet(mssv);
-      }
-    });
-  }
-
-  onChangeSubPlan(idSubPlan: number | null | undefined) {
-    if (idSubPlan) {
-      this.loading = true;
-      this._svTraoBangService.backToDaTraoBangSubPlan(idSubPlan).subscribe({
-        next: res => {
-          if (this.isResponseSucceed(res)) {
-            this.idSubPlan = idSubPlan;
-            this.getListSubPlan();
-            this.getHangDoi();
-            this.getCurrentSubPlan();
-          }
-        }
-      }).add(() => {
-        this.loading = false;
-      })
+    override ngOnInit(): void {
+        this.initData();
+        this.connectHub();
+        this._scanQrService.addListener((mssv) => {
+            this.pushHangDoi(mssv);
+        });
     }
-  }
 
-  onNextSubPlan() {
-    this.loading = true;
-    this._svTraoBangService.nextSubPlan().subscribe({
-      next: res => {
-        if (this.isResponseSucceed(res)) {
-          this.initData();
+    initData() {
+        this._svTraoBangService.getQrListSubPlan(1).subscribe({
+            next: (res) => {
+                if (this.isResponseSucceed(res)) {
+                    this.listSubPlan = res.data;
+                    const dangTrao = this.listSubPlan.find((x) => x.trangThai === SubPlanStatuses.DANG_TRAO_BANG);
+                    if (typeof dangTrao !== 'undefined') {
+                        this.idSubPlan = dangTrao.id || 0;
+                    } else {
+                        this.idSubPlan = 0;
+                    }
+                    this.getCurrentSubPlan();
+                    this.getHangDoi();
+                }
+            }
+        });
+    }
+
+    getListSubPlan() {
+        this._svTraoBangService.getQrListSubPlan(1).subscribe({
+            next: (res) => {
+                if (this.isResponseSucceed(res)) {
+                    this.listSubPlan = res.data;
+                    const dangTrao = this.listSubPlan.find((x) => x.trangThai === SubPlanStatuses.DANG_TRAO_BANG);
+                    if (typeof dangTrao !== 'undefined') {
+                        this.idSubPlan = dangTrao.id || 0;
+                    } else {
+                        this.idSubPlan = 1;
+                    }
+                }
+            }
+        });
+    }
+
+    cutSlide() {
+        this.removingFirstSlide = true;
+        setTimeout(() => {
+            this._svTraoBangService.cutSlideThuong(this.idSubPlan).subscribe({
+                next: (res) => {
+                    this.removingFirstSlide = false;
+                    if (this.isResponseSucceed(res, true, 'Chuyển loại slide thành công ')) {
+                        this.currentSubPlanInfo = res.data;
+                        this.getCurrentSubPlan();
+                        this._svTraoBangService.getHangDoi({ SoLuong: 7 }).subscribe({
+                            next: (hangDoiRes) => {
+                                if (this.isResponseSucceed(hangDoiRes)) {
+                                    this.students = hangDoiRes.data;
+                                    this.highlightLastStudent = true;
+                                    setTimeout(() => {
+                                        this.highlightLastStudent = false;
+                                    }, 420);
+                                } else {
+                                    this.students = [];
+                                }
+                            }
+                        });
+                    }
+                },
+                error: () => {
+                    this.removingFirstSlide = false;
+                }
+            });
+        }, 260);
+    }
+
+    getCurrentSubPlan() {
+        this._svTraoBangService.getCurrentSubPlanById(this.idSubPlan).subscribe({
+            next: (res) => {
+                if (this.isResponseSucceed(res)) {
+                    this.currentSubPlanInfo = res.data;
+                }
+            }
+        });
+    }
+
+    getHangDoi() {
+        this._svTraoBangService.getHangDoi({ SoLuong: 7 }).subscribe({
+            next: (res) => {
+                if (this.isResponseSucceed(res)) {
+                    this.students = res.data;
+                } else {
+                    this.students = [];
+                }
+            }
+        });
+    }
+
+    pushHangDoi(mssv: string) {
+        this.loading = true;
+        this._svTraoBangService
+            .pushHangDoi(mssv)
+            .subscribe({
+                next: (res) => {
+                    if (this.isResponseSucceed(res)) {
+                        this.pushedSuccessSv = res.data;
+                        this.getHangDoi();
+                        this.getCurrentSubPlan();
+                    }
+                }
+            })
+            .add(() => {
+                this.loading = false;
+            });
+    }
+
+    pushHangDoiDacBiet(mssv: string) {
+        this.loading = true;
+        this._svTraoBangService
+            .pushHangDoiTruongHopDacBiet(mssv)
+            .subscribe({
+                next: (res) => {
+                    if (this.isResponseSucceed(res)) {
+                        this.pushedSuccessSv = res.data;
+                        this.getHangDoi();
+                        this.getCurrentSubPlan();
+                    }
+                }
+            })
+            .add(() => {
+                this.loading = false;
+            });
+    }
+
+    onResetData() {
+        this.confirmAction(
+            {
+                header: 'Xóa hết dữ liệu',
+                message: `Xóa hết dữ liệu?`
+            },
+            () => {
+                // this.callApiImport();
+                this._systemService.restart().subscribe({
+                    next: (res) => {
+                        if (this.isResponseSucceed(res, true, 'Đã clear data')) {
+                            this.initData();
+                        }
+                    }
+                });
+            }
+        );
+    }
+
+    onOpenDialogMssv() {
+        const ref = this._dialogService.open(DialogMssv, { header: 'Chuyển SV vào hàng đợi', closable: true, modal: true, styleClass: 'w-[500px]', focusOnShow: false });
+        ref.onClose.subscribe((mssv) => {
+            if (mssv) {
+                this.pushHangDoiDacBiet(mssv);
+            }
+        });
+    }
+
+    onChangeSubPlan(idSubPlan: number | null | undefined) {
+        if (idSubPlan) {
+            this.loading = true;
+            this._svTraoBangService
+                .backToDaTraoBangSubPlan(idSubPlan)
+                .subscribe({
+                    next: (res) => {
+                        if (this.isResponseSucceed(res)) {
+                            this.idSubPlan = idSubPlan;
+                            this.getListSubPlan();
+                            this.getHangDoi();
+                            this.getCurrentSubPlan();
+                        }
+                    }
+                })
+                .add(() => {
+                    this.loading = false;
+                });
         }
-      }
-    }).add(() => {
-      this.loading = false;
-    })
-  }
+    }
 
-  connectHub() {
-    const hubUrl = TraoBangHubConst.HUB;
-    this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl(hubUrl, {
-        skipNegotiation: true,
-        transport: signalR.HttpTransportType.WebSockets,
-      })
-      .build();
+    onNextSubPlan() {
+        this.loading = true;
+        this._svTraoBangService
+            .nextSubPlan()
+            .subscribe({
+                next: (res) => {
+                    if (this.isResponseSucceed(res)) {
+                        this.initData();
+                    }
+                }
+            })
+            .add(() => {
+                this.loading = false;
+            });
+    }
 
-    this.hubConnection.on(TraoBangHubConst.ReceiveSinhVienDangTrao, (...args) => {
-      const idSubPlan = args[0];
+    connectHub() {
+        const hubUrl = TraoBangHubConst.HUB;
+        this.hubConnection = new signalR.HubConnectionBuilder()
+            .withUrl(hubUrl, {
+                skipNegotiation: true,
+                transport: signalR.HttpTransportType.WebSockets
+            })
+            .build();
 
-      // if (!idSubPlan) return;
+        this.hubConnection.on(TraoBangHubConst.ReceiveSinhVienDangTrao, (...args) => {
+            const idSubPlan = args[0];
 
-      this.initData();
-    });
+            // if (!idSubPlan) return;
 
-    this.hubConnection.start().then();
-  }
+            this.initData();
+        });
 
-  ngOnDestroy(): void {
-    this.hubConnection?.stop().then();
-    this._scanQrService.clearListener();
-  }
+        this.hubConnection.start().then();
+    }
 
+    ngOnDestroy(): void {
+        this.hubConnection?.stop().then();
+        this._scanQrService.clearListener();
+    }
 }

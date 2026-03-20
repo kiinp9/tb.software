@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System.Text.Json;
 using traobang.be.application.Base;
 using traobang.be.application.TraoBang.Dtos;
@@ -10,10 +11,14 @@ using traobang.be.application.TraoBang.Interfaces;
 using traobang.be.domain.TraoBang;
 using traobang.be.infrastructure.data;
 using traobang.be.infrastructure.external.Excel;
+using traobang.be.infrastructure.external.File;
+using traobang.be.infrastructure.external.File.Dtos;
+using traobang.be.infrastructure.external.QrCode;
 using traobang.be.shared.Constants.TraoBang;
 using traobang.be.shared.HttpRequest.AppException;
 using traobang.be.shared.HttpRequest.BaseRequest;
 using traobang.be.shared.HttpRequest.Error;
+using traobang.be.shared.Settings;
 using traobang.be.shared.Utils;
 
 namespace traobang.be.application.TraoBang.Implements
@@ -21,22 +26,35 @@ namespace traobang.be.application.TraoBang.Implements
     public class SlideService : BaseService, ISlideService
     {
         private readonly IExcelService _excelService;
+        private readonly IFileS3Services _fileS3Service;
+        private readonly IQrCodeService _qrCodeService;
+        private readonly FileS3Config _fileS3Config;
+        private readonly TemplateSettings _templateSettings;
+
         public SlideService(
             TbDbContext tbDbContext,
             ILogger<SlideService> logger,
             IHttpContextAccessor httpContextAccessor,
             IExcelService excelService,
+            IFileS3Services fileS3Service,
+            IQrCodeService qrCodeService,
+            IOptions<FileS3Config> fileS3Config,
+            IOptions<TemplateSettings> templateSettings,
             IMapper mapper)
         : base(tbDbContext, logger, httpContextAccessor, mapper)
         {
             _excelService = excelService;
+            _fileS3Service = fileS3Service;
+            _qrCodeService = qrCodeService;
+            _fileS3Config = fileS3Config.Value;
+            _templateSettings = templateSettings.Value;
         }
 
         public void Create(CreateSlideDto dto)
         {
             _logger.LogInformation($"{nameof(Create)}, dto = {JsonSerializer.Serialize(dto)}");
             var username = getCurrentName();
-            if (dto.LoaiSlide == LoaiSlides.BINH_THUONG && string.IsNullOrEmpty(dto.NoiDung))
+            if (dto.LoaiSlide == LoaiSlides.TEXT && string.IsNullOrEmpty(dto.NoiDung))
             {
                 throw new UserFriendlyException(ErrorCodes.TraoBangErrorLoaiSlideBinhThuongPhaiCoNoiDung);
             }
@@ -79,7 +97,7 @@ namespace traobang.be.application.TraoBang.Implements
         {
             _logger.LogInformation($"{nameof(Create)}, dto = {JsonSerializer.Serialize(dto)}");
 
-            if (dto.LoaiSlide == LoaiSlides.BINH_THUONG && string.IsNullOrEmpty(dto.NoiDung))
+            if (dto.LoaiSlide == LoaiSlides.TEXT && string.IsNullOrEmpty(dto.NoiDung))
             {
                 throw new UserFriendlyException(ErrorCodes.TraoBangErrorLoaiSlideBinhThuongPhaiCoNoiDung);
             }
@@ -149,7 +167,7 @@ namespace traobang.be.application.TraoBang.Implements
                     slide.IdSinhVienNhanBang = newsv.Id;
                 }
             }
-            else if (dto.LoaiSlide == LoaiSlides.BINH_THUONG)
+            else if (dto.LoaiSlide == LoaiSlides.TEXT)
             {
                 var oldSv = _tbDbContext.DanhSachSinhVienNhanBangs.FirstOrDefault(x => x.Id == slide.IdSinhVienNhanBang && !x.Deleted);
                 if (oldSv != null)
@@ -193,13 +211,17 @@ namespace traobang.be.application.TraoBang.Implements
             var query = from s in _tbDbContext.Slides.AsNoTracking().Where(x => !x.Deleted)
                         join sp in _tbDbContext.SubPlans.AsNoTracking().Where(x => !x.Deleted) on s.IdSubPlan equals sp.Id
                         join p in _tbDbContext.Plans.AsNoTracking().Where(x => !x.Deleted) on sp.IdPlan equals p.Id
-                        from sv in _tbDbContext.DanhSachSinhVienNhanBangs.AsNoTracking().Where(x => x.Id == s.IdSinhVienNhanBang && !x.Deleted).DefaultIfEmpty()
+                        join sinhVien in _tbDbContext.DanhSachSinhVienNhanBangs.AsNoTracking().Where(x => !x.Deleted) on s.IdSinhVienNhanBang equals sinhVien.Id into sinhVienGroup
+                        from sv in sinhVienGroup.DefaultIfEmpty()
+                            //from sv in _tbDbContext.DanhSachSinhVienNhanBangs.AsNoTracking().Where(x => x.Id == s.IdSinhVienNhanBang && !x.Deleted).DefaultIfEmpty()
                         where (string.IsNullOrEmpty(dto.Keyword) || (
                             (s.NoiDung ?? "").Trim().ToLower().Contains(dto.Keyword.Trim().ToLower()) ||
                             (sv.HoVaTen ?? "").Trim().ToLower().Contains(dto.Keyword.Trim().ToLower())
                         )) &&
                         (dto.IdPlan == null || dto.IdPlan == p.Id) &&
+                        //(sp.Id == 2)
                         (dto.IdSubPlan == null || dto.IdSubPlan == sp.Id)
+                        orderby s.Id
                         select new ViewSlideDto()
                         {
                             Id = s.Id,
@@ -235,6 +257,7 @@ namespace traobang.be.application.TraoBang.Implements
                         };
 #pragma warning restore CS8601 // Possible null reference assignment.
             var items = query.Paging(dto).ToList();
+
             return new BaseResponsePagingDto<ViewSlideDto>
             {
                 TotalItems = query.Count(),
@@ -271,7 +294,7 @@ namespace traobang.be.application.TraoBang.Implements
 
         public void ImportSlide(ImportExcelSlideDto dto)
         {
-            _logger.LogInformation($"{nameof(ImportSlide)}");
+            _logger.LogInformation($"{nameof(ImportSlide)}, dto = {JsonSerializer.Serialize(dto)}");
 
             var username = getCurrentName();
             var data = _excelService.ReadExcelFile(dto.File, "Sheet1");
@@ -294,6 +317,8 @@ namespace traobang.be.application.TraoBang.Implements
             int indexSoQuyetDinhTotNghiep = col++;
             int indexNgayQuyetDinh = col++;
             int indexNoteChoMC = col++;
+            int indexQrTenKhoa = col++;
+            int indexQrHoTen = col++;
 
             if (data != null && data.Count > 0)
             {
@@ -327,6 +352,9 @@ namespace traobang.be.application.TraoBang.Implements
                         oldSv.DeletedDate = DateTime.Now;
                     }
 
+                    var slideSvOrderDict = new Dictionary<int, int>();
+                    var slideTextOrderDict = new Dictionary<int, int>();
+
                     // insert vao map
                     for (int i = 0; i < data.Count; i++)
                     {
@@ -353,12 +381,40 @@ namespace traobang.be.application.TraoBang.Implements
                         var soQuyetDinhTotNghiep = row[indexSoQuyetDinhTotNghiep];
                         var ngayQuyetDinh = row[indexNgayQuyetDinh];
                         var noteChoMC = row[indexNoteChoMC];
+                        var qrTenKhoa = row[indexQrTenKhoa];
+                        var qrHoTen = row[indexQrHoTen];
 
                         var subplan = _tbDbContext.SubPlans.FirstOrDefault(x => x.IdPlan == dto.IdPlan && x.Ten == tenSubPlan && !x.Deleted);
 
                         if (subplan == null)
                         {
                             continue;
+                        }
+
+                        int tmpOrder = 0;
+                        if (loaiSlide == LoaiSlides.SINH_VIEN)
+                        {
+                            if (slideSvOrderDict.ContainsKey(subplan.Id))
+                            {
+                                slideSvOrderDict[subplan.Id]++;
+                            }
+                            else
+                            {
+                                slideSvOrderDict[subplan.Id] = 1;
+                            }
+                            tmpOrder = slideSvOrderDict[subplan.Id];
+                        }
+                        else if (loaiSlide == LoaiSlides.TEXT)
+                        {
+                            if (slideTextOrderDict.ContainsKey(subplan.Id))
+                            {
+                                slideTextOrderDict[subplan.Id]++;
+                            }
+                            else
+                            {
+                                slideTextOrderDict[subplan.Id] = 1;
+                            }
+                            tmpOrder = slideTextOrderDict[subplan.Id];
                         }
 
                         var tmpMap = new ImportExcelMapSlideSinhVienDto();
@@ -381,6 +437,8 @@ namespace traobang.be.application.TraoBang.Implements
                                 TenNganhDaoTao = tenNganhDaoTao,
                                 ThanhTich = thanhTich,
                                 XepHang = xepHang,
+                                QrHoTen = qrHoTen,
+                                QrTenKhoa = qrTenKhoa,
                             };
                         }
 
@@ -391,8 +449,8 @@ namespace traobang.be.application.TraoBang.Implements
                             LoaiSlide = loaiSlide,
                             NoiDung = hoTenNoiDung,
                             Note = noteChoMC,
-                            Order = rowIndex,
-                            TrangThai = TraoBangConstants.ChuanBi,
+                            Order = tmpOrder,
+                            TrangThai = TraoBangConstants.ThamGiaTraoBang,
                             CreatedBy = username,
                         };
 
@@ -421,6 +479,85 @@ namespace traobang.be.application.TraoBang.Implements
 
                     tran.Commit();
                 }
+            }
+        }
+
+        public async Task GenerateQr(GenerateSinhVienQrDto dto)
+        {
+            _logger.LogInformation($"{nameof(GenerateQr)}, dto = {JsonSerializer.Serialize(dto)}");
+
+            var plan = _tbDbContext.Plans.AsNoTracking().Where(x => x.Id == dto.IdPlan && !x.Deleted).FirstOrDefault()
+                ?? throw new UserFriendlyException(ErrorCodes.TraoBangErrorPlanNotFound);
+
+            var listSv = (
+                    from sl in _tbDbContext.Slides
+                    join sv in _tbDbContext.DanhSachSinhVienNhanBangs on sl.IdSinhVienNhanBang equals sv.Id
+                    join sp in _tbDbContext.SubPlans on sl.IdSubPlan equals sp.Id
+                    where !sl.Deleted && !sv.Deleted && !sp.Deleted
+                        && sl.LoaiSlide == LoaiSlides.SINH_VIEN
+                        && sp.IdPlan == plan.Id
+                        && !string.IsNullOrEmpty(sv.MaSoSinhVien)
+                    select new { sv, sp }
+                ).ToList();
+
+            foreach (var item in listSv)
+            {
+                await _generateQrCommon(item.sv, item.sp);
+            }
+
+            _tbDbContext.SaveChanges();
+        }
+
+        public async Task GenerateQrOneSv(int idSlide)
+        {
+            _logger.LogInformation($"{nameof(GenerateQrOneSv)}, idSlide = {idSlide}");
+
+            var svSlide = (
+                    from sl in _tbDbContext.Slides
+                    join sv in _tbDbContext.DanhSachSinhVienNhanBangs on sl.IdSinhVienNhanBang equals sv.Id
+                    join sp in _tbDbContext.SubPlans on sl.IdSubPlan equals sp.Id
+                    where !sl.Deleted && !sv.Deleted && !sp.Deleted
+                        && sl.LoaiSlide == LoaiSlides.SINH_VIEN
+                        && sl.Id == idSlide
+                        && !string.IsNullOrEmpty(sv.MaSoSinhVien)
+                    select new { sv, sp }
+                ).FirstOrDefault()
+                ?? throw new UserFriendlyException(ErrorCodes.TraoBangErrorSinhVienNotFound);
+
+            await _generateQrCommon(svSlide.sv, svSlide.sp);
+            _tbDbContext.SaveChanges();
+        }
+
+        private async Task _generateQrCommon(DanhSachSinhVienNhanBang sv, SubPlan sp)
+        {
+            string templateContent = _templateSettings.UrlSvInfo;
+            string folder = "QrSinhVien";
+
+            var content = templateContent.Replace("[mssv]", sv.MaSoSinhVien);
+
+            string notice = $@"{sv.QrTenKhoa}
+{sv.QrHoTen}
+MSSV: {sv.MaSoSinhVien}";
+
+            if (sp.Order <= 2)
+            {
+                notice = $@"{sv.QrHoTen}
+MSSV: {sv.MaSoSinhVien}";
+            }
+
+            var qrcode = _qrCodeService.GenerateQrWithText(content, notice);
+            string filename = $"{folder}/{sv.MaSoSinhVien}.jpg";
+
+            try
+            {
+                _logger.LogInformation($"Sinh qr cho SV mssv = {sv.MaSoSinhVien}");
+
+                var upload = await _fileS3Service.WriteStreamFileAsync(filename, qrcode);
+                sv.LinkQR = $"{_fileS3Config.BucketName}/{filename}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
             }
         }
     }

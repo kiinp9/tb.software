@@ -4,60 +4,59 @@
 @use 'primeicons/primeicons.css';
 @use './demo/demo.scss';
 
-
 @font-face {
-  font-family: 'svn-snell';
-  src: url('../assets/fonts/SVN-SNELL\ ROUNDHAND\ SCRIPT.TTF');
+    font-family: 'svn-snell';
+    src: url('../assets/fonts/SVN-SNELL\ ROUNDHAND\ SCRIPT.TTF');
 }
 
 @font-face {
-  font-family: 'svn-snell-bold';
-  src: url('../assets/fonts/SVN-SNELL\ ROUNDHAND\ SCRIPT\ BOLD.TTF');
+    font-family: 'svn-snell-bold';
+    src: url('../assets/fonts/SVN-SNELL\ ROUNDHAND\ SCRIPT\ BOLD.TTF');
 }
 
 @font-face {
-  font-family: 'avo';
-  src: url('../assets/fonts/UTM\ AVO.TTF');
+    font-family: 'avo';
+    src: url('../assets/fonts/UTM\ AVO.TTF');
 }
 
 @font-face {
-  font-family: 'avo-bold';
-  src: url('../assets/fonts/UTM\ AVOBOLD.TTF');
+    font-family: 'avo-bold';
+    src: url('../assets/fonts/UTM\ AVOBOLD.TTF');
 }
 
 @font-face {
-  font-family: 'avo-bold-italic';
-  src: url('../assets/fonts/UTM\ AVOBOLD_ITALIC.TTF');
+    font-family: 'avo-bold-italic';
+    src: url('../assets/fonts/UTM\ AVOBOLD_ITALIC.TTF');
 }
 
 @font-face {
-  font-family: 'avo-italic';
-  src: url('../assets/fonts/UTM\ AVOITALIC.TTF');
+    font-family: 'avo-italic';
+    src: url('../assets/fonts/UTM\ AVOITALIC.TTF');
 }
 
 @font-face {
-  font-family: 'helvetins';
-  src: url('../assets/fonts/UTM\ HELVETINS.TTF');
+    font-family: 'helvetins';
+    src: url('../assets/fonts/UTM\ HELVETINS.TTF');
 }
 
 @font-face {
-  font-family: 'helvetins-bold';
-  src: url('../assets/fonts/UTM\ HelveBold.ttf');
+    font-family: 'helvetins-bold';
+    src: url('../assets/fonts/UTM\ HelveBold.ttf');
 }
 
 @font-face {
-  font-family: 'myriadpro';
-  src: url('../assets/fonts/MYRIADPRO-LIGHT_0.OTF');
+    font-family: 'myriadpro';
+    src: url('../assets/fonts/MYRIADPRO-LIGHT_0.OTF');
 }
 
 @font-face {
-  font-family: 'myriadpro-bold';
-  src: url('../assets/fonts/MYRIADPRO-BOLD.OTF');
+    font-family: 'myriadpro-bold';
+    src: url('../assets/fonts/MYRIADPRO-BOLD.OTF');
 }
 
 @font-face {
-  font-family: 'montesrrat-extrabold';
-  src: url('../assets/fonts/Montserrat-ExtraBold.ttf');
+    font-family: 'montesrrat-extrabold';
+    src: url('../assets/fonts/Montserrat-ExtraBold.ttf');
 }
 
 .font-snell {
@@ -90,4 +89,8 @@
 
 .font-montesrrat-extrabold {
     font-family: 'montesrrat-extrabold';
+}
+
+.header-label .layout-menuitem-text {
+    font-weight: 800 !important;
 }

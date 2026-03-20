@@ -1,7 +1,6 @@
 import moment from 'moment';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import { IJwtPayload } from './models/jwt-payload.models';
-
 
 export class Utils {
     // LOCAL STORAGE
@@ -30,11 +29,11 @@ export class Utils {
     }
 
     public static clearSessionStorage() {
-        sessionStorage.clear()
+        sessionStorage.clear();
     }
 
     public static removeSessionStorage(key: string) {
-        sessionStorage.removeItem(key)
+        sessionStorage.removeItem(key);
     }
 
     public static getAccessToken() {
@@ -158,14 +157,14 @@ export class Utils {
         if (moment(date).isValid()) {
             return moment(date).format(format);
         }
-        return ''
+        return '';
     }
 
     static formatDateView(date: string | Date | null | undefined, format = 'DD/MM/YYYY') {
         if (moment(date).isValid()) {
             return moment(date).format(format);
         }
-        return ''
+        return '';
     }
 
     static base64UrlEncode(arrayBuffer: ArrayBuffer) {

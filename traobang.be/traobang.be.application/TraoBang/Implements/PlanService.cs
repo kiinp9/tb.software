@@ -32,6 +32,9 @@ namespace traobang.be.application.TraoBang.Implements
             _logger.LogInformation($"{nameof(Create)}, dto = {JsonSerializer.Serialize(dto)}");
 
             var vietnameNow = GetVietnamTime();
+
+            var giaoDien = _tbDbContext.GiaoDiens.FirstOrDefault(x => !x.Deleted && x.Id == dto.IdGiaoDien);
+
             var plan = new domain.TraoBang.Plan
             {
                 Ten = dto.Ten,
@@ -40,8 +43,11 @@ namespace traobang.be.application.TraoBang.Implements
                 ThoiGianKetThuc = dto.ThoiGianKetThuc,
                 CreatedDate = vietnameNow,
                 TrangThai = TrangThaiPlan.KhoiTao,
-                Deleted = false
+                Deleted = false,
+                IdGiaoDien = giaoDien != null ? giaoDien.Id : null,
+                GiaoDien = giaoDien
             };
+
             _tbDbContext.Plans.Add(plan);
             _tbDbContext.SaveChanges();
         }
@@ -68,11 +74,15 @@ namespace traobang.be.application.TraoBang.Implements
                     }
                 }
 
+                var giaoDien = _tbDbContext.GiaoDiens.FirstOrDefault(x => !x.Deleted && x.Id == dto.IdGiaoDien);
+
                 plan.Ten = dto.Ten;
                 plan.MoTa = dto.MoTa;
                 plan.ThoiGianBatDau = dto.ThoiGianBatDau;
                 plan.ThoiGianKetThuc = dto.ThoiGianKetThuc;
                 plan.TrangThai = dto.TrangThai;
+                plan.IdGiaoDien = giaoDien != null ? giaoDien.Id : null;
+                plan.GiaoDien = giaoDien;
 
                 _tbDbContext.Plans.Update(plan);
                 _tbDbContext.SaveChanges();
@@ -114,15 +124,23 @@ namespace traobang.be.application.TraoBang.Implements
 
             return plans;
         }
+
         public void Delete(int id)
         {
             _logger.LogInformation($"{nameof(Delete)}, id = {id}");
             var vietnameNow = GetVietnamTime();
             var plan = _tbDbContext.Plans.FirstOrDefault(x => x.Id == id && !x.Deleted);
+
             if (plan == null)
             {
                 throw new UserFriendlyException(ErrorCodes.TraoBangErrorPlanNotFound);
             }
+
+            if (plan.TrangThai == TrangThaiPlan.DangHoatDong)
+            {
+                throw new UserFriendlyException(ErrorCodes.TraoBangErrorCannotDeleteActivePlan);
+            }
+
             plan.DeletedDate = vietnameNow;
             plan.Deleted = true;
             _tbDbContext.Plans.Update(plan);
@@ -170,6 +188,7 @@ namespace traobang.be.application.TraoBang.Implements
                     subplan.DeletedDate = DateTime.Now;
                 }
 
+                _tbDbContext.SaveChanges();
                 tran.Commit();
             }
         }

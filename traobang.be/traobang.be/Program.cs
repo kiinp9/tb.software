@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Minio;
 using NLog;
 using NLog.Web;
 using OpenIddict.Abstractions;
@@ -18,6 +19,9 @@ using traobang.be.infrastructure.data;
 using traobang.be.infrastructure.data.Seeder;
 using traobang.be.infrastructure.external.BackgroundJob;
 using traobang.be.infrastructure.external.Excel;
+using traobang.be.infrastructure.external.File;
+using traobang.be.infrastructure.external.File.Dtos;
+using traobang.be.infrastructure.external.QrCode;
 using traobang.be.infrastructure.external.SignalR.Hub.Implements;
 using traobang.be.infrastructure.external.SignalR.Service.Implements;
 using traobang.be.infrastructure.external.SignalR.Service.Interfaces;
@@ -89,16 +93,12 @@ builder.Services.AddCors(options =>
 });
 #endregion
 
-
-
 #region identity
 // 2. Add Identity
 builder.Services.AddIdentity<AppUser, IdentityRole>()
     .AddEntityFrameworkStores<TbDbContext>()
     .AddDefaultTokenProviders();
 #endregion
-
-
 
 #region auth
 string secretKey = builder.Configuration.GetSection("AuthServer:SecretKey").Value!;
@@ -197,7 +197,6 @@ builder.Services.AddAuthorization();
 builder.Services.AddHostedService<AuthWorker>();
 #endregion
 
-
 #region mapper
 // Build mapper configuration
 builder.Services.AddAutoMapper(cfg => { }, typeof(MappingProfile));
@@ -206,9 +205,32 @@ builder.Services.AddAutoMapper(cfg => { }, typeof(MappingProfile));
 #region hangfire
 builder.Services.ConfigureHangfire(hangfireConnectionString);
 #endregion
+
 #region signalr
 builder.Services.AddSignalR();
 builder.Services.AddScoped<ITraoBangService, TraoBangService>();
+#endregion
+
+#region s3
+builder.Services.Configure<FileS3Config>(builder.Configuration.GetSection("FileS3Config"));
+
+string endpoint = builder.Configuration.GetSection("FileS3Config:Endpoint").Value!;
+string accessKey = builder.Configuration.GetSection("FileS3Config:AccessKey").Value!;
+string s3SecretKey = builder.Configuration.GetSection("FileS3Config:SecretKey").Value!;
+
+// Add Minio using the custom endpoint and configure additional settings for default MinioClient initialization
+builder.Services.AddMinio(configureClient => configureClient
+    .WithEndpoint(endpoint)
+    .WithSSL(true)
+    .WithCredentials(accessKey, s3SecretKey));
+
+builder.Services.AddScoped<IFileS3Services, FileS3Services>();
+#endregion
+
+builder.Services.Configure<TemplateSettings>(builder.Configuration.GetSection("Template"));
+
+#region qrcode
+builder.Services.AddScoped<IQrCodeService, QrCodeService>();
 #endregion
 
 // Add services to the container.
@@ -222,11 +244,9 @@ builder.Services.AddScoped<IExcelService, ExcelService>();
 builder.Services.AddScoped<IPlanService, PlanService>();
 builder.Services.AddScoped<ISubPlanService, SubPlanService>();
 builder.Services.AddScoped<ISlideService, SlideService>();
-builder.Services.AddScoped<IGiaoDienService, GiaoDienService>();    
+builder.Services.AddScoped<IGiaoDienService, GiaoDienService>();
 
 #endregion
-
-
 
 builder.Services.AddHttpClient();
 builder.Services.AddHttpContextAccessor();

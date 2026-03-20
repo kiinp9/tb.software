@@ -7,10 +7,12 @@ import { MenuItem } from 'primeng/api';
 import { Menu } from 'primeng/menu';
 import { Button } from 'primeng/button';
 import { IViewRowUser } from '@/models/auth/user.models';
+import { ELoaiSlide, listLoaiSlide } from '@/models/traobang/slide.models';
 
 export const TblActionTypes = {
     update: 'update',
     delete: 'delete',
+    qrCode:'qrCode'
 }
 
 @Component({
@@ -25,28 +27,51 @@ export class TblAction extends BaseComponent {
 
     tblEmit = inject(TBL_CUSTOM_COMP_EMIT);
 
-    @Input() row: IViewRowUser = {};
+    @Input() row: any = {};
     @Input() rowIndex: number = 0;
     @Input() data: any;
     @ViewChild('menu', { static: false }) menu!: Menu;
     @ViewChild('actionBtn', { static: false }) actionBtn!: Button;
 
     actionType = TblActionTypes;
+    eLoaiSlide = ELoaiSlide
     menuItems: MenuItem[] = [];
 
     override ngOnInit(): void {
-        this.menuItems = [
-            {
-                label: 'Cập nhật',
-                icon: 'pi pi-pencil',
-                command: () => this.onClick(TblActionTypes.update)
-            },
-            {
-                label: 'Xóa',
-                icon: 'pi pi-trash',
-                command: () => this.onClick(TblActionTypes.delete)
-            }
-        ];
+        if (this.row.loaiSlide == this.eLoaiSlide.SINH_VIEN) {
+            this.menuItems = [
+                {
+                    label: 'Tạo mã QR',
+                    icon: 'pi pi-qrcode',
+                    command: () => this.onClick(TblActionTypes.qrCode)
+                },
+                {
+                    label: 'Cập nhật',
+                    icon: 'pi pi-pencil',
+                    command: () => this.onClick(TblActionTypes.update)
+                },
+                {
+                    label: 'Xóa',
+                    icon: 'pi pi-trash',
+                    command: () => this.onClick(TblActionTypes.delete)
+                }
+            ];
+        }
+        else {
+            this.menuItems = [
+                {
+                    label: 'Cập nhật',
+                    icon: 'pi pi-pencil',
+                    command: () => this.onClick(TblActionTypes.update)
+                },
+                {
+                    label: 'Xóa',
+                    icon: 'pi pi-trash',
+                    command: () => this.onClick(TblActionTypes.delete)
+                }
+            ];
+        }
+
     }
 
     onClick(customType: string): void {

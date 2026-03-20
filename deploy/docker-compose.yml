@@ -21,5 +21,7 @@ services:
     ports:
       - "7100:8080"
     restart: unless-stopped
+    volumes:
+      - /usr/share/fonts:/usr/share/fonts
     environment:
       - DOTNET_ENVIRONMENT=${APP_BE_ENV}

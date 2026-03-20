@@ -18,6 +18,10 @@ namespace traobang.be.domain.TraoBang
         public int Id { get; set; }
         public required string TenGiaoDien { get; set; }
         public required string NoiDung { get; set; }
+        public string? Html { get; set; }
+        public string? Css { get; set; }
+        public string? Js { get; set; }
+        [MaxLength(250)]
         public string? MoTa { get; set; }
         public List<Plan> Plans { get; set; } = [];
         public DateTime? ThoiGianBatDau { get; set; }

@@ -18,12 +18,11 @@ import { PaginatorState } from 'primeng/paginator';
     templateUrl: './giao-dien.html',
     styleUrl: './giao-dien.scss'
 })
-
 export class GiaoDien extends BaseComponent {
     _giaoDienService = inject(GiaoDienService);
 
     searchForm: FormGroup = new FormGroup({
-        search: new FormControl(''),
+        search: new FormControl('')
     });
 
     columns: IColumn[] = [
@@ -41,7 +40,7 @@ export class GiaoDien extends BaseComponent {
     };
 
     override ngOnInit(): void {
-        this.getData()
+        this.getData();
         this.searchForm
             .get('search')
             ?.valueChanges.pipe(debounceTime(500), distinctUntilChanged())
@@ -61,7 +60,7 @@ export class GiaoDien extends BaseComponent {
             .subscribe({
                 next: (res) => {
                     if (this.isResponseSucceed(res, false)) {
-                        this.data = res.data.items
+                        this.data = res.data.items;
                         this.totalRecords = res.data.totalItems;
                     }
                 }

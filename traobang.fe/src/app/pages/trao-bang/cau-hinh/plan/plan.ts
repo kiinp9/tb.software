@@ -75,6 +75,7 @@ export class Plan extends BaseComponent {
                                 trangThaiText: trangThaiText?.name ?? ''
                             };
                         });
+                        console.log(this.data)
                         this.totalRecords = res.data.totalItems;
                     }
                 }
@@ -128,8 +129,13 @@ export class Plan extends BaseComponent {
             this.onOpenUpdate(data.data);
         } else if (data.type === TblActionTypes.delete) {
             this.onDelete(data.data);
+        } else if (data.type === TblActionTypes.delete_config) {
+            this.onDeleteConfig(data.data)
         } else if (data.type === TblActionTypes.config) {
+            this.editGiaoDien(data.data)
         }
+
+
     }
 
     onDeleteConfig(data: IViewRowConfigPlan) {
@@ -151,5 +157,14 @@ export class Plan extends BaseComponent {
                 );
             }
         );
+    }
+
+    editGiaoDien(data: IViewRowConfigPlan) {
+        this.router.navigate(['trao-bang/config/giao-dien/create'], {
+            queryParams: {
+                id: encodeURIComponent(JSON.stringify(data.idGiaoDien)),
+                isPlan: true
+            }
+        });
     }
 }

@@ -8,7 +8,7 @@ import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { TblAction, TblActionTypes } from './tbl-action/tbl-action';
-import { IFindPagingSlide, IViewRowSlide } from '@/models/traobang/slide.models';
+import { IFindPagingSlide, IViewRowSlide, listLoaiSlide } from '@/models/traobang/slide.models';
 import { PaginatorState } from 'primeng/paginator';
 import { SvNhanBangStatuses } from '@/shared/constants/sv-nhan-bang.constants';
 import { Create } from './create/create';
@@ -18,6 +18,7 @@ import { TraoBangPlanService } from '@/service/plan.service';
 import { IViewRowConfigPlan, PlanTrangThai } from '@/models/traobang/plan.models';
 import { TraoBangSubPlanService } from '@/service/sub-plan.service';
 import { IViewRowConfigSubPlan } from '@/models/traobang/sub-plan.models';
+import { GenQrCode } from './gen-qr-code/gen-qr-code';
 @Component({
     selector: 'app-slide',
     imports: [SharedImports, DataTable, FileUploadModule],
@@ -37,20 +38,12 @@ export class SlideScreen extends BaseComponent {
     dataFilter: any = {};
     listPlanActive: IViewRowConfigPlan[] = [];
     listSubPlan: IViewRowConfigSubPlan[] = [];
-    listLoaiSlide = [
-        {
-            code: 1,
-            name: 'Text'
-        },
-        {
-            code: 2,
-            name: 'Sinh viên'
-        }
-    ];
+    listLoaiSlide = listLoaiSlide;
 
     columns: IColumn[] = [
         { header: 'STT', cellViewType: CellViewTypes.INDEX, headerContainerStyle: 'width: 6rem' },
         { header: 'Nội dung', field: 'noiDung', headerContainerStyle: 'min-width: 10rem' },
+        { header: 'Mã Sinh viên', field: 'sinhVien.maSoSinhVien', headerContainerStyle: 'min-width: 10rem' },
         { header: 'Note', field: 'note', headerContainerStyle: 'min-width: 10rem' },
         {
             header: 'Loại Slide',
@@ -174,6 +167,9 @@ export class SlideScreen extends BaseComponent {
         } else if (data.type === TblActionTypes.delete) {
             this.onDelete(data.data);
         }
+        else if (data.type === TblActionTypes.qrCode) {
+            this.genQrCode(data.data)
+        }
     }
 
     onOpenUpdate(data: IViewRowSlide) {
@@ -236,5 +232,27 @@ export class SlideScreen extends BaseComponent {
                 this.getData();
             }
         });
+    }
+
+    onGenQR() {
+        const ref = this._dialogService.open(GenQrCode, { header: 'Tạo mã QR', closable: true, modal: true, styleClass: 'w-[700px]', focusOnShow: false });
+        ref.onClose.subscribe((result) => {
+            if (result) {
+                this.getData();
+            }
+        });
+    }
+
+    genQrCode(data: IViewRowSlide) {
+        this._slideService.genQrCode(data.id).subscribe(
+            (res) => {
+                if (this.isResponseSucceed(res, true, 'Đã tạo mã QR')) {
+                    this.getData();
+                }
+            },
+            (err) => {
+                this.messageError(err?.message);
+            }
+        );
     }
 }

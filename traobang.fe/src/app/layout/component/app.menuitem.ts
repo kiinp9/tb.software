@@ -149,10 +149,6 @@ export class AppMenuitem {
             event.preventDefault();
             return;
         }
-         if (this.item.expanded) {
-            event.preventDefault();
-            return;
-        }
 
         // execute command
         if (this.item.command) {

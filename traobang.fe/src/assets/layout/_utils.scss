@@ -8,8 +8,9 @@
 .card {
     background: var(--surface-card);
     padding: 2rem;
-    margin-bottom: 2rem;
+    margin-top: -1rem;
     border-radius: var(--content-border-radius);
+
 
     &:last-child {
         margin-bottom: 0;

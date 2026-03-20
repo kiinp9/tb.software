@@ -521,6 +521,16 @@ namespace traobang.be.infrastructure.data.Migrations
                     b.Property<int>("Order")
                         .HasColumnType("int");
 
+                    b.Property<string>("QrHoTen")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("QrTenKhoa")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
                     b.Property<string>("SoQuyetDinhTotNghiep")
                         .IsRequired()
                         .HasMaxLength(500)
@@ -567,6 +577,9 @@ namespace traobang.be.infrastructure.data.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("getdate()");
 
+                    b.Property<string>("Css")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("Deleted")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
@@ -578,8 +591,15 @@ namespace traobang.be.infrastructure.data.Migrations
                     b.Property<DateTime?>("DeletedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("MoTa")
+                    b.Property<string>("Html")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Js")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MoTa")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
 
                     b.Property<string>("NoiDung")
                         .IsRequired()
@@ -839,7 +859,13 @@ namespace traobang.be.infrastructure.data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("IdPlan")
+                        .HasColumnType("int");
+
                     b.Property<int>("IdSinhVienNhanBang")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IdSlide")
                         .HasColumnType("int");
 
                     b.Property<int>("IdSubPlan")
@@ -847,6 +873,9 @@ namespace traobang.be.infrastructure.data.Migrations
 
                     b.Property<bool>("IsShow")
                         .HasColumnType("bit");
+
+                    b.Property<int>("LoaiSlide")
+                        .HasColumnType("int");
 
                     b.Property<string>("MaSoSinhVien")
                         .IsRequired()

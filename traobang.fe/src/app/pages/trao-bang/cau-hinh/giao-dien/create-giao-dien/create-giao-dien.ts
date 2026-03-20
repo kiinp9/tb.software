@@ -8,6 +8,7 @@ import { tableComponent, dialogComponent, rteTinyMce, canvasAbsoluteMode, layout
 import { Breadcrumb } from '@/shared/components/breadcrumb/breadcrumb';
 import { MenuItem } from 'primeng/api';
 import { IViewGiaoDien } from '@/models/traobang/giao-dien.models';
+import { environment } from 'src/environments/environment';
 @Component({
     selector: 'app-create-giao-dien',
     imports: [SharedImports, Breadcrumb],
@@ -25,7 +26,7 @@ export class CreateGiaoDien extends BaseComponent {
     idGiaoDien!: any;
     giaoDien!: IViewGiaoDien;
     submitted: boolean = false;
-
+    isPlan: any = false;
     override form: FormGroup = new FormGroup({
         tenGiaoDien: new FormControl(null, [Validators.required])
     });
@@ -38,7 +39,8 @@ export class CreateGiaoDien extends BaseComponent {
 
     async ngAfterViewInit() {
         await createStudioEditor({
-            licenseKey: '25678fc14abc44f1824d13156e1b355f53988497d8354604a7cb3176a076c8e',
+            // licenseKey: '25678fc14abc44f1824d13156e1b355f53988497d8354604a7cb3176a076c8e',
+            licenseKey: environment.grapeJsLicense,
             root: this.editorEl.nativeElement,
             fonts: {
                 enableFontManager: true
@@ -51,10 +53,40 @@ export class CreateGiaoDien extends BaseComponent {
             plugins: [
                 googleFontsAssetProvider.init({ apiKey: 'AIzaSyByNrR2JpnJcuRRQimwgRhHDca8fXIHx8Y' }),
                 (editor) => {
-                    editor.onReady(() => {
-                        const textCmp = editor.getWrapper()?.find('p')[0];
-                        editor.select(textCmp);
-                    });
+                    editor.Blocks.add('variable1', {
+                        label: "Cấp bằng",
+                        content: `<span>{{capBang}}<span/>`,
+                        category: 'Data',
+                    }),
+                        editor.Blocks.add('variable2', {
+                            label: "Họ và tên",
+                            content: `<span>{{hoVaTen}}<span/>`,
+                            category: 'Data',
+                        }),
+                        editor.Blocks.add('variable3', {
+                            label: "Tên ngành đào tạo",
+                            content: `<span>{{tenNganhDaoTao}}<span/>`,
+                            category: 'Data',
+                        }),
+                        editor.Blocks.add('variable4', {
+                            label: "Thành tích",
+                            content: `<span>{{thanhTich}}<span/>`,
+                            category: 'Data',
+                        }),
+                        editor.Blocks.add('variable5', {
+                            label: "Xếp hạng",
+                            content: `<span>{{texepHangxt}}<span/>`,
+                            category: 'Data',
+                        }),
+                        editor.Blocks.add('variable6', {
+                            label: "Text",
+                            content: `<span>{{text}}<span/>`,
+                            category: 'Data',
+                        }),
+                        editor.onReady(() => {
+                            const textCmp = editor.getWrapper()?.find('p')[0];
+                            editor.select(textCmp);
+                        });
                 },
                 tableComponent.init({
                     block: { category: 'Extra', label: 'My Table' }
@@ -126,6 +158,7 @@ export class CreateGiaoDien extends BaseComponent {
         if (!this.idGiaoDien) {
             this._activatedRoute.queryParamMap.subscribe((params) => {
                 const id = params.get('id');
+                this.isPlan = params.get('isPlan');
                 if (id) {
                     this.idGiaoDien = id;
                 }
@@ -161,12 +194,18 @@ export class CreateGiaoDien extends BaseComponent {
             body = {
                 id: this.idGiaoDien,
                 tenGiaoDien: this.form.get('tenGiaoDien')?.value,
-                noiDung: this.designToString(projectData)
+                noiDung: this.designToString(projectData),
+                html: this.editor.getHtml(),
+                css: this.editor.getCss(),
+                js: this.editor.getJs()
             };
         } else {
             body = {
                 tenGiaoDien: this.form.get('tenGiaoDien')?.value,
-                noiDung: this.designToString(projectData)
+                noiDung: this.designToString(projectData),
+                html: this.editor.getHtml(),
+                css: this.editor.getCss(),
+                js: this.editor.getJs()
             };
         }
 
@@ -203,7 +242,12 @@ export class CreateGiaoDien extends BaseComponent {
     }
 
     back() {
-        this.router.navigate(['trao-bang/config/giao-dien']);
+        if (this.isPlan) {
+            this.router.navigate(['trao-bang/config/plan']);
+        }
+        else {
+            this.router.navigate(['trao-bang/config/giao-dien']);
+        }
     }
 
     loadEditorData() {

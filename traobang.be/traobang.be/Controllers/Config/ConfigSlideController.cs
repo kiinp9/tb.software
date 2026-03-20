@@ -146,5 +146,43 @@ namespace traobang.be.Controllers.Config
                 return OkException(ex);
             }
         }
+
+        /// <summary>
+        /// Sinh mã QR cho danh sách SV nhận bằng
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        [HttpPost("qr")]
+        public async Task<ApiResponse> GenerateQr([FromBody] GenerateSinhVienQrDto dto)
+        {
+            try
+            {
+                await _slideService.GenerateQr(dto);
+                return new();
+            }
+            catch (Exception ex)
+            {
+                return OkException(ex);
+            }
+        }
+
+        /// <summary>
+        /// Sinh mã QR cho 1 SV nhận bằng
+        /// </summary>
+        /// <param name="idSlide"></param>
+        /// <returns></returns>
+        [HttpPost("qr/slide/{idSlide}")]
+        public async Task<ApiResponse> GenerateQrOneSV([FromRoute] int idSlide)
+        {
+            try
+            {
+                await _slideService.GenerateQrOneSv(idSlide);
+                return new();
+            }
+            catch (Exception ex)
+            {
+                return OkException(ex);
+            }
+        }
     }
 }

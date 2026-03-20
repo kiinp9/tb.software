@@ -1,5 +1,7 @@
 
+import { IViewGiaoDien } from '@/models/traobang/giao-dien.models';
 import { ICreateConfigPlan, IUpdateConfigPlan, PlanTrangThai } from '@/models/traobang/plan.models';
+import { GiaoDienService } from '@/service/giao-dien.service';
 import { TraoBangPlanService } from '@/service/plan.service';
 import { BaseComponent } from '@/shared/components/base/base-component';
 import { SharedImports } from '@/shared/import.shared';
@@ -7,10 +9,10 @@ import { Utils } from '@/shared/utils';
 import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
-
+import { TextareaModule } from 'primeng/textarea';
 @Component({
     selector: 'app-create',
-    imports: [SharedImports],
+    imports: [SharedImports, TextareaModule],
     templateUrl: './create.html',
     styleUrl: './create.scss'
 })
@@ -18,15 +20,19 @@ export class Create extends BaseComponent {
     private _ref = inject(DynamicDialogRef);
     private _config = inject(DynamicDialogConfig);
     private _planService = inject(TraoBangPlanService);
+    private _giaoDienService = inject(GiaoDienService);
 
     listTrangThai = PlanTrangThai.ListTrangThai
+
+    listGiaoDien: IViewGiaoDien[] = []
 
     override form: FormGroup = new FormGroup({
         id: new FormControl(null),
         ten: new FormControl('', [Validators.required]),
         trangThai: new FormControl(this.listTrangThai[0].code, [Validators.required]),
         moTa: new FormControl(''),
-        time: new FormControl(null, [Validators.required])
+        time: new FormControl(null, [Validators.required]),
+        idGiaoDien: new FormControl("",)
     });
 
     override ValidationMessages: Record<string, Record<string, string>> = {
@@ -40,12 +46,14 @@ export class Create extends BaseComponent {
 
     override ngOnInit(): void {
         console.log(this._config.data)
+        this.getListGiaoDien()
         if (this.isUpdate) {
             this.form.setValue({
                 id: this._config.data.id,
                 ten: this._config.data.ten,
                 moTa: this._config.data.moTa,
                 trangThai: this._config.data.trangThai,
+                idGiaoDien: this._config.data.idGiaoDien ?? '',
                 time: [new Date(this._config.data.thoiGianBatDau), new Date(this._config.data.thoiGianKetThuc)]
             });
         }
@@ -53,6 +61,16 @@ export class Create extends BaseComponent {
 
     get isUpdate() {
         return this._config.data?.id;
+    }
+
+    getListGiaoDien() {
+        this._giaoDienService.getList().subscribe({
+            next: (res) => {
+                if (this.isResponseSucceed(res)) {
+                    this.listGiaoDien = res.data;
+                }
+            }
+        })
     }
 
     onSubmit() {
@@ -75,6 +93,7 @@ export class Create extends BaseComponent {
             ten: this.form.value['ten'],
             moTa: this.form.value['moTa'],
             trangThai: this.form.value['trangThai'],
+            idGiaoDien: this.form.value['idGiaoDien'],
             thoiGianBatDau: from,
             thoiGianKetThuc: to
         };
@@ -103,6 +122,7 @@ export class Create extends BaseComponent {
             ten: this.form.value['ten'],
             moTa: this.form.value['moTa'],
             trangThai: this.form.value['trangThai'],
+            idGiaoDien: this.form.value['idGiaoDien'],
             thoiGianBatDau: from,
             thoiGianKetThuc: to
         };

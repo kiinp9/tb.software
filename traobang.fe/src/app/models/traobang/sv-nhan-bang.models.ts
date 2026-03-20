@@ -67,6 +67,7 @@ export interface IViewScanQrCurrentSubPlan {
     soLuongThamGia?: number
     soLuongVangMat?: number
     ten?: string
+    slideTexts?: ISlideItem[]
 }
 
 export interface IViewScanQrTienDoSv {
@@ -79,6 +80,8 @@ export interface IViewScanQrTienDoSv {
     trangThai?: number;
     capBang?: string;
     tenKhoa?: string;
+    loaiSlide?:number;
+    isSlideDauCuoi?:Boolean
 }
 
 export interface IViewScanQrSubPlan {
@@ -101,7 +104,7 @@ export interface IViewSvDangTraoBang {
     note?: string;
     text?: string;
     textNote?: string;
-    infoType?: number; 
+    infoType?: number;
 }
 
 export interface IViewTienDoTraoBang {
@@ -112,9 +115,25 @@ export interface IViewSubPlanSideScreen {
     id?: number
     ten?: string
     tienDo?: string
+    orderTienDo?:number;
     items?: IViewScanQrTienDoSv[]
 }
 export interface IViewSvBatDauLuiResponse {
     svBatDauLui?: IViewSvDangTraoBang;
     svChuanBiTiepTheo?: IViewSvDangTraoBang;
+}
+
+export interface ISlideItem {
+    id: number;
+    idSubPlan: number;
+    loaiSlide: number;
+    idSinhVienNhanBang: number | null;
+    noiDung: string;
+    note: string;
+    trangThai: number;
+    order: number;
+    isShow: boolean;
+    createdBy: string;
+    createdDate: string; // hoặc Date nếu bạn parse sang Date
+    sinhVien: any | null; // đổi thành interface cụ thể nếu có model sinhVien
 }

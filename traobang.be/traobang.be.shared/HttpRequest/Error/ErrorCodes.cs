@@ -39,6 +39,7 @@
         public const int TraoBangErrorLoaiSlideBinhThuongPhaiCoNoiDung = 1010;
         public const int TraoBangErrorLoaiSlideSinhVienPhaiCoSinhVien = 1011;
         public const int TraoBangErrorSlideNotFound = 1012;
+        public const int TraoBangErrorCannotDeleteActivePlan = 1013;
 
         public const int TraoBangErrorGiaoDienNotFound = 1101;
     }

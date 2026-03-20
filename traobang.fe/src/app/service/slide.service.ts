@@ -1,3 +1,4 @@
+import { GenQrCode } from './../pages/trao-bang/cau-hinh/slide/gen-qr-code/gen-qr-code';
 import { inject, Injectable } from '@angular/core';
 import { IBaseResponse, IBaseResponsePaging, IBaseResponseWithData } from '@/shared/models/request-paging.base.models';
 import { HttpClient } from '@angular/common/http';
@@ -41,5 +42,13 @@ export class SlideService {
 
     uploadFile(body: any) {
         return this.http.post<IBaseResponse>(`${this.api}/import/slide`, body);
+    }
+
+    genQrCodeBySlide(body: any) {
+        return this.http.post<IBaseResponse>(`${this.api}/qr`, body);
+    }
+
+    genQrCode(id: number) {
+        return this.http.post<IBaseResponse>(`${this.api}/qr/slide/${id}`, {});
     }
 }

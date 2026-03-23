@@ -2,11 +2,29 @@
 {
     public static class TraoBangConstants
     {
+        /// <summary>
+        /// trong hàng đợi
+        /// </summary>
         public const int XepHang = 1;
+        /// <summary>
+        /// chuẩn bị lên bục nhận bằng
+        /// </summary>
         public const int ChuanBi = 2;
+        /// <summary>
+        /// đang được trao bằng
+        /// </summary>
         public const int DangTraoBang = 3;
+        /// <summary>
+        /// đã trao bằng rồi
+        /// </summary>
         public const int DaTraoBang = 4;
+        /// <summary>
+        /// sẽ tham gia trao bằng (ko dùng trong bảng tiến độ)
+        /// </summary>
         public const int ThamGiaTraoBang = 5;
+        /// <summary>
+        /// ko đi nhận bằng (ko dùng trong bảng tiến độ)
+        /// </summary>
         public const int VangMat = 6;
     }
 

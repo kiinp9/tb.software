@@ -54,5 +54,15 @@ namespace traobang.be.application.TraoBang.Interfaces
         /// <param name="idSlide"></param>
         /// <returns></returns>
         public Task GenerateQrOneSv(int idSlide);
+        /// <summary>
+        /// Thêm nhanh slide vào hàng đợi slide ở màn checkin
+        /// </summary>
+        /// <param name="dto"></param>
+        public void CreateSlideTextFast(CreateSlideTextFastDto dto);
+        /// <summary>
+        /// Kéo thả slide trong hàng đợi ở màn checkin
+        /// </summary>
+        /// <param name="dto"></param>
+        public void UpdateTienDoOrder(UpdateTienDoOrderDto dto);
     }
 }

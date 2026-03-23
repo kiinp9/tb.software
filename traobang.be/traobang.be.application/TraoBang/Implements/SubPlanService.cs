@@ -982,14 +982,25 @@ namespace traobang.be.application.TraoBang.Implements
             var soLuongConLai = dto.SoLuong - results.Count;
             if (soLuongConLai > 0)
             {
-                var sinhVienChuanBi = await _tbDbContext.TienDoTraoBangs
-                    .AsNoTracking()
-                    .Where(x => !x.Deleted
-                                && x.IdSubPlan == khoaDangTrao.Id
-                                && x.TrangThai != TraoBangConstants.DaTraoBang)
-                    .OrderBy(x => x.Order)
-                    //.Take(soLuongConLai)
-                    .ToListAsync();
+                var sinhVienChuanBi = (from td in _tbDbContext.TienDoTraoBangs.AsNoTracking()
+                                       from sv in _tbDbContext.DanhSachSinhVienNhanBangs.AsNoTracking().Where(x => x.Id == td.IdSinhVienNhanBang && !x.Deleted).DefaultIfEmpty()
+                                       orderby td.Order
+                                       where !td.Deleted
+                                         && td.IdSubPlan == khoaDangTrao.Id
+                                         && td.TrangThai != TraoBangConstants.DaTraoBang
+                                       select new TienDoTraoBang
+                                       {
+                                           Id = td.Id,
+                                           HoVaTen = sv != null ? sv.QrHoTen : td.HoVaTen,
+                                           MaSoSinhVien = td.MaSoSinhVien,
+                                           TrangThai = td.TrangThai,
+                                           Order = td.Order,
+                                           IsShow = td.IsShow,
+                                           LoaiSlide = td.LoaiSlide,
+                                           IdSlide = td.IdSlide,
+                                           // gán tạm tên ngành đào tạo
+                                           Note = sv != null ? sv.TenNganhDaoTao : string.Empty
+                                       }).ToList();
 
                 results.AddRange(sinhVienChuanBi);
             }
@@ -999,17 +1010,27 @@ namespace traobang.be.application.TraoBang.Implements
                 return null;
             }
 
+            var slideDau = _tbDbContext.Slides.AsNoTracking()
+                                    .Where(x => !x.Deleted && x.IdSubPlan == khoaDangTrao.Id && x.LoaiSlide == LoaiSlides.TEXT)
+                                    .OrderBy(x => x.Order).FirstOrDefault()?.Id;
+
+            var slideCuoi = _tbDbContext.Slides.AsNoTracking()
+                                .Where(x => !x.Deleted && x.IdSubPlan == khoaDangTrao.Id && x.LoaiSlide == LoaiSlides.TEXT)
+                                .OrderByDescending(x => x.Order).FirstOrDefault()?.Id;
+
             return results.Select(result => new ViewTienDoNhanBangResponseDto
             {
                 Id = result.Id,
                 HoVaTen = result.HoVaTen,
                 MaSoSinhVien = result.MaSoSinhVien,
                 CapBang = sinhVien.CapBang,
-                TenNganhDaoTao = sinhVien.TenNganhDaoTao,
+                TenNganhDaoTao = result.Note,
                 TrangThai = result.TrangThai,
                 Note = sinhVien.Note ?? "",
                 Order = result.Order,
-                IsShow = result.IsShow
+                IsShow = result.IsShow,
+                LoaiSlide = result.LoaiSlide,
+                IsSlideDauCuoi = result.IdSlide == slideDau || result.IdSlide == slideCuoi
             }).ToList();
         }
         public async Task<GetNextSubPlanResponseDto?> NextSubPlan()
@@ -1045,7 +1066,7 @@ namespace traobang.be.application.TraoBang.Implements
                 _tbDbContext.SubPlans.Update(nextSubPlan);
 
                 #region lay slide dau tien
-                var firstSlide = _tbDbContext.Slides.FirstOrDefault(x => !x.Deleted && x.IdSubPlan == nextSubPlan.Id && x.IsShow && x.LoaiSlide == LoaiSlides.BINH_THUONG);
+                var firstSlide = _tbDbContext.Slides.FirstOrDefault(x => !x.Deleted && x.IdSubPlan == nextSubPlan.Id && x.IsShow && x.LoaiSlide == LoaiSlides.TEXT);
                 if (firstSlide != null)
                 {
                     var isFirstSlideOnQueue = _tbDbContext.TienDoTraoBangs.Any(x => !x.Deleted && x.IdSlide == firstSlide.Id);
@@ -1158,6 +1179,21 @@ namespace traobang.be.application.TraoBang.Implements
                 .AsNoTracking()
                 .CountAsync(x => x.IdSubPlan == idSubPlan && !x.Deleted && x.TrangThai == TraoBangConstants.DaTraoBang && x.LoaiSlide == LoaiSlides.SINH_VIEN);
 
+            // Lấy slide text ko ở trong hàng đợi, ko lấy slide đầu và cuối
+            var listSlideTrongHangDoi = _tbDbContext.TienDoTraoBangs.Where(x => !x.Deleted && x.LoaiSlide == LoaiSlides.TEXT).Select(x => x.IdSlide).ToList();
+            var slideDau = _tbDbContext.Slides.AsNoTracking()
+                                    .Where(x => !x.Deleted && x.IdSubPlan == idSubPlan && x.LoaiSlide == LoaiSlides.TEXT)
+                                    .OrderBy(x => x.Order).FirstOrDefault()?.Id;
+
+            var slideCuoi = _tbDbContext.Slides.AsNoTracking()
+                                .Where(x => !x.Deleted && x.IdSubPlan == idSubPlan && x.LoaiSlide == LoaiSlides.TEXT)
+                                .OrderByDescending(x => x.Order).FirstOrDefault()?.Id;
+            var listSlide = _tbDbContext.Slides
+                                    .Where(x => !x.Deleted && x.IsShow && x.IdSubPlan == idSubPlan
+                                                && x.Id != slideDau && x.Id != slideCuoi
+                                                && x.LoaiSlide == LoaiSlides.TEXT && !listSlideTrongHangDoi.Contains(x.Id))
+                                    .OrderBy(x => x.Order)
+                                    .ToList();
 
             return new GetInforSubPlanDto
             {
@@ -1165,7 +1201,8 @@ namespace traobang.be.application.TraoBang.Implements
                 SoLuongThamGia = soLuongThamGia,
                 SoLuongVangMat = soLuongVangMat,
                 SoLuongDaTrao = soLuongDaTrao,
-                SoLuongConLai = soLuongThamGia - soLuongDaTrao
+                SoLuongConLai = soLuongThamGia - soLuongDaTrao,
+                SlideTexts = _mapper.Map<List<ViewSlideDto>>(listSlide)
             };
 
         }
@@ -1226,6 +1263,46 @@ namespace traobang.be.application.TraoBang.Implements
                     if (subPlanForKetBai != null && subPlanForKetBai.IsShowKetBai)
                     {
                         await _traoBangService.NotifySinhVienDangTrao();
+
+                        var tienDoSlide = _tbDbContext.TienDoTraoBangs
+                                                .Where(x => !x.Deleted && x.LoaiSlide == LoaiSlides.TEXT && x.IdSubPlan == subPlanForKetBai.Id)
+                                                .Select(x => x.IdSlide).ToList();
+
+                        var finalSlide = _tbDbContext.Slides
+                                            .Where(x => !x.Deleted && x.LoaiSlide == LoaiSlides.TEXT && x.IsShow && x.IdSubPlan == subPlanForKetBai.Id && !tienDoSlide.Contains(x.Id))
+                                            .OrderByDescending(x => x.Order)
+                                            .FirstOrDefault();
+
+                        if (finalSlide != null)
+                        {
+                            var maxOrder = _tbDbContext.TienDoTraoBangs
+                                                .Where(x => x.IdSubPlan == subPlanForKetBai.Id && !x.Deleted)
+                                                .Max(x => (int?)x.Order) ?? 0;
+
+                            _tbDbContext.TienDoTraoBangs.Add(new TienDoTraoBang
+                            {
+                                IdSubPlan = finalSlide.IdSubPlan,
+                                IdSlide = finalSlide.Id,
+                                HoVaTen = finalSlide.NoiDung,
+                                TrangThai = TraoBangConstants.DangTraoBang,
+                                TrackingDangTrao = true,
+                                IsShow = finalSlide.IsShow,
+                                IdPlan = subPlanForKetBai.IdPlan,
+                                LoaiSlide = LoaiSlides.TEXT,
+                                Note = finalSlide.Note,
+                                Order = maxOrder + 1,
+                                IdSinhVienNhanBang = -1
+                            });
+                            _tbDbContext.SaveChanges();
+
+                            return new GetSinhVienDangTraoBangInforDto
+                            {
+                                TenSubPlan = subPlanForKetBai.Ten ?? string.Empty,
+                                Text = finalSlide.NoiDung,
+                                TextNote = finalSlide.Note
+                            };
+                        }
+
                         return new GetSinhVienDangTraoBangInforDto
                         {
                             TenSubPlan = subPlanForKetBai.Ten ?? string.Empty,
@@ -1310,7 +1387,7 @@ namespace traobang.be.application.TraoBang.Implements
                                           && !x.Deleted);
             if (existingLog == null)
             {
-                var traoBangLog = new domain.TraoBang.TraoBangLog
+                var traoBangLog = new TraoBangLog
                 {
                     IdSubPlan = idSubPlan,
                     IdSinhVien = sinhVienDangTrao.IdSinhVienNhanBang,
@@ -1368,9 +1445,17 @@ namespace traobang.be.application.TraoBang.Implements
                 var plan = query.p;
                 var subPlan = query.sp;
 
+                var slideDau = _tbDbContext.Slides.AsNoTracking()
+                                    .Where(x => !x.Deleted && x.IdSubPlan == idSubPlan && x.LoaiSlide == LoaiSlides.TEXT)
+                                    .OrderBy(x => x.Order).FirstOrDefault()?.Id;
+
+                var slideCuoi = _tbDbContext.Slides.AsNoTracking()
+                                    .Where(x => !x.Deleted && x.IdSubPlan == idSubPlan && x.LoaiSlide == LoaiSlides.TEXT)
+                                    .OrderByDescending(x => x.Order).FirstOrDefault()?.Id;
+
                 var slideDaChay = _tbDbContext.TienDoTraoBangs
                                         .Where(x => !x.Deleted && x.IdSubPlan == idSubPlan
-                                                    && x.LoaiSlide == LoaiSlides.BINH_THUONG)
+                                                    && x.LoaiSlide == LoaiSlides.TEXT)
                                         .Select(x => x.IdSlide)
                                         .ToList();
 
@@ -1379,9 +1464,10 @@ namespace traobang.be.application.TraoBang.Implements
                                         .Select(x => (int?)x.Order)
                                         .Max() ?? 0;
 
-                var slideIncomming = _tbDbContext.Slides.Where(x => !x.Deleted && x.IdSubPlan == idSubPlan &&
-                                                    !slideDaChay.Contains(x.Id) &&
-                                                    x.LoaiSlide == LoaiSlides.BINH_THUONG && x.IsShow)
+                var slideIncomming = _tbDbContext.Slides.Where(x => !x.Deleted && x.IdSubPlan == idSubPlan
+                                                    && !slideDaChay.Contains(x.Id)
+                                                    && x.Id != slideDau && x.Id != slideCuoi
+                                                    && x.LoaiSlide == LoaiSlides.TEXT && x.IsShow)
                                                 .OrderBy(x => x.Order)
                                                 .FirstOrDefault();
 
@@ -1396,7 +1482,7 @@ namespace traobang.be.application.TraoBang.Implements
                         Order = maxOrder + 1,
                         IdSlide = slideIncomming.Id,
                         IdPlan = plan.Id,
-                        LoaiSlide = LoaiSlides.BINH_THUONG,
+                        LoaiSlide = LoaiSlides.TEXT,
                         IsShow = true,
                         CreatedBy = userid,
                         TrackingDangTrao = true,
@@ -1898,7 +1984,6 @@ namespace traobang.be.application.TraoBang.Implements
 
             var itemsFromTienDo = (from tienDo in tienDoList
                                    join sv in danhSachSinhViens on tienDo.IdSinhVienNhanBang equals sv.Id
-
                                    select new ListSinhVienDto
                                    {
                                        TenSubPlan = subPlan.Ten,
@@ -1912,34 +1997,47 @@ namespace traobang.be.application.TraoBang.Implements
                                        OrderDanhSachNhanBang = sv.Order,
                                    }).ToList();
 
-            var itemsFromXepHangHopLe = sinhVienXepHangHopLe.Select(x => new ListSinhVienDto
+            var listTienDoSv = _tbDbContext.TienDoTraoBangs.AsNoTracking().Where(x => !x.Deleted && x.LoaiSlide == LoaiSlides.SINH_VIEN && x.IdSubPlan == subPlan.Id)
+                                            .OrderBy(x => x.Order).Select(x => x.IdSinhVienNhanBang).ToList()
+                                            .Select((IdSinhVienNhanBang, index) => new { IdSinhVienNhanBang, RowNumber = index + 1 });
+
+            foreach (var item in itemsFromTienDo)
             {
-                TenSubPlan = subPlan.Ten,
-                Id = x.sv.Id,
-                HoVaTen = x.sv.QrHoTen,
-                MaSoSinhVien = x.sv.MaSoSinhVien,
-                TenNganhDaoTao = x.sv.TenNganhDaoTao,
-                TrangThai = TraoBangConstants.XepHang,
-                CapBang = x.sv.CapBang,
-                OrderDanhSachNhanBang = x.sl.Order,
-            }).ToList();
+                var ord = listTienDoSv.Where(x => x.IdSinhVienNhanBang == item.Id).FirstOrDefault();
+                if (ord != null)
+                {
+                    item.OrderTienDo = ord.RowNumber;
+                }
+            }
+
+            //var itemsFromXepHangHopLe = sinhVienXepHangHopLe.Select(x => new ListSinhVienDto
+            //{
+            //    TenSubPlan = subPlan.Ten,
+            //    Id = x.sv.Id,
+            //    HoVaTen = x.sv.QrHoTen,
+            //    MaSoSinhVien = x.sv.MaSoSinhVien,
+            //    TenNganhDaoTao = x.sv.TenNganhDaoTao,
+            //    TrangThai = TraoBangConstants.XepHang,
+            //    CapBang = x.sv.CapBang,
+            //    OrderDanhSachNhanBang = x.sl.Order,
+            //}).ToList();
 
 
-            var itemsFromSinhVienBiBoQua = sinhVienBiBoQua.Select(x => new ListSinhVienDto
-            {
-                TenSubPlan = subPlan.Ten,
-                Id = x.sv.Id,
-                HoVaTen = x.sv.QrHoTen,
-                MaSoSinhVien = x.sv.MaSoSinhVien,
-                TenNganhDaoTao = x.sv.TenNganhDaoTao,
-                TrangThai = TraoBangConstants.XepHang,
-                CapBang = x.sv.CapBang,
-                OrderDanhSachNhanBang = x.sl.Order,
-            }).ToList();
+            //var itemsFromSinhVienBiBoQua = sinhVienBiBoQua.Select(x => new ListSinhVienDto
+            //{
+            //    TenSubPlan = subPlan.Ten,
+            //    Id = x.sv.Id,
+            //    HoVaTen = x.sv.QrHoTen,
+            //    MaSoSinhVien = x.sv.MaSoSinhVien,
+            //    TenNganhDaoTao = x.sv.TenNganhDaoTao,
+            //    TrangThai = TraoBangConstants.XepHang,
+            //    CapBang = x.sv.CapBang,
+            //    OrderDanhSachNhanBang = x.sl.Order,
+            //}).ToList();
 
             var items = itemsFromTienDo
-                .Concat(itemsFromXepHangHopLe)
-                .Concat(itemsFromSinhVienBiBoQua)
+                //.Concat(itemsFromXepHangHopLe)
+                //.Concat(itemsFromSinhVienBiBoQua)
                 .ToList();
 
             return new GetInforSubPlanDangTraoResponseDto

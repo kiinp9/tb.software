@@ -13,29 +13,52 @@
         </tr>
     </ng-template>
 
-    <ng-template pTemplate="body" let-student>
-        <tr>
-            <td [class]="{
+    <ng-template pTemplate="body" let-student let-ri="rowIndex">
+        <tr [class.slide-enter-animation]="highlightLast() && ri === students().length - 1">
+            <td [ngClass]="{
                     '!text-center': true,
-                    'bg-orange-200': student.trangThai === constStatuses.DANG_TRAO_BANG
-            }">{{
-                student.order }}</td>
-            <td [class]="{
+                    'bg-orange-200': student.trangThai === constStatuses.DANG_TRAO_BANG,
+                    '!bg-[#d4ffd1]': student.loaiSlide === loaiSlide.TEXT,
+                    '!bg-[#ffedd5]': student.isSlideDauCuoi
+                }">
+                {{ student.order }}
+            </td>
+
+            <td [ngClass]="{
                     '!text-center': true,
-                    'bg-orange-200': student.trangThai === constStatuses.DANG_TRAO_BANG
-            }">
-                {{
-                student.maSoSinhVien }}</td>
-            <td [class]="student.trangThai === constStatuses.DANG_TRAO_BANG ? 'bg-orange-200' : ''">{{ student.hoVaTen
-                }}</td>
-            <td [class]="student.trangThai === constStatuses.DANG_TRAO_BANG ? 'bg-orange-200' : ''">{{
-                student.tenNganhDaoTao }}</td>
-            <td [class]="student.trangThai === constStatuses.DANG_TRAO_BANG ? 'bg-orange-200' : ''">
+                    'bg-orange-200': student.trangThai === constStatuses.DANG_TRAO_BANG,
+                    '!bg-[#d4ffd1]': student.loaiSlide === loaiSlide.TEXT,
+                     '!bg-[#ffedd5]': student.isSlideDauCuoi
+                }">
+                {{ student.maSoSinhVien }}
+            </td>
+
+            <td [ngClass]="{
+                    'bg-orange-200': student.trangThai === constStatuses.DANG_TRAO_BANG,
+                    '!bg-[#d4ffd1]': student.loaiSlide === loaiSlide.TEXT,
+                     '!bg-[#ffedd5]': student.isSlideDauCuoi
+                }">
+                {{ student.hoVaTen }}
+            </td>
+
+            <td [ngClass]="{
+                    'bg-orange-200': student.trangThai === constStatuses.DANG_TRAO_BANG,
+                    '!bg-[#d4ffd1]': student.loaiSlide === loaiSlide.TEXT,
+                    '!bg-[#ffedd5]': student.isSlideDauCuoi
+                }">
+                {{ student.tenNganhDaoTao }}
+            </td>
+
+            <td [ngClass]="{
+                    'bg-orange-200': student.trangThai === constStatuses.DANG_TRAO_BANG,
+                    '!bg-[#d4ffd1]': student.loaiSlide === loaiSlide.TEXT,
+                     '!bg-[#ffedd5]': student.isSlideDauCuoi
+                }">
                 <p-tag [severity]="constStatuses.getSeverity(student.trangThai)">
-                    <span class="text-xl">{{constStatuses.getName(student.trangThai)}}
+                    <span class="text-xl">
+                        {{ constStatuses.getName(student.trangThai) }}
                     </span>
                 </p-tag>
-
             </td>
         </tr>
     </ng-template>

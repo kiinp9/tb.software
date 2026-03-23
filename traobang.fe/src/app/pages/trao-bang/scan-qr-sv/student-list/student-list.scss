@@ -1,0 +1,32 @@
+@keyframes slideEnterAnim {
+    0% {
+        opacity: 0;
+        transform: translateX(-28px);
+        background-color: #fef08a !important;
+    }
+    40% {
+        opacity: 0.8;
+        transform: translateX(-6px);
+        background-color: #bbf7d0 !important;
+    }
+    70% {
+        opacity: 1;
+        transform: translateX(2px);
+        background-color: #d9f99d !important;
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.slide-enter-animation td {
+    animation: slideEnterAnim 0.38s ease-out forwards;
+}
+
+:host ::ng-deep .p-datatable,
+:host ::ng-deep .p-datatable-table,
+:host ::ng-deep .p-datatable-wrapper {
+    overflow-x: hidden !important;
+    overflow-y: hidden !important;
+}

@@ -1,4 +1,5 @@
 
+import { ELoaiSlide } from '@/models/traobang/slide.models';
 import { IViewScanQrTienDoSv } from '@/models/traobang/sv-nhan-bang.models';
 import { SvNhanBangStatuses } from '@/shared/constants/sv-nhan-bang.constants';
 import { SharedImports } from '@/shared/import.shared';
@@ -14,5 +15,7 @@ import { TagModule } from 'primeng/tag';
 })
 export class StudentList {
   students = input.required<IViewScanQrTienDoSv[]>();
+  highlightLast = input<boolean>(false);
   constStatuses = SvNhanBangStatuses;
+  loaiSlide = ELoaiSlide
 }

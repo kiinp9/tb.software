@@ -14,14 +14,15 @@ import * as signalR from '@microsoft/signalr';
 
 import { NgIcon } from '@ng-icons/core';
 import { TagModule } from 'primeng/tag';
-import { IViewScanQrCurrentSubPlan, IViewScanQrTienDoSv, IViewScanQrSubPlan } from '@/models/traobang/sv-nhan-bang.models';
+import { IViewScanQrCurrentSubPlan, IViewScanQrTienDoSv, IViewScanQrSubPlan, ISlideItem } from '@/models/traobang/sv-nhan-bang.models';
 import { ScanQrService } from '@/service/scan-qr.service';
 import { TraoBangSvService } from '@/service/sv-nhan-bang.service';
 import { SystemTraoBangService } from '@/service/system-trao-bang';
+import { SlideList } from './slide-list/slide-list';
 
 @Component({
     selector: 'app-scan-qr-sv',
-    imports: [SharedImports, TableModule, LeftSidebar, Header, StudentList, Footer, NgIcon, TagModule],
+    imports: [SharedImports, TableModule, LeftSidebar, Header, StudentList, Footer, NgIcon, TagModule, SlideList],
     templateUrl: './scan-qr-sv.html',
     styleUrl: './scan-qr-sv.scss'
 })
@@ -36,6 +37,9 @@ export class ScanQrSv extends BaseComponent implements OnDestroy {
     students: IViewScanQrTienDoSv[] = [];
     listSubPlan: IViewScanQrSubPlan[] = [];
     pushedSuccessSv: IViewScanQrTienDoSv = {};
+    listSlide : ISlideItem[] = [];
+    removingFirstSlide = false;
+    highlightLastStudent = false;
 
     override ngOnInit(): void {
         this.initData();
@@ -80,15 +84,34 @@ export class ScanQrSv extends BaseComponent implements OnDestroy {
     }
 
     cutSlide() {
-        this._svTraoBangService.cutSlideThuong(this.idSubPlan).subscribe({
-            next: (res) => {
-                if (this.isResponseSucceed(res, true, 'Cắt silde thành công ')) {
-                    this.currentSubPlanInfo = res.data;
-                    this.getHangDoi();
-                    this.getCurrentSubPlan();
+        this.removingFirstSlide = true;
+        setTimeout(() => {
+            this._svTraoBangService.cutSlideThuong(this.idSubPlan).subscribe({
+                next: (res) => {
+                    this.removingFirstSlide = false;
+                    if (this.isResponseSucceed(res, true, 'Chuyển loại slide thành công ')) {
+                        this.currentSubPlanInfo = res.data;
+                        this.getCurrentSubPlan();
+                        this._svTraoBangService.getHangDoi({ SoLuong: 7 }).subscribe({
+                            next: (hangDoiRes) => {
+                                if (this.isResponseSucceed(hangDoiRes)) {
+                                    this.students = hangDoiRes.data;
+                                    this.highlightLastStudent = true;
+                                    setTimeout(() => {
+                                        this.highlightLastStudent = false;
+                                    }, 420);
+                                } else {
+                                    this.students = [];
+                                }
+                            }
+                        });
+                    }
+                },
+                error: () => {
+                    this.removingFirstSlide = false;
                 }
-            }
-        });
+            });
+        }, 260);
     }
 
     getCurrentSubPlan() {

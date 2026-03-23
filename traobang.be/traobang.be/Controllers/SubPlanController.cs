@@ -295,6 +295,7 @@ namespace traobang.be.Controllers
                 return OkException(ex);
             }
         }
+
         [Permission(PermissionKeys.SubPlanUpdate)]
         [HttpPut("{id}/trang-thai-sub-plan")]
         public ApiResponse UpdateTrangThaiSubPlan([FromRoute] int id)
@@ -432,6 +433,7 @@ namespace traobang.be.Controllers
                 return OkException(ex);
             }
         }
+
         [AllowAnonymous]
         [HttpGet("danh-sach-sinh-vien-nhan-bang-khoa")]
         public async Task<ApiResponse> GetInforSubPlanDangTrao([FromQuery] int soLuong)
@@ -568,5 +570,7 @@ namespace traobang.be.Controllers
                 return OkException(ex);
             }
         }
+
+
     }
 }

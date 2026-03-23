@@ -54,7 +54,7 @@ namespace traobang.be.application.TraoBang.Implements
         {
             _logger.LogInformation($"{nameof(Create)}, dto = {JsonSerializer.Serialize(dto)}");
             var username = getCurrentName();
-            if (dto.LoaiSlide == LoaiSlides.BINH_THUONG && string.IsNullOrEmpty(dto.NoiDung))
+            if (dto.LoaiSlide == LoaiSlides.TEXT && string.IsNullOrEmpty(dto.NoiDung))
             {
                 throw new UserFriendlyException(ErrorCodes.TraoBangErrorLoaiSlideBinhThuongPhaiCoNoiDung);
             }
@@ -97,7 +97,7 @@ namespace traobang.be.application.TraoBang.Implements
         {
             _logger.LogInformation($"{nameof(Create)}, dto = {JsonSerializer.Serialize(dto)}");
 
-            if (dto.LoaiSlide == LoaiSlides.BINH_THUONG && string.IsNullOrEmpty(dto.NoiDung))
+            if (dto.LoaiSlide == LoaiSlides.TEXT && string.IsNullOrEmpty(dto.NoiDung))
             {
                 throw new UserFriendlyException(ErrorCodes.TraoBangErrorLoaiSlideBinhThuongPhaiCoNoiDung);
             }
@@ -167,7 +167,7 @@ namespace traobang.be.application.TraoBang.Implements
                     slide.IdSinhVienNhanBang = newsv.Id;
                 }
             }
-            else if (dto.LoaiSlide == LoaiSlides.BINH_THUONG)
+            else if (dto.LoaiSlide == LoaiSlides.TEXT)
             {
                 var oldSv = _tbDbContext.DanhSachSinhVienNhanBangs.FirstOrDefault(x => x.Id == slide.IdSinhVienNhanBang && !x.Deleted);
                 if (oldSv != null)
@@ -404,7 +404,7 @@ namespace traobang.be.application.TraoBang.Implements
                             }
                             tmpOrder = slideSvOrderDict[subplan.Id];
                         }
-                        else if (loaiSlide == LoaiSlides.BINH_THUONG)
+                        else if (loaiSlide == LoaiSlides.TEXT)
                         {
                             if (slideTextOrderDict.ContainsKey(subplan.Id))
                             {

@@ -3,6 +3,6 @@
     public class UpdateTienDoOrderDto
     {
         public int IdTienDo { get; set; }
-        public int NewOrder { get; set; }
+        public int IdSlideTruoc { get; set; }
     }
 }

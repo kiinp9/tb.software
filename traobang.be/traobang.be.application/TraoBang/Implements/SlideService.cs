@@ -590,7 +590,7 @@ namespace traobang.be.application.TraoBang.Implements
             _logger.LogInformation($"{nameof(UpdateTienDoOrder)} dto={JsonSerializer.Serialize(dto)}");
 
             // check tiến độ có tồn tại ko
-            var tienDo = _tbDbContext.TienDoTraoBangs.Where(x => x.Id == dto.IdTienDo && !x.Deleted && x.IsShow).FirstOrDefault()
+            var tienDo = _tbDbContext.TienDoTraoBangs.Where(x => x.Id == dto.IdTienDo && !x.Deleted).FirstOrDefault()
                     ?? throw new UserFriendlyException(ErrorCodes.TraoBangErrorSinhVienOrderInvalid);
 
             // check subplan có đang trao bằng ko
@@ -604,13 +604,32 @@ namespace traobang.be.application.TraoBang.Implements
                            select sp).FirstOrDefault()
                         ?? throw new UserFriendlyException(ErrorCodes.TraoBangErrorSubPlanNotFound);
 
+            // lấy slide trước
+            var slideTruocTrongBangTienDo = _tbDbContext.TienDoTraoBangs.AsNoTracking()
+                                .Where(x => x.Id == dto.IdSlideTruoc && x.IdSubPlan == subPlan.Id && !x.Deleted)
+                                .FirstOrDefault();
+            int newOrder = 1;
+            if (slideTruocTrongBangTienDo != null)
+            {
+                newOrder = slideTruocTrongBangTienDo.Order + 1;
+            }
+
             using (var tran = _tbDbContext.Database.BeginTransaction())
             {
-                tienDo.Order = dto.NewOrder;
+                tienDo.Order = newOrder;
                 _tbDbContext.SaveChanges();
 
-                _tbDbContext.TienDoTraoBangs.Where(x => x.IdSubPlan == tienDo.IdSubPlan && !x.Deleted)
-                                .ExecuteUpdate(setter => setter.SetProperty(x => x.Order, x => x.Order + 1));
+                _tbDbContext.TienDoTraoBangs.Where(x => x.IdSubPlan == tienDo.IdSubPlan && x.Order >= newOrder && !x.Deleted && x.Id != tienDo.Id)
+                               .ExecuteUpdate(setter => setter.SetProperty(x => x.Order, x => x.Order + 1));
+
+                var listTienDo = _tbDbContext.TienDoTraoBangs.Where(x => x.IdSubPlan == tienDo.IdSubPlan && !x.Deleted).OrderBy(x => x.Order).ToList();
+                int order = 1;
+                foreach (var item in listTienDo)
+                {
+                    item.Order = order;
+                    order++;
+                }
+                _tbDbContext.SaveChanges();
                 tran.Commit();
             }
         }

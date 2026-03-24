@@ -45,10 +45,7 @@ export class StudentList {
                 IdSlideTruoc: data[event.currentIndex - 1].id,
             }
         }
-
-        console.log(dataChange)
-
-        // this.studentsChange.emit(dataChange);
+        this.studentsChange.emit(dataChange);
     }
 
 

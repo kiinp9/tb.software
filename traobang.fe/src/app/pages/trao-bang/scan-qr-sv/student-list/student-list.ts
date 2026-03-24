@@ -32,11 +32,23 @@ export class StudentList {
         data.forEach((item, index) => {
             item.orderTienDo = index + 1;
         });
-        let dataChange = {
-            IdTienDo: draggedItem.id,
-            NewOrder: event.currentIndex + 1
+
+        let dataChange
+
+        if (event.currentIndex === 0) {
+            dataChange = {
+                IdSlideTruoc: 0,
+            }
         }
-        this.studentsChange.emit(dataChange);
+        else {
+            dataChange = {
+                IdSlideTruoc: data[event.currentIndex - 1].id,
+            }
+        }
+
+        console.log(dataChange)
+
+        // this.studentsChange.emit(dataChange);
     }
 
 

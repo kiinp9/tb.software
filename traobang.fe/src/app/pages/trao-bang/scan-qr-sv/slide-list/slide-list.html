@@ -1,8 +1,10 @@
+<button pButton (click)="onOpenCreateSlide()" label="Thêm slide" class="p-button-sm p-button mt-2"></button>
 <p-table [value]="slides() || []" class="!text-1xl w-full">
     <ng-template pTemplate="header">
         <tr class="font-bold">
             <th class="w-1/3">Nội dung</th>
             <th class="w-2/3">Ghi chú</th>
+            <th class="w-12 !text-center">Xóa</th>
         </tr>
     </ng-template>
 
@@ -16,10 +18,18 @@
             </td>
 
             <!-- Ghi chú -->
-            <td class="align-middle !bg-[#d4ffd1]" [class.bg-orange-200]="slide.trangThai === constStatuses.DANG_TRAO_BANG">
+            <td class="align-middle !bg-[#d4ffd1]"
+                [class.bg-orange-200]="slide.trangThai === constStatuses.DANG_TRAO_BANG">
                 <div class=" overflow-hidden">
                     {{ slide.note }}
                 </div>
+            </td>
+
+            <!-- Delete -->
+            <td class="align-middle !bg-[#d4ffd1] !text-center"
+                [class.bg-orange-200]="slide.trangThai === constStatuses.DANG_TRAO_BANG">
+                <button pButton icon="pi pi-trash" class="p-button-rounded p-button-danger p-button-text p-button-sm"
+                    (click)="onDeleteSlide(slide.id)" pTooltip="Xóa slide" tooltipPosition="top"></button>
             </td>
         </tr>
     </ng-template>

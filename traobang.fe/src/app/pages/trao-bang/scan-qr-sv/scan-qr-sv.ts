@@ -19,6 +19,7 @@ import { ScanQrService } from '@/service/scan-qr.service';
 import { TraoBangSvService } from '@/service/sv-nhan-bang.service';
 import { SystemTraoBangService } from '@/service/system-trao-bang';
 import { SlideList } from './slide-list/slide-list';
+import { SlideDragDropService } from '@/service/slide-drag-drop.service';
 
 @Component({
     selector: 'app-scan-qr-sv',
@@ -30,14 +31,15 @@ export class ScanQrSv extends BaseComponent implements OnDestroy {
     hubConnection: signalR.HubConnection | undefined;
     _svTraoBangService = inject(TraoBangSvService);
     _scanQrService = inject(ScanQrService);
+    _slideDragService = inject(SlideDragDropService);
     _systemService = inject(SystemTraoBangService);
 
     idSubPlan: number = 0;
-    currentSubPlanInfo: IViewScanQrCurrentSubPlan | null = {};
+    currentSubPlanInfo: IViewScanQrCurrentSubPlan | undefined = undefined;
     students: IViewScanQrTienDoSv[] = [];
     listSubPlan: IViewScanQrSubPlan[] = [];
     pushedSuccessSv: IViewScanQrTienDoSv = {};
-    listSlide : ISlideItem[] = [];
+    listSlide: ISlideItem[] = [];
     removingFirstSlide = false;
     highlightLastStudent = false;
 
@@ -260,5 +262,24 @@ export class ScanQrSv extends BaseComponent implements OnDestroy {
     ngOnDestroy(): void {
         this.hubConnection?.stop().then();
         this._scanQrService.clearListener();
+    }
+
+    onDragDropStudent(data: any) {
+        this.loading = true
+        this._slideDragService.onChangeOrderSlideStudent(data)
+            .subscribe({
+                next: (res) => {
+                    if (this.isResponseSucceed(res)) {
+                        this.getHangDoi()
+                    }
+                }
+            })
+            .add(() => {
+                this.loading = false;
+            });
+    }
+
+    createFastSlide() {
+        this.getCurrentSubPlan()
     }
 }

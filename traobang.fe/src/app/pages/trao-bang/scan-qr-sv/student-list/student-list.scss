@@ -29,4 +29,8 @@
 :host ::ng-deep .p-datatable-wrapper {
     overflow-x: hidden !important;
     overflow-y: hidden !important;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
 }

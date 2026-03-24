@@ -574,7 +574,7 @@ namespace traobang.be.application.TraoBang.Implements
                     IdSubPlan = subPlan.Id,
                     IsShow = true,
                     NoiDung = dto.NoiDung,
-                    LoaiSlide = LoaiSlides.BINH_THUONG,
+                    LoaiSlide = LoaiSlides.TEXT,
                     Note = dto.Note,
                     TrangThai = TraoBangConstants.ThamGiaTraoBang,
                     Order = newOrder,

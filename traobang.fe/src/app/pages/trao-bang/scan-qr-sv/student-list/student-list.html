@@ -17,10 +17,13 @@
 
     <!-- BODY -->
     <ng-template pTemplate="body" let-student let-ri="rowIndex">
-        <tr cdkDrag 
+        <tr cdkDrag
             cdkDragHandle
+            [cdkDragDisabled]="ri < 2"
             [class.slide-enter-animation]="highlightLast() && ri === studentsList().length - 1"
-            class="cursor-grab hover:bg-blue-50 transition-colors"
+            [class.cursor-grab]="ri >= 2"
+            [class.cursor-not-allowed]="ri < 2"
+            class="hover:bg-blue-50 transition-colors"
             [cdkDragData]="student">
             <!-- Drag handle -->
             <td class="!text-center">

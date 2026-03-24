@@ -24,6 +24,11 @@ export class StudentList {
     studentsChange = output<any>();
 
     drop(event: CdkDragDrop<IViewScanQrTienDoSv[]>) {
+        // Chặn drop vào 2 vị trí đầu tiên và chặn drag từ 2 vị trí đầu
+        if (event.currentIndex < 2 || event.previousIndex < 2) {
+            return;
+        }
+
         const data = [...this.studentsList()];
         const draggedItem = data[event.previousIndex];
 

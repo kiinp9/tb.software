@@ -37,11 +37,13 @@ export class StudentList {
 
         if (event.currentIndex === 0) {
             dataChange = {
-                IdSlideTruoc: 0,
+                idTienDo: draggedItem.id,
+                idSlideTruoc: 0,
             }
         }
         else {
             dataChange = {
+                idTienDo: draggedItem.id,
                 IdSlideTruoc: data[event.currentIndex - 1].id,
             }
         }

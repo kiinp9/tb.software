@@ -21,22 +21,25 @@ export class StudentList {
     loaiSlide = ELoaiSlide
 
     studentsList = computed(() => this.students() || []);
-    studentsChange = output<IViewScanQrTienDoSv[]>();
+    studentsChange = output<any>();
 
     drop(event: CdkDragDrop<IViewScanQrTienDoSv[]>) {
         const data = [...this.studentsList()];
+        const draggedItem = data[event.previousIndex];
 
         moveItemInArray(data, event.previousIndex, event.currentIndex);
 
-        // update order
         data.forEach((item, index) => {
             item.orderTienDo = index + 1;
         });
-
-        this.studentsChange.emit(data);
+        let dataChange = {
+            IdTienDo: draggedItem.id,
+            NewOrder: event.currentIndex + 1
+        }
+        this.studentsChange.emit(dataChange);
     }
 
-    // 🎯 CLASS
+
     getRowClass(student: IViewScanQrTienDoSv) {
         return {
             'bg-orange-200': student.trangThai === this.constStatuses.DANG_TRAO_BANG,

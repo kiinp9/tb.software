@@ -245,6 +245,7 @@ builder.Services.AddScoped<IPlanService, PlanService>();
 builder.Services.AddScoped<ISubPlanService, SubPlanService>();
 builder.Services.AddScoped<ISlideService, SlideService>();
 builder.Services.AddScoped<IGiaoDienService, GiaoDienService>();
+builder.Services.AddScoped<IPrepareDataService, PrepareDataService>();
 
 #endregion
 

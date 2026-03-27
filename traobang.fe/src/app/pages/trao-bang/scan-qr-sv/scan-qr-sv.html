@@ -16,6 +16,7 @@
                 <div class="flex flex-row justify-between mb-3">
                     <div class="flex gap-2">
                         <button pButton label="QUÉT QR" class="p-button-sm p-button"></button>
+                        <button pButton label="Test" (click)="onModeTest()" class="p-button-sm p-button"></button>
                         <button pButton label="NHẬP MSSV" class="p-button-sm p-button-outlined"
                             (click)="onOpenDialogMssv()"></button>
                         <button pButton label="Chuyển loại bằng" class="p-button-sm p-button-danger button-cut"
@@ -46,8 +47,8 @@
                 </div>
                 }
 
-                <app-slide-list (createSuccess)="createFastSlide()" [idSubPlan]="idSubPlan" [slides]="this.currentSubPlanInfo?.slideTexts ?? []"
-                    [removingFirst]="removingFirstSlide" />
+                <app-slide-list (createSuccess)="createFastSlide()" [idSubPlan]="idSubPlan"
+                    [slides]="this.currentSubPlanInfo?.slideTexts ?? []" [removingFirst]="removingFirstSlide" />
 
             </div>
 

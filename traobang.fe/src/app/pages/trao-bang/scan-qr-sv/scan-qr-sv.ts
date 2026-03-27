@@ -282,4 +282,18 @@ export class ScanQrSv extends BaseComponent implements OnDestroy {
     createFastSlide() {
         this.getCurrentSubPlan()
     }
+
+    onModeTest() {
+        this._slideDragService.onModeTest(this.currentSubPlanInfo?.idPlan)
+            .subscribe({
+                next: (res) => {
+                    if (this.isResponseSucceed(res)) {
+                        this.ngOnInit()
+                    }
+                }
+            })
+            .add(() => {
+                this.loading = false;
+            });
+    }
 }

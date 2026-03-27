@@ -1198,6 +1198,8 @@ namespace traobang.be.application.TraoBang.Implements
             return new GetInforSubPlanDto
             {
                 Ten = subPlan.Ten,
+                IdPlan = plan.Id,
+                IdSubPlan = subPlan.Id,
                 SoLuongThamGia = soLuongThamGia,
                 SoLuongVangMat = soLuongVangMat,
                 SoLuongDaTrao = soLuongDaTrao,

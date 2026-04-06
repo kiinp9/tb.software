@@ -31,7 +31,7 @@ namespace traobang.be.application.TraoBang.Implements
         {
             _logger.LogInformation($"{nameof(PrepareForDemo)} dto={JsonSerializer.Serialize(dto)}");
 
-            var plan = _tbDbContext.Plans.AsNoTracking().FirstOrDefault(x => x.Id == dto.IdPlan && !x.Deleted)
+            var plan = _tbDbContext.Plans.AsNoTracking().FirstOrDefault(x => x.TrangThai == TrangThaiPlan.DangHoatDong && !x.Deleted)
                 ?? throw new UserFriendlyException(ErrorCodes.TraoBangErrorPlanNotFound);
 
             var listSubplan = _tbDbContext.SubPlans.AsNoTracking()
@@ -43,22 +43,29 @@ namespace traobang.be.application.TraoBang.Implements
             {
                 var slides = _tbDbContext.Slides
                                     .Where(x => !x.Deleted && x.IsShow && x.IdSubPlan == subplan.Id)
-                                    .OrderBy(x => x.Order)
+                                    .OrderBy(x => x.Id)
                                     .ToList();
+
+                var lastSlideText = slides.Where(x => x.LoaiSlide == LoaiSlides.TEXT).LastOrDefault();
 
                 int stt = 1;
                 int countSvDemo = 1;
                 const int countSvDemoMax = 2;
+                bool isLastSlideText = false;
 
                 foreach (var slide in slides)
                 {
+                    if (isLastSlideText)
+                    {
+                        continue;
+                    }
                     if (slide.LoaiSlide == LoaiSlides.TEXT)
                     {
                         var tienDoTraoBang = new TienDoTraoBang
                         {
                             IdSubPlan = subplan.Id,
                             IdSinhVienNhanBang = slide.IdSinhVienNhanBang ?? -1,
-                            //HoVaTen = sinhVien.HoVaTen,
+                            HoVaTen = slide.NoiDung ?? string.Empty,
                             //MaSoSinhVien = sinhVien.MaSoSinhVien,
                             TrangThai = TraoBangConstants.ChuanBi,
                             Order = stt,
@@ -66,13 +73,18 @@ namespace traobang.be.application.TraoBang.Implements
                             CreatedDate = DateTime.Now,
                             IdSlide = slide.Id,
                             LoaiSlide = slide.LoaiSlide,
-                            //Note = query.sv.Note,
+                            Note = slide.Note,
                             IdPlan = plan.Id,
                             Deleted = false
                         };
                         _tbDbContext.TienDoTraoBangs.Add(tienDoTraoBang);
                         stt += 1;
                         countSvDemo = 0;
+
+                        if (slide.Id == lastSlideText?.Id)
+                        {
+                            isLastSlideText = true;
+                        }
                     }
                     else if (slide.LoaiSlide == LoaiSlides.SINH_VIEN && countSvDemo <= countSvDemoMax)
                     {
@@ -98,6 +110,7 @@ namespace traobang.be.application.TraoBang.Implements
                             };
                             _tbDbContext.TienDoTraoBangs.Add(tienDoTraoBang);
                             stt += 1;
+                            countSvDemo += 1;
                         }
 
                     }

@@ -638,14 +638,30 @@ namespace traobang.be.application.TraoBang.Implements
         {
             _logger.LogInformation($"{nameof(RevertTienDoTraoBang)} idTienDo={idTienDo}");
 
-            var tienDo = _tbDbContext.TienDoTraoBangs.Where(x => x.Id == idTienDo && !x.Deleted).FirstOrDefault()
+            using (var tran = _tbDbContext.Database.BeginTransaction())
+            {
+                var tienDo = _tbDbContext.TienDoTraoBangs.Where(x => x.Id == idTienDo && !x.Deleted).FirstOrDefault()
                     ?? throw new UserFriendlyException(ErrorCodes.TraoBangErrorTienDoNotFound);
 
-            tienDo.Deleted = true;
-            tienDo.DeletedBy = getCurrentName();
-            tienDo.DeletedDate = DateTime.Now;
+                tienDo.Deleted = true;
+                tienDo.DeletedBy = getCurrentName();
+                tienDo.DeletedDate = DateTime.Now;
 
-            _tbDbContext.SaveChanges();
+                // Nếu là loại slide text thì xóa cả tiến độ lẫn slide đó
+                if (tienDo.LoaiSlide == LoaiSlides.TEXT)
+                {
+                    var slide = _tbDbContext.Slides.Where(x => x.Id == tienDo.IdSlide && !x.Deleted).FirstOrDefault();
+                    if (slide != null)
+                    {
+                        slide.Deleted = true;
+                        slide.DeletedBy = getCurrentName();
+                        slide.DeletedDate = DateTime.Now;
+                    }
+                }
+
+                _tbDbContext.SaveChanges();
+                tran.Commit();
+            }
         }
 
         private async Task _generateQrCommon(DanhSachSinhVienNhanBang sv, SubPlan sp)

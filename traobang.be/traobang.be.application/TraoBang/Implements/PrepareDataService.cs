@@ -59,25 +59,32 @@ namespace traobang.be.application.TraoBang.Implements
                     {
                         continue;
                     }
+
+                    bool isExistInTienDo = _tbDbContext.TienDoTraoBangs.Any(x => x.IdSlide == slide.Id && !x.Deleted);
+
                     if (slide.LoaiSlide == LoaiSlides.TEXT)
                     {
-                        var tienDoTraoBang = new TienDoTraoBang
+                        if (!isExistInTienDo)
                         {
-                            IdSubPlan = subplan.Id,
-                            IdSinhVienNhanBang = slide.IdSinhVienNhanBang ?? -1,
-                            HoVaTen = slide.NoiDung ?? string.Empty,
-                            //MaSoSinhVien = sinhVien.MaSoSinhVien,
-                            TrangThai = TraoBangConstants.ChuanBi,
-                            Order = stt,
-                            IsShow = true,
-                            CreatedDate = DateTime.Now,
-                            IdSlide = slide.Id,
-                            LoaiSlide = slide.LoaiSlide,
-                            Note = slide.Note,
-                            IdPlan = plan.Id,
-                            Deleted = false
-                        };
-                        _tbDbContext.TienDoTraoBangs.Add(tienDoTraoBang);
+                            var tienDoTraoBang = new TienDoTraoBang
+                            {
+                                IdSubPlan = subplan.Id,
+                                IdSinhVienNhanBang = slide.IdSinhVienNhanBang ?? -1,
+                                HoVaTen = slide.NoiDung ?? string.Empty,
+                                //MaSoSinhVien = sinhVien.MaSoSinhVien,
+                                TrangThai = TraoBangConstants.ChuanBi,
+                                Order = stt,
+                                IsShow = true,
+                                CreatedDate = DateTime.Now,
+                                IdSlide = slide.Id,
+                                LoaiSlide = slide.LoaiSlide,
+                                Note = slide.Note,
+                                IdPlan = plan.Id,
+                                Deleted = false
+                            };
+                            _tbDbContext.TienDoTraoBangs.Add(tienDoTraoBang);
+                        }
+
                         stt += 1;
                         countSvDemo = 0;
 
@@ -92,23 +99,27 @@ namespace traobang.be.application.TraoBang.Implements
 
                         if (sv != null)
                         {
-                            var tienDoTraoBang = new TienDoTraoBang
+                            if (!isExistInTienDo)
                             {
-                                IdSubPlan = subplan.Id,
-                                IdSinhVienNhanBang = slide.IdSinhVienNhanBang ?? -1,
-                                HoVaTen = sv.HoVaTen,
-                                MaSoSinhVien = sv.MaSoSinhVien,
-                                TrangThai = TraoBangConstants.ChuanBi,
-                                Order = stt,
-                                IsShow = true,
-                                CreatedDate = DateTime.Now,
-                                IdSlide = slide.Id,
-                                LoaiSlide = slide.LoaiSlide,
-                                Note = sv.Note,
-                                IdPlan = plan.Id,
-                                Deleted = false
-                            };
-                            _tbDbContext.TienDoTraoBangs.Add(tienDoTraoBang);
+                                var tienDoTraoBang = new TienDoTraoBang
+                                {
+                                    IdSubPlan = subplan.Id,
+                                    IdSinhVienNhanBang = slide.IdSinhVienNhanBang ?? -1,
+                                    HoVaTen = sv.HoVaTen,
+                                    MaSoSinhVien = sv.MaSoSinhVien,
+                                    TrangThai = TraoBangConstants.ChuanBi,
+                                    Order = stt,
+                                    IsShow = true,
+                                    CreatedDate = DateTime.Now,
+                                    IdSlide = slide.Id,
+                                    LoaiSlide = slide.LoaiSlide,
+                                    Note = sv.Note,
+                                    IdPlan = plan.Id,
+                                    Deleted = false
+                                };
+                                _tbDbContext.TienDoTraoBangs.Add(tienDoTraoBang);
+                            }
+
                             stt += 1;
                             countSvDemo += 1;
                         }

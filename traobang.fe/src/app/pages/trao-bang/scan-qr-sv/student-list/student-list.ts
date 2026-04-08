@@ -83,7 +83,7 @@ export class StudentList extends BaseComponent {
                 this._slideDragDropService.changeStatus(id)
                     .subscribe({
                         next: (res) => {
-                            if (this.isResponseSucceed(res,true,'Đã hủy checkin Thành công')) {
+                            if (this.isResponseSucceed(res, true, 'Đã hủy checkin Thành công')) {
                                 this.deleteSlide.emit(true);
                             }
                         }
@@ -100,17 +100,18 @@ export class StudentList extends BaseComponent {
         this.confirmAction(
             {
                 header: 'Xóa slide',
-                message: 'Bạn chắc chắn muốn xóa slide này?'
+                message: 'Bạn chắc chắn muốn xóa slide?'
             },
             () => {
                 // Call API to delete slide
-                this._slideService.delete(slideId).subscribe({
-                    next: (res) => {
-                        if (this.isResponseSucceed(res,true,'Đã xóa thành công')) {
-                            this.deleteSlide.emit(true);
+                this._slideDragDropService.changeStatus(slideId)
+                    .subscribe({
+                        next: (res) => {
+                            if (this.isResponseSucceed(res, true, 'Đã xóa thành công')) {
+                                this.deleteSlide.emit(true);
+                            }
                         }
-                    }
-                })
+                    })
                     .add(() => {
                         this.loading = false;
                     });

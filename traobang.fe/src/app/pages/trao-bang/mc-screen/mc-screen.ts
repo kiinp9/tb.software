@@ -21,6 +21,7 @@ import { IViewScanQrCurrentSubPlan, IViewScanQrTienDoSv, IViewScanQrSubPlan, IVi
 export class McScreen extends BaseComponent implements OnDestroy {
 
   private removeListener?: () => void;
+  private nextTransitionTimer?: ReturnType<typeof setTimeout>;
   hubConnection: signalR.HubConnection | undefined;
   _svTraoBangService = inject(TraoBangSvService);
   renderer = inject(Renderer2)
@@ -39,8 +40,9 @@ export class McScreen extends BaseComponent implements OnDestroy {
   isLoadingNext: boolean = false;
   isLoadingPrev: boolean = false;
   isViewingSvBatDauLui: boolean = false;
- isHiddenSvBatDauLuiButton: boolean = true;
-  
+  isHiddenSvBatDauLuiButton: boolean = true;
+  transitionDirection: 'next' | 'prev' | null = null;
+
 
   countDown = 0;
   timeLeft = 0;
@@ -57,7 +59,7 @@ export class McScreen extends BaseComponent implements OnDestroy {
         this.onClickNextTraoBang();
         console.log('enter')
       }
-      
+
     });
 
   }
@@ -149,6 +151,7 @@ export class McScreen extends BaseComponent implements OnDestroy {
       return;
     }
     this.isViewingSvBatDauLui = false;
+    this.startTransition('next');
 
     this.isLoadingNext = true;
 
@@ -177,7 +180,28 @@ export class McScreen extends BaseComponent implements OnDestroy {
     });*/
                 .add(() => {
                 this.isLoadingNext = false;
+                this.stopTransitionSoon();
             });
+  }
+
+  private startTransition(direction: 'next' | 'prev') {
+    if (this.nextTransitionTimer) {
+      clearTimeout(this.nextTransitionTimer);
+      this.nextTransitionTimer = undefined;
+    }
+
+    this.transitionDirection = direction;
+  }
+
+  private stopTransitionSoon() {
+    if (this.nextTransitionTimer) {
+      clearTimeout(this.nextTransitionTimer);
+    }
+
+    this.nextTransitionTimer = setTimeout(() => {
+      this.transitionDirection = null;
+      this.nextTransitionTimer = undefined;
+    }, 1600);
   }
 
   onClickViewSinhVienBatDauLui() {
@@ -211,7 +235,7 @@ export class McScreen extends BaseComponent implements OnDestroy {
                 if (this.isResponseSucceed(res)) {
             this.currentSubPlanInfo = res.data
           }
-            
+
       }
     })
              this._svTraoBangService.getTienDoTraoBang().subscribe({
@@ -237,6 +261,7 @@ export class McScreen extends BaseComponent implements OnDestroy {
       return;
     }
     this.isHiddenSvBatDauLuiButton = false;
+    this.startTransition('prev');
     this.isLoadingPrev = true;
     this._svTraoBangService.prevSvNhanBang(this.idSubPlan).subscribe({
       next: res => {
@@ -251,6 +276,7 @@ export class McScreen extends BaseComponent implements OnDestroy {
       }
     }).add(() => {
       this.isLoadingPrev = false;
+      this.stopTransitionSoon();
     });
   }
 
@@ -287,6 +313,9 @@ export class McScreen extends BaseComponent implements OnDestroy {
     this.hubConnection?.stop().then();
     if (this.removeListener) {
       this.removeListener();
+    }
+    if (this.nextTransitionTimer) {
+      clearTimeout(this.nextTransitionTimer);
     }
   }
 

@@ -7,6 +7,7 @@ import { Component, computed, input, output } from '@angular/core';
 import { TableModule } from "primeng/table";
 import { TagModule } from 'primeng/tag';
 import { DragDropModule, CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { BaseComponent } from '@/shared/components/base/base-component';
 
 @Component({
     selector: 'app-student-list',
@@ -14,7 +15,7 @@ import { DragDropModule, CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-
     templateUrl: './student-list.html',
     styleUrl: './student-list.scss'
 })
-export class StudentList {
+export class StudentList extends BaseComponent{
     students = input.required<IViewScanQrTienDoSv[]>();
     highlightLast = input<boolean>(false);
     constStatuses = SvNhanBangStatuses;
@@ -62,5 +63,24 @@ export class StudentList {
             '!bg-[#d4ffd1]': student.loaiSlide === this.loaiSlide.TEXT,
             '!bg-[#ffedd5]': student.isSlideDauCuoi
         };
+    }
+
+    changeStatus(){
+
+    }
+
+    onDeleteSlide(slideId: number | undefined) {
+        if (!slideId) return;
+        // this.confirmAction(
+        //     {
+        //         header: 'Xóa slide',
+        //         message: 'Bạn chắc chắn muốn xóa slide này?'
+        //     },
+        //     () => {
+        //         // Call API to delete slide
+        //         console.log('Delete slide:', slideId);
+        //         this.createSuccess.emit(true);
+        //     }
+        // );
     }
 }

@@ -12,5 +12,7 @@ import { Component, input } from '@angular/core';
 })
 export class SvInfo {
   svDangTrao = input.required<IViewSvDangTraoBang | null>();
+  animateDirection = input<'next' | 'prev' | null>(null);
+  isNext = input(false);
   type = ViewSvTypeConstants
 }

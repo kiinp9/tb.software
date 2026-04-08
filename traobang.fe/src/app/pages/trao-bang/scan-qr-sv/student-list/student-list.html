@@ -6,29 +6,26 @@
     <!-- HEADER -->
     <ng-template pTemplate="header">
         <tr class="font-bold">
-            <th class="!text-center w-12"></th>
+            <th class="!text-center"></th>
             <th class="!text-center">STT</th>
             <th class="!text-center">MSSV</th>
             <th>Họ và Tên</th>
             <th>Ngành/Chuyên ngành</th>
             <th>Trạng thái</th>
+            <th>Actions</th>
         </tr>
     </ng-template>
 
     <!-- BODY -->
     <ng-template pTemplate="body" let-student let-ri="rowIndex">
-        <tr cdkDrag
-            cdkDragHandle
-            [cdkDragDisabled]="ri < 2"
+        <tr cdkDrag cdkDragHandle [cdkDragDisabled]="ri < 2"
             [class.slide-enter-animation]="highlightLast() && ri === studentsList().length - 1"
-            [class.cursor-grab]="ri >= 2"
-            [class.cursor-not-allowed]="ri < 2"
-            class="hover:bg-blue-50 transition-colors"
-            [cdkDragData]="student">
+            [class.cursor-grab]="ri >= 2" [class.cursor-not-allowed]="ri < 2"
+            class="group hover:bg-blue-50 transition-colors" [cdkDragData]="student">
             <!-- Drag handle -->
-            <td class="!text-center">
-                <span class="select-none">
-                    <i class="pi pi-equals text-gray-500"></i>
+            <td class="!text-center" [ngClass]="getRowClass(student)">
+                <span class="select-none opacity-0 transition-opacity duration-150 group-hover:opacity-100">
+                    <i class="pi pi-align-justify text-gray-500"></i>
                 </span>
             </td>
 
@@ -60,6 +57,12 @@
                         {{ constStatuses.getName(student.trangThai) }}
                     </span>
                 </p-tag>
+            </td>
+            <td [ngClass]="getRowClass(student)">
+                <p-button *ngIf="student.loaiSlide !== loaiSlide.TEXT" icon="pi pi-replay" (onClick)="changeStatus()"
+                    class="mr-3" label="" />
+                <p-button *ngIf="student.loaiSlide === loaiSlide.TEXT && !student.isSlideDauCuoi" icon="pi pi-trash" (onClick)="changeStatus()"
+                    class="mr-3" label="" />
             </td>
         </tr>
     </ng-template>

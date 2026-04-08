@@ -1,0 +1,135 @@
+:host {
+	display: block;
+}
+
+@keyframes sv-info-fade-swap-rise {
+	0% {
+		transform: translateY(0);
+		opacity: 1;
+	}
+
+	45% {
+		transform: translateY(0);
+		opacity: 0;
+	}
+
+	46% {
+		transform: translateY(18px);
+		opacity: 0;
+	}
+
+	100% {
+		transform: translateY(0);
+		opacity: 1;
+	}
+}
+
+@keyframes sv-info-fade-swap-fall {
+	0% {
+		transform: translateY(0);
+		opacity: 1;
+	}
+
+	45% {
+		transform: translateY(0);
+		opacity: 0;
+	}
+
+	46% {
+		transform: translateY(-18px);
+		opacity: 0;
+	}
+
+	100% {
+		transform: translateY(0);
+		opacity: 1;
+	}
+}
+
+@keyframes sv-info-rise {
+	0% {
+		transform: translateY(18px);
+		opacity: 0;
+	}
+
+	100% {
+		transform: translateY(0);
+		opacity: 1;
+	}
+}
+
+@keyframes sv-info-fall {
+	0% {
+		transform: translateY(-18px);
+		opacity: 0;
+	}
+
+	100% {
+		transform: translateY(0);
+		opacity: 1;
+	}
+}
+
+.sv-info-line {
+	will-change: transform, opacity;
+}
+
+.sv-info-root--next .sv-info-line {
+	animation: sv-info-rise 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+.sv-info-root--prev .sv-info-line {
+	animation: sv-info-fall 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+.sv-info-root--fast.sv-info-root--next .sv-info-line {
+	animation: sv-info-rise 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+.sv-info-root--fast.sv-info-root--prev .sv-info-line {
+	animation: sv-info-fall 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+.sv-info-root--fast.sv-info-root--next .sv-info-line--1,
+.sv-info-root--fast.sv-info-root--prev .sv-info-line--1 {
+	opacity: 0;
+	animation-delay: 900ms;
+}
+
+.sv-info-root--fast.sv-info-root--next .sv-info-line--2,
+.sv-info-root--fast.sv-info-root--prev .sv-info-line--2 {
+	opacity: 0;
+	animation-delay: 900ms;
+}
+
+.sv-info-root--fast.sv-info-root--next .sv-info-line--3,
+.sv-info-root--fast.sv-info-root--prev .sv-info-line--3 {
+	opacity: 0;
+	animation-delay: 900ms;
+}
+
+.sv-info-root--fast.sv-info-root--next .sv-info-line--4,
+.sv-info-root--fast.sv-info-root--prev .sv-info-line--4 {
+	opacity: 0;
+	animation-delay: 900ms;
+}
+
+.sv-info-root--next .sv-info-line--1,
+.sv-info-root--prev .sv-info-line--1 {
+	animation-delay: 250ms;
+}
+
+.sv-info-root--next .sv-info-line--2,
+.sv-info-root--prev .sv-info-line--2 {
+	animation-delay: 250ms;
+}
+
+.sv-info-root--next .sv-info-line--3,
+.sv-info-root--prev .sv-info-line--3 {
+	animation-delay: 250ms;
+}
+
+.sv-info-root--next .sv-info-line--4,
+.sv-info-root--prev .sv-info-line--4 {
+	animation-delay: 250ms;
+}

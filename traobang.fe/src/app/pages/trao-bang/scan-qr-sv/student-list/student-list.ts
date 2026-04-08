@@ -3,11 +3,13 @@ import { ELoaiSlide } from '@/models/traobang/slide.models';
 import { IViewScanQrTienDoSv } from '@/models/traobang/sv-nhan-bang.models';
 import { SvNhanBangStatuses } from '@/shared/constants/sv-nhan-bang.constants';
 import { SharedImports } from '@/shared/import.shared';
-import { Component, computed, input, output } from '@angular/core';
+import { Component, computed, inject, input, output } from '@angular/core';
 import { TableModule } from "primeng/table";
 import { TagModule } from 'primeng/tag';
 import { DragDropModule, CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { BaseComponent } from '@/shared/components/base/base-component';
+import { SlideService } from '@/service/slide.service';
+import { SlideDragDropService } from '@/service/slide-drag-drop.service';
 
 @Component({
     selector: 'app-student-list',
@@ -15,7 +17,10 @@ import { BaseComponent } from '@/shared/components/base/base-component';
     templateUrl: './student-list.html',
     styleUrl: './student-list.scss'
 })
-export class StudentList extends BaseComponent{
+export class StudentList extends BaseComponent {
+    _slideService = inject(SlideService);
+    _slideDragDropService = inject(SlideDragDropService);
+
     students = input.required<IViewScanQrTienDoSv[]>();
     highlightLast = input<boolean>(false);
     constStatuses = SvNhanBangStatuses;
@@ -23,6 +28,7 @@ export class StudentList extends BaseComponent{
 
     studentsList = computed(() => this.students() || []);
     studentsChange = output<any>();
+    deleteSlide = output<any>();
 
     drop(event: CdkDragDrop<IViewScanQrTienDoSv[]>) {
         // Chặn drop vào 2 vị trí đầu tiên và chặn drag từ 2 vị trí đầu
@@ -65,22 +71,50 @@ export class StudentList extends BaseComponent{
         };
     }
 
-    changeStatus(){
-
+    changeStatus(id: number | undefined) {
+        if (!id) return;
+        this.confirmAction(
+            {
+                header: 'Xóa slide',
+                message: 'Bạn chắc chắn muốn hủy checkin?'
+            },
+            () => {
+                // Call API to delete slide
+                this._slideDragDropService.changeStatus(id)
+                    .subscribe({
+                        next: (res) => {
+                            if (this.isResponseSucceed(res,true,'Đã hủy checkin Thành công')) {
+                                this.deleteSlide.emit(true);
+                            }
+                        }
+                    })
+                    .add(() => {
+                        this.loading = false;
+                    });
+            }
+        );
     }
 
     onDeleteSlide(slideId: number | undefined) {
         if (!slideId) return;
-        // this.confirmAction(
-        //     {
-        //         header: 'Xóa slide',
-        //         message: 'Bạn chắc chắn muốn xóa slide này?'
-        //     },
-        //     () => {
-        //         // Call API to delete slide
-        //         console.log('Delete slide:', slideId);
-        //         this.createSuccess.emit(true);
-        //     }
-        // );
+        this.confirmAction(
+            {
+                header: 'Xóa slide',
+                message: 'Bạn chắc chắn muốn xóa slide này?'
+            },
+            () => {
+                // Call API to delete slide
+                this._slideService.delete(slideId).subscribe({
+                    next: (res) => {
+                        if (this.isResponseSucceed(res,true,'Đã xóa thành công')) {
+                            this.deleteSlide.emit(true);
+                        }
+                    }
+                })
+                    .add(() => {
+                        this.loading = false;
+                    });
+            }
+        );
     }
 }

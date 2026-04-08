@@ -17,10 +17,15 @@ export class SlideDragDropService {
     createFastSlide(data: any) {
         return this.http.post<IBaseResponse>(`${this.api}/text/fast`, data);
     }
+
     onModeTest(id: any) {
         const body = {
             idPlan: id
         }
         return this.http.post<IBaseResponse>(`/api/core/trao-bang/prepare/demo`, body);
+    }
+
+    changeStatus(id: any) {
+        return this.http.put<any>(`${this.api}/tien-do/revert/${id}`,{});
     }
 }

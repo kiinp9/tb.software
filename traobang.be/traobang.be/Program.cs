@@ -1,4 +1,5 @@
 using Hangfire;
+using InfisicalConfiguration;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +35,27 @@ logger.Info("Starting application...");
 var builder = WebApplication.CreateBuilder(args);
 
 Console.WriteLine("EnvironmentName => " + builder.Environment.EnvironmentName);
+
+if (builder.Environment.IsEnvironment("Staging"))
+{
+    builder.Configuration
+        .SetBasePath(builder.Environment.ContentRootPath)
+        .AddInfisical(
+            new InfisicalConfigBuilder()
+                .SetProjectId(Environment.GetEnvironmentVariable("INFISICAL_PROJECT_ID")!)
+                .SetEnvironment("Staging")
+                .SetInfisicalUrl(Environment.GetEnvironmentVariable("INFISICAL_URL")!) // your self-hosted URL
+                .SetAuth(
+                    new InfisicalAuthBuilder()
+                        .SetUniversalAuth(
+                            Environment.GetEnvironmentVariable("INFISICAL_CLIENT_ID")!,
+                            Environment.GetEnvironmentVariable("INFISICAL_CLIENT_SECRET")!
+                        )
+                        .Build()
+                )
+                .Build()
+        );
+}
 
 
 builder.Logging.ClearProviders();

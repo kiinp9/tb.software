@@ -43,7 +43,7 @@ if (builder.Environment.IsEnvironment("Staging"))
         .AddInfisical(
             new InfisicalConfigBuilder()
                 .SetProjectId(Environment.GetEnvironmentVariable("INFISICAL_PROJECT_ID")!)
-                .SetEnvironment("Staging")
+                .SetEnvironment("staging")
                 .SetInfisicalUrl(Environment.GetEnvironmentVariable("INFISICAL_URL")!) // your self-hosted URL
                 .SetAuth(
                     new InfisicalAuthBuilder()

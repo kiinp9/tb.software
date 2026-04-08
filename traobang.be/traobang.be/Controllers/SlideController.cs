@@ -22,7 +22,7 @@ namespace traobang.be.Controllers
             _slideService = slideService;
         }
 
-        [Permission(PermissionKeys.PlanAdd)]
+        [Permission(PermissionKeys.SlideTextAddFast)]
         [HttpPost("text/fast")]
         public ApiResponse CreateSlideTextFast(CreateSlideTextFastDto dto)
         {
@@ -37,9 +37,9 @@ namespace traobang.be.Controllers
             }
         }
 
-        [Permission(PermissionKeys.PlanAdd)]
+        [Permission(PermissionKeys.SlideUpdateOrderTienDo)]
         [HttpPut("tien-do/order")]
-        public ApiResponse CreateSlideTextFast(UpdateTienDoOrderDto dto)
+        public ApiResponse UpdateTienDoOrder(UpdateTienDoOrderDto dto)
         {
             try
             {
@@ -52,7 +52,7 @@ namespace traobang.be.Controllers
             }
         }
 
-        [Permission(PermissionKeys.PlanAdd)]
+        [Permission(PermissionKeys.SlideRevertTienDo)]
         [HttpPut("tien-do/revert/{id}")]
         public ApiResponse RevertTienDoTraoBang(int id)
         {

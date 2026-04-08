@@ -1030,7 +1030,8 @@ namespace traobang.be.application.TraoBang.Implements
                 Order = result.Order,
                 IsShow = result.IsShow,
                 LoaiSlide = result.LoaiSlide,
-                IsSlideDauCuoi = result.IdSlide == slideDau || result.IdSlide == slideCuoi
+                IsSlideDauCuoi = result.IdSlide == slideDau || result.IdSlide == slideCuoi,
+                IdSlide = result.IdSlide,
             }).ToList();
         }
         public async Task<GetNextSubPlanResponseDto?> NextSubPlan()

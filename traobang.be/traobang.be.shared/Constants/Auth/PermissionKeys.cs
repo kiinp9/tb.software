@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace traobang.be.shared.Constants.Auth
+﻿namespace traobang.be.shared.Constants.Auth
 {
-     public static class PermissionKeys
+    public static class PermissionKeys
     {
         public const string Menu = "Menu.";
         public const string Function = "Function.";
@@ -38,7 +32,6 @@ namespace traobang.be.shared.Constants.Auth
         public const string RoleDelete = Function + "Delete";
         public const string RoleView = Function + "View";
 
-
         public const string CategoryPlan = "QL Plan";
         public const string PlanAdd = Function + "PlanAdd";
         public const string PlanUpdate = Function + "PlanUpdate";
@@ -57,6 +50,11 @@ namespace traobang.be.shared.Constants.Auth
         public const string GiaoDienDelete = Function + "GiaoDienDelete";
         public const string GiaoDienView = Function + "GiaoDienView";
 
+        public const string CategorySlide = "QL Slide";
+        public const string SlideTextAddFast = Function + "SlideTextAddFast";
+        public const string SlideUpdateOrderTienDo = Function + "SlideUpdateOrderTienDo";
+        public const string SlideRevertTienDo = Function + "SlideRevertTienDo";
+
         public static readonly (string Key, string Name, string Category)[] All =
         {
 
@@ -64,7 +62,6 @@ namespace traobang.be.shared.Constants.Auth
             (MenuUserManagementUser, "Menu Quản lý User - User", "Menu"),
             (MenuUserManagementRole, "Menu Quản lý User - Role", "Menu"),
             (MenuTraoBang, "Menu Trao Bằng", "Menu"),
-
 
             (MenuTraoBangCauHinh, "Menu Trao Bằng Cấu hình", "Menu"),
             (MenuTraoBangCauHinhChuongTrinh, "Menu Trao Bằng Cấu hình Chương trình", "Menu"),
@@ -100,10 +97,10 @@ namespace traobang.be.shared.Constants.Auth
             (GiaoDienDelete, "Xoá GiaoDien", CategoryGiaoDien),
             (GiaoDienView, "Xem GiaoDien", CategoryGiaoDien),
 
+            (SlideTextAddFast, "Thêm Slide Text nhanh", CategorySlide),
+            (SlideUpdateOrderTienDo, "Cập nhật thứ tự tiến độ slide", CategorySlide),
+            (SlideRevertTienDo, "Revert tiến độ trao bằng", CategorySlide),
 
         };
-
-
-
     }
 }

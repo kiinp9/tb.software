@@ -13,6 +13,7 @@
         public bool IsShow { get; set; }
         public int LoaiSlide { get; set; }
         public bool IsSlideDauCuoi { get; set; }
+        public int? IdSlide { get; set; }
 
     }
 }

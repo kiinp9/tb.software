@@ -64,5 +64,10 @@ namespace traobang.be.application.TraoBang.Interfaces
         /// </summary>
         /// <param name="dto"></param>
         public void UpdateTienDoOrder(UpdateTienDoOrderDto dto);
+        /// <summary>
+        /// Remove slide khỏi tiến độ trao bằng
+        /// </summary>
+        /// <param name="idTienDo"></param>
+        public void RevertTienDoTraoBang(int idTienDo);
     }
 }

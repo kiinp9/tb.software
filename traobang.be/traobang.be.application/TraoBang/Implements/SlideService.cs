@@ -634,6 +634,20 @@ namespace traobang.be.application.TraoBang.Implements
             }
         }
 
+        public void RevertTienDoTraoBang(int idTienDo)
+        {
+            _logger.LogInformation($"{nameof(RevertTienDoTraoBang)} idTienDo={idTienDo}");
+
+            var tienDo = _tbDbContext.TienDoTraoBangs.Where(x => x.Id == idTienDo && !x.Deleted).FirstOrDefault()
+                    ?? throw new UserFriendlyException(ErrorCodes.TraoBangErrorTienDoNotFound);
+
+            tienDo.Deleted = true;
+            tienDo.DeletedBy = getCurrentName();
+            tienDo.DeletedDate = DateTime.Now;
+
+            _tbDbContext.SaveChanges();
+        }
+
         private async Task _generateQrCommon(DanhSachSinhVienNhanBang sv, SubPlan sp)
         {
             string templateContent = _templateSettings.UrlSvInfo;

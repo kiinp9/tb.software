@@ -51,5 +51,20 @@ namespace traobang.be.Controllers
                 return OkException(ex);
             }
         }
+
+        [Permission(PermissionKeys.PlanAdd)]
+        [HttpPut("tien-do/revert/{id}")]
+        public ApiResponse RevertTienDoTraoBang(int id)
+        {
+            try
+            {
+                _slideService.RevertTienDoTraoBang(id);
+                return new();
+            }
+            catch (Exception ex)
+            {
+                return OkException(ex);
+            }
+        }
     }
 }

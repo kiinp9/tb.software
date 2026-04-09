@@ -42,7 +42,7 @@ if (builder.Environment.IsEnvironment("Staging") || builder.Environment.IsEnviro
     string infisicalEnv = builder.Environment.EnvironmentName switch
     {
         "Staging" => "staging",
-        "Production" => "production",
+        "Production" => "prod",
         _ => ""
     };
 

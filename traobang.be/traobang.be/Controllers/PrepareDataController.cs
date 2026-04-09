@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using traobang.be.application.TraoBang.Dtos.PrepareData;
 using traobang.be.application.TraoBang.Interfaces;
+using traobang.be.Attributes;
 using traobang.be.Controllers.Base;
+using traobang.be.shared.Constants.Auth;
 using traobang.be.shared.HttpRequest;
 
 namespace traobang.be.Controllers
@@ -20,7 +22,7 @@ namespace traobang.be.Controllers
             _service = service;
         }
 
-        //[Permission(PermissionKeys.PlanAdd)]
+        [Permission(PermissionKeys.DemoMode)]
         [HttpPost("demo")]
         public ApiResponse CreateSlideTextFast(PrepareDataForDemoDto dto)
         {

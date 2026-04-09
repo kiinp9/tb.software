@@ -668,9 +668,12 @@ namespace traobang.be.application.TraoBang.Implements
                 IdPlan = query.sp.IdPlan,
                 Deleted = false
             };
+
             _tbDbContext.TienDoTraoBangs.Add(tienDoTraoBang);
             _tbDbContext.SaveChanges();
+
             await _traoBangService.NotifyCheckIn();
+
             return new DiemDanhNhanBangDto
             {
                 TenKhoa = subPlan?.Ten ?? String.Empty,
@@ -761,6 +764,7 @@ namespace traobang.be.application.TraoBang.Implements
             await _traoBangService.NotifySinhVienDangTrao();
             _logger.LogInformation($"Đã bắn SignalR cho sinh viên Id: {id}, SubPlan: {idSubPlan}");
         }
+
         public async Task<GetSinhVienDangTraoBangInforDto> GetSinhVienDangTraoBang()
         {
             _logger.LogInformation($"{nameof(GetSinhVienDangTraoBang)} ");

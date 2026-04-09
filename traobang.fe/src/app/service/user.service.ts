@@ -32,4 +32,12 @@ export class UserService {
     getMe() {
         return this.http.get<IBaseResponseWithData<IViewUser>>(`${this.api}/me`);
     }
+
+    delete(id: string) {
+        return this.http.delete<IBaseResponse>(`${this.api}/${id}`);
+    }
+
+    toggleLock(id: string) {
+        return this.http.delete<IBaseResponse>(`${this.api}/${id}/toggle-lock`);
+    }
 }

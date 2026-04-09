@@ -22,6 +22,7 @@ namespace traobang.be.Controllers
         {
             _subPlanService = subPlanService;
         }
+
         [Permission(PermissionKeys.SubPlanAdd)]
         [HttpPost("{idPlan}")]
         public ApiResponse Create([FromRoute] int idPlan, [FromBody] CreateSubPlanDto dto)
@@ -36,6 +37,7 @@ namespace traobang.be.Controllers
                 return OkException(ex);
             }
         }
+
         [Permission(PermissionKeys.SubPlanUpdate)]
         [HttpPut("")]
         public async Task<ApiResponse> Update([FromBody] UpdateSubPlanDto dto)
@@ -83,6 +85,7 @@ namespace traobang.be.Controllers
                 return OkException(ex);
             }
         }
+
         [Permission(PermissionKeys.SubPlanDelete)]
         [HttpDelete("{idSubPlan}/plan/{idPlan}")]
         public ApiResponse Delete([FromRoute] int idPlan, [FromRoute] int idSubPlan)
@@ -97,6 +100,7 @@ namespace traobang.be.Controllers
                 return OkException(ex);
             }
         }
+
         [Permission(PermissionKeys.SubPlanUpdate)]
         [HttpPut("sort")]
         public ApiResponse Sort([FromBody] MoveOrderSubPlanDto dto)
@@ -111,6 +115,7 @@ namespace traobang.be.Controllers
                 return OkException(ex);
             }
         }
+
         [Permission(PermissionKeys.SubPlanView)]
         [HttpGet("plan/{idPlan}/list")]
         public async Task<ApiResponse> ListSubPlan([FromRoute] int idPlan)
@@ -126,6 +131,7 @@ namespace traobang.be.Controllers
                 return OkException(ex);
             }
         }
+
         [Permission(PermissionKeys.SubPlanAdd)]
         [HttpPost("import-ggsheet")]
         public async Task<ApiResponse> ImportSubPlanFromGgSheet([FromBody] ImportDanhSachSinhVienNhanBangDto dto)
@@ -141,65 +147,65 @@ namespace traobang.be.Controllers
             }
         }
 
-        [Permission(PermissionKeys.SubPlanView)]
-        [HttpGet("paging-danh-sach-sinh-vien-nhan-bang")]
-        public ApiResponse PagingSinhVienNhanBang([FromQuery] FindPagingSinhVienNhanBangDto dto)
-        {
-            try
-            {
-                var data = _subPlanService.PagingSinhVienNhanBang(dto);
-                return new(data);
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
-        }
+        //[Permission(PermissionKeys.SubPlanView)]
+        //[HttpGet("paging-danh-sach-sinh-vien-nhan-bang")]
+        //public ApiResponse PagingSinhVienNhanBang([FromQuery] FindPagingSinhVienNhanBangDto dto)
+        //{
+        //    try
+        //    {
+        //        var data = _subPlanService.PagingSinhVienNhanBang(dto);
+        //        return new(data);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return OkException(ex);
+        //    }
+        //}
 
-        [Permission(PermissionKeys.SubPlanAdd)]
-        [HttpPost("sinh-vien-nhan-bang")]
-        public ApiResponse CreateSinhVienNhanBang([FromBody] CreateSinhVienNhanBangDto dto)
-        {
-            try
-            {
-                _subPlanService.CreateSinhVienNhanBang(dto);
-                return new();
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
-        }
+        //[Permission(PermissionKeys.SubPlanAdd)]
+        //[HttpPost("sinh-vien-nhan-bang")]
+        //public ApiResponse CreateSinhVienNhanBang([FromBody] CreateSinhVienNhanBangDto dto)
+        //{
+        //    try
+        //    {
+        //        _subPlanService.CreateSinhVienNhanBang(dto);
+        //        return new();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return OkException(ex);
+        //    }
+        //}
 
-        [Permission(PermissionKeys.SubPlanUpdate)]
-        [HttpPut("sinh-vien-nhan-bang")]
-        public async Task<ApiResponse> UpdateSinhVienNhanBang([FromBody] UpdateSinhVienNhanBangDto dto)
-        {
-            try
-            {
-                await _subPlanService.UpdateSinhVienNhanBang(dto);
-                return new();
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
-        }
+        //[Permission(PermissionKeys.SubPlanUpdate)]
+        //[HttpPut("sinh-vien-nhan-bang")]
+        //public async Task<ApiResponse> UpdateSinhVienNhanBang([FromBody] UpdateSinhVienNhanBangDto dto)
+        //{
+        //    try
+        //    {
+        //        await _subPlanService.UpdateSinhVienNhanBang(dto);
+        //        return new();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return OkException(ex);
+        //    }
+        //}
 
-        [Permission(PermissionKeys.SubPlanDelete)]
-        [HttpDelete("{idSubPlan}/sinh-vien-nhan-bang/{id}")]
-        public ApiResponse DeleteSinhVienNhanBang([FromRoute] int idSubPlan, [FromRoute] int id)
-        {
-            try
-            {
-                _subPlanService.DeleteSinhVienNhanBang(idSubPlan, id);
-                return new();
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
-        }
+        //[Permission(PermissionKeys.SubPlanDelete)]
+        //[HttpDelete("{idSubPlan}/sinh-vien-nhan-bang/{id}")]
+        //public ApiResponse DeleteSinhVienNhanBang([FromRoute] int idSubPlan, [FromRoute] int id)
+        //{
+        //    try
+        //    {
+        //        _subPlanService.DeleteSinhVienNhanBang(idSubPlan, id);
+        //        return new();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return OkException(ex);
+        //    }
+        //}
 
         [AllowAnonymous]
         [HttpGet("sinh-vien-nhan-bang/{mssv}")]
@@ -246,7 +252,7 @@ namespace traobang.be.Controllers
             }
         }
 
-        [Permission(PermissionKeys.SubPlanAdd)]
+        [Permission(PermissionKeys.PushSinhVienVaoHangDoi)]
         [HttpPost("sinh-vien-nhan-bang/hang-doi")]
         public async Task<ApiResponse> DiemDanhNhanBang([FromQuery] string mssv)
         {
@@ -266,7 +272,7 @@ namespace traobang.be.Controllers
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
-        [Permission(PermissionKeys.SubPlanView)]
+        [Permission(PermissionKeys.GetTienDo)]
         [HttpGet("sinh-vien-nhan-bang/tien-do")]
         public async Task<ApiResponse> GetTienDoNhanBang([FromQuery] ViewTienDoNhanBangRequestDto dto)
         {
@@ -311,7 +317,8 @@ namespace traobang.be.Controllers
             }
 
         }
-        [Permission(PermissionKeys.SubPlanAdd)]
+
+        [Permission(PermissionKeys.NextSubPlan)]
         [HttpPost("next-sub-plan")]
         public async Task<ApiResponse> NextSubPlan()
         {
@@ -330,7 +337,7 @@ namespace traobang.be.Controllers
         /// Lấy danh sách subplan của plan active
         /// </summary>
         /// <returns></returns>
-        [Permission(PermissionKeys.SubPlanView)]
+        [Permission(PermissionKeys.GetSubPlansOfActivePlan)]
         [HttpGet("plan/active/list-sub-plan-infor")]
         public async Task<ApiResponse> GetListSubPlanInfor()
         {
@@ -345,7 +352,7 @@ namespace traobang.be.Controllers
             }
         }
 
-        [Permission(PermissionKeys.SubPlanAdd)]
+        [Permission(PermissionKeys.UpdateTrangThaiSv)]
         [HttpPut("{idSubPlan}/sinh-vien-nhan-bang/{id}/trang-thai")]
         public ApiResponse UpdateTrangThaiSinhVienNhanBang([FromRoute] int idSubPlan, [FromRoute] int id)
         {
@@ -375,7 +382,7 @@ namespace traobang.be.Controllers
             }
         }
 
-        [Permission(PermissionKeys.SubPlanView)]
+        [Permission(PermissionKeys.GetTienDo)]
         [HttpGet("tien-do-trao-bang")]
         public async Task<ApiResponse> GetTienDoTraoBang()
         {
@@ -419,7 +426,8 @@ namespace traobang.be.Controllers
                 return OkException(ex);
             }
         }
-        [Permission(PermissionKeys.SubPlanView)]
+
+        [Permission(PermissionKeys.GetSvChuanBiNhanBang)]
         [HttpGet("{idSubPlan}/sinh-vien-nhan-bang/chuan-bi")]
         public async Task<ApiResponse> GetInforSinhVienChuanBiDuocTraoBang([FromRoute] int idSubPlan)
         {
@@ -449,7 +457,7 @@ namespace traobang.be.Controllers
             }
         }
 
-        [Permission(PermissionKeys.SubPlanAdd)]
+        [Permission(PermissionKeys.PushSinhVienVaoHangDoi)]
         [HttpPost("sinh-vien-nhan-bang/hang-doi/truong-hop-dac-biet")]
         public async Task<ApiResponse> DiemDanhNhanBangTruongHopDacBiet([FromQuery] string mssv)
         {
@@ -469,7 +477,7 @@ namespace traobang.be.Controllers
         /// </summary>
         /// <param name="idSubPlan"></param>
         /// <returns></returns>
-        [Permission(PermissionKeys.SubPlanAdd)]
+        [Permission(PermissionKeys.PushSlideVaoHangDoi)]
         [HttpPost("sinh-vien-nhan-bang/hang-doi/slide-thuong")]
         public async Task<ApiResponse> ChuanBiSlideNormal([FromBody] CutSlideDto dto)
         {
@@ -484,7 +492,11 @@ namespace traobang.be.Controllers
             }
         }
 
-        [Permission(PermissionKeys.SubPlanDelete)]
+        /// <summary>
+        /// Xóa tiến độ trao bằng, log của plan đang active
+        /// </summary>
+        /// <returns></returns>
+        [Permission(PermissionKeys.RestartActivePlan)]
         [HttpPost("restart")]
         public async Task<ApiResponse> Restart()
         {
@@ -499,7 +511,6 @@ namespace traobang.be.Controllers
             }
         }
 
-        [Permission(PermissionKeys.SubPlanView)]
         [HttpPost("{idSubPlan}/infor-sinh-vien-prev")]
         public async Task<ApiResponse> GetInforSinhVienPrev([FromRoute] int idSubPlan)
         {
@@ -513,8 +524,9 @@ namespace traobang.be.Controllers
                 return OkException(ex);
             }
         }
-        [Permission(PermissionKeys.SubPlanView)]
+
         [HttpGet("sinh-vien-prev/tien-do")]
+        [Permission(PermissionKeys.GetTienDo)]
         public async Task<ApiResponse> GetTienDoNhanBangSinhVienBatDauPrev([FromQuery] ViewTienDoNhanBangSinhVienBatDauLuiRequestDto dto)
         {
             try
@@ -533,6 +545,7 @@ namespace traobang.be.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("export/template-import-subplan")]
+        [Permission(PermissionKeys.SubPlanAdd)]
         public IActionResult ExportTemplateImportSlide()
         {
             try
@@ -558,6 +571,7 @@ namespace traobang.be.Controllers
         /// <param name="dto"></param>
         /// <returns></returns>
         [HttpPost("import/sub-plan")]
+        [Permission(PermissionKeys.SubPlanAdd)]
         public ApiResponse ImportSubPlan([FromForm] ImportExcelSubPlanDto dto)
         {
             try

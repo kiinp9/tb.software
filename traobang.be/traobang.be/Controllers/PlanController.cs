@@ -51,6 +51,7 @@ namespace traobang.be.Controllers
                 return OkException(ex);
             }
         }
+
         [Permission(PermissionKeys.PlanView)]
         [HttpGet("")]
         public ApiResponse FindPaging([FromQuery] FindPagingPlanDto dto)
@@ -65,6 +66,7 @@ namespace traobang.be.Controllers
                 return OkException(ex);
             }
         }
+
         [Permission(PermissionKeys.PlanDelete)]
         [HttpDelete("{id}")]
         public ApiResponse Delete([FromRoute] int id)

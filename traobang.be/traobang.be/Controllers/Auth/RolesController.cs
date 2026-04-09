@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using traobang.be.application.Auth.Dtos.Role;
 using traobang.be.application.Auth.Interfaces;
@@ -7,7 +7,6 @@ using traobang.be.Attributes;
 using traobang.be.Controllers.Base;
 using traobang.be.shared.Constants.Auth;
 using traobang.be.shared.HttpRequest;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 
 namespace traobang.be.Controllers.Auth
@@ -93,6 +92,21 @@ namespace traobang.be.Controllers.Auth
             {
                 var data = await _roleService.GetList();
                 return new(data);
+            }
+            catch (Exception ex)
+            {
+                return OkException(ex);
+            }
+        }
+
+        [Permission(PermissionKeys.RoleDelete)]
+        [HttpDelete("{id}")]
+        public async Task<ApiResponse> Delete(string id)
+        {
+            try
+            {
+                await _roleService.Delete(id);
+                return new();
             }
             catch (Exception ex)
             {

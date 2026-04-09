@@ -2,6 +2,7 @@ import { Utils } from '@/shared/utils';
 import { HttpClient, HttpErrorResponse, HttpHandlerFn, HttpHeaders, HttpParams, HttpRequest } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { MessageService } from 'primeng/api';
 import { catchError, throwError, switchMap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
@@ -10,12 +11,14 @@ export function authInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn) 
     const baseUrl = environment.baseUrl;
     const http = inject(HttpClient);
     const router = inject(Router);
+    const _messageService = inject(MessageService);
 
     // Clone the request to add the authentication header.
     const newReq = req.clone({
         headers: req.headers.append('Authorization', `Bearer ${token}`),
         url: req.url.startsWith('http') ? req.url : `${baseUrl}${req.url}`
     });
+
     return next(newReq).pipe(
         catchError((error: HttpErrorResponse) => {
             // Only handle 401
@@ -60,7 +63,15 @@ export function authInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn) 
                     })
                 );
             }
-
+            
+            if (error.status === 403) {
+                _messageService.add({
+                    closable: true,
+                    severity: 'error',
+                    detail: 'Bạn không có quyền thực hiện thao tác này',
+                    life: 4000
+                });
+            }
             return throwError(() => error);
         })
     );

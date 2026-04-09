@@ -36,14 +36,22 @@ var builder = WebApplication.CreateBuilder(args);
 
 Console.WriteLine("EnvironmentName => " + builder.Environment.EnvironmentName);
 
-if (builder.Environment.IsEnvironment("Staging"))
+#region secret manager
+if (builder.Environment.IsEnvironment("Staging") || builder.Environment.IsEnvironment("Production"))
 {
+    string infisicalEnv = builder.Environment.EnvironmentName switch
+    {
+        "Staging" => "staging",
+        "Production" => "production",
+        _ => ""
+    };
+
     builder.Configuration
         .SetBasePath(builder.Environment.ContentRootPath)
         .AddInfisical(
             new InfisicalConfigBuilder()
                 .SetProjectId(Environment.GetEnvironmentVariable("INFISICAL_PROJECT_ID")!)
-                .SetEnvironment("staging")
+                .SetEnvironment(infisicalEnv)
                 .SetInfisicalUrl(Environment.GetEnvironmentVariable("INFISICAL_URL")!) // your self-hosted URL
                 .SetAuth(
                     new InfisicalAuthBuilder()
@@ -56,6 +64,7 @@ if (builder.Environment.IsEnvironment("Staging"))
                 .Build()
         );
 }
+#endregion
 
 
 builder.Logging.ClearProviders();
@@ -120,6 +129,21 @@ builder.Services.AddCors(options =>
 builder.Services.AddIdentity<AppUser, IdentityRole>()
     .AddEntityFrameworkStores<TbDbContext>()
     .AddDefaultTokenProviders();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Events.OnRedirectToLogin = context =>
+    {
+        context.Response.StatusCode = 401;
+        return Task.CompletedTask;
+    };
+
+    options.Events.OnRedirectToAccessDenied = context =>
+    {
+        context.Response.StatusCode = 403;
+        return Task.CompletedTask;
+    };
+});
 #endregion
 
 #region auth
@@ -210,8 +234,6 @@ builder.Services.AddAuthentication(options =>
         }
     )
     .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme);
-
-
 
 builder.Services.AddAuthorization();
 

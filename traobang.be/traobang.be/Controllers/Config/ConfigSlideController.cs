@@ -82,20 +82,18 @@ namespace traobang.be.Controllers.Config
         }
 
         [HttpGet("")]
-        //[Permission(PermissionKeys.SlideView)]
-        [AllowAnonymous]
-        public IActionResult FindPaging([FromQuery] FindPagingSlideDto dto)
+        [Permission(PermissionKeys.SlideView)]
+        public ApiResponse FindPaging([FromQuery] FindPagingSlideDto dto)
         {
-            return Forbid();
-            //try
-            //{
-            //    var result = _slideService.FindPaging(dto);
-            //    return new(result);
-            //}
-            //catch (Exception ex)
-            //{
-            //    return OkException(ex);
-            //}
+            try
+            {
+                var result = _slideService.FindPaging(dto);
+                return new(result);
+            }
+            catch (Exception ex)
+            {
+                return OkException(ex);
+            }
         }
 
         [HttpGet("{id}")]

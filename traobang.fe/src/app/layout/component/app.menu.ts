@@ -47,13 +47,13 @@ export class AppMenu {
                             {
                                 label: 'Sân khấu',
                                 routerLink: ['/guest/trao-bang/main-screen'],
-                                visible: true,
+                                visible: this._sharedService.isGranted(PermissionConstants.MenuManHinhSanKhau),
                                 icon: 'pi pi-expand'
                             },
                             {
                                 label: 'Cánh gà',
                                 routerLink: ['/guest/trao-bang/side-screen'],
-                                visible: true,
+                                visible: this._sharedService.isGranted(PermissionConstants.MenuManHinhCanhGa),
                                 heroIcon: 'heroBarsArrowUp'
                             },
                             {

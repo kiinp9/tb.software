@@ -82,6 +82,9 @@
         public const string SlideUpdateOrderTienDo = Function + "SlideUpdateOrderTienDo";
         public const string SlideRevertTienDo = Function + "SlideRevertTienDo";
 
+        public const string DieuKhienView = Function + "DieuKhienView";
+        public const string CheckinView = Function + "CheckinView";
+
         public const string PushSinhVienVaoHangDoi = Function + "PushSinhVienVaoHangDoi";
         public const string GetTienDo = Function + "GetTienDo";
         public const string NextSubPlan = Function + "NextSubPlan";
@@ -142,6 +145,9 @@
             (SlideUpdate, "[Cấu hình Slide] Cập nhật", CategoryCauHinhSlide),
             (SlideDelete, "[Cấu hình Slide] Xoá", CategoryCauHinhSlide),
             (SlideView, "[Cấu hình Slide] Xem", CategoryCauHinhSlide),
+
+            (DieuKhienView, "[Điều khiển] Xem", CategoryMainFunction),
+            (CheckinView, "[Checkin] Xem", CategoryMainFunction),
 
             (SlideTextAddFast, "[Chức năng chính] Thêm Slide Text nhanh", CategoryMainFunction),
             (SlideUpdateOrderTienDo, "[Chức năng chính] Cập nhật thứ tự tiến độ slide", CategoryMainFunction),

@@ -272,7 +272,7 @@ namespace traobang.be.Controllers
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
-        [Permission(PermissionKeys.GetTienDo)]
+        [Permission(PermissionKeys.GetTienDo, PermissionKeys.DieuKhienView, PermissionKeys.CheckinView)]
         [HttpGet("sinh-vien-nhan-bang/tien-do")]
         public async Task<ApiResponse> GetTienDoNhanBang([FromQuery] ViewTienDoNhanBangRequestDto dto)
         {
@@ -287,7 +287,7 @@ namespace traobang.be.Controllers
             }
         }
 
-        [Permission(PermissionKeys.SubPlanView)]
+        [Permission(PermissionKeys.DieuKhienView, PermissionKeys.CheckinView, PermissionKeys.SubPlanView)]
         [HttpGet("{idSubPlan}/thong-tin-subplan")]
         public async Task<ApiResponse> GetThongTinSubPlan([FromRoute] int idSubPlan)
         {
@@ -302,7 +302,7 @@ namespace traobang.be.Controllers
             }
         }
 
-        [Permission(PermissionKeys.SubPlanUpdate)]
+        [Permission(PermissionKeys.SubPlanUpdate, PermissionKeys.CheckinView)]
         [HttpPut("{id}/trang-thai-sub-plan")]
         public ApiResponse UpdateTrangThaiSubPlan([FromRoute] int id)
         {
@@ -337,7 +337,7 @@ namespace traobang.be.Controllers
         /// Lấy danh sách subplan của plan active
         /// </summary>
         /// <returns></returns>
-        [Permission(PermissionKeys.GetSubPlansOfActivePlan)]
+        [Permission(PermissionKeys.DieuKhienView, PermissionKeys.CheckinView)]
         [HttpGet("plan/active/list-sub-plan-infor")]
         public async Task<ApiResponse> GetListSubPlanInfor()
         {
@@ -382,7 +382,7 @@ namespace traobang.be.Controllers
             }
         }
 
-        [Permission(PermissionKeys.GetTienDo)]
+        [Permission(PermissionKeys.DieuKhienView, PermissionKeys.CheckinView)]
         [HttpGet("tien-do-trao-bang")]
         public async Task<ApiResponse> GetTienDoTraoBang()
         {
@@ -427,7 +427,7 @@ namespace traobang.be.Controllers
             }
         }
 
-        [Permission(PermissionKeys.GetSvChuanBiNhanBang)]
+        [Permission(PermissionKeys.DieuKhienView)]
         [HttpGet("{idSubPlan}/sinh-vien-nhan-bang/chuan-bi")]
         public async Task<ApiResponse> GetInforSinhVienChuanBiDuocTraoBang([FromRoute] int idSubPlan)
         {

@@ -143,7 +143,7 @@ export class SlideScreen extends BaseComponent {
                         // console.log(this.data);
                         this.totalRecords = res.data.totalItems;
                     }
-                }
+                },
             })
             .add(() => {
                 this.loading = false;

@@ -3,12 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 using traobang.be.application.Auth.Dtos.User;
 using traobang.be.application.Auth.Interfaces;
 using traobang.be.application.Base;
@@ -90,16 +85,6 @@ namespace traobang.be.application.Auth.Implements
             return data;
         }
 
-        /*public async Task<ViewUserDto> FindByMsAccount(string msAccount)
-        {
-            _logger.LogInformation($"{nameof(FindByMsAccount)} id={msAccount}");
-
-            var user = await _userManager.Users.AsNoTracking().FirstOrDefaultAsync(x => x.MsAccount == msAccount)
-                ?? throw new UserFriendlyException(ErrorCodes.AuthErrorUserNotFound);
-
-            return _mapper.Map<ViewUserDto>(user);
-        }*/
-
         public async Task<BaseResponsePagingDto<ViewUserDto>> FindPaging(FindPagingUserDto dto)
         {
             _logger.LogInformation($"{nameof(FindPaging)} dto={JsonSerializer.Serialize(dto)}");
@@ -109,6 +94,8 @@ namespace traobang.be.application.Auth.Implements
             var totalCount = await query.CountAsync();
 
             var users = await query
+                    .AsNoTracking()
+                    .Where(x => x.Id != getCurrentUserId())
                     .OrderBy(x => x.UserName)
                     .Paging(dto)
                     .ToListAsync();
@@ -159,7 +146,7 @@ namespace traobang.be.application.Auth.Implements
         {
             _logger.LogInformation($"{nameof(GetMe)}");
             var userId = getCurrentUserId();
-            
+
             var data = await _userManager.FindByIdAsync(userId)
                 ?? throw new UserFriendlyException(ErrorCodes.AuthErrorUserNotFound);
             var user = _mapper.Map<ViewMeDto>(data);
@@ -179,5 +166,48 @@ namespace traobang.be.application.Auth.Implements
             return user;
         }
 
+        public async Task Delete(string id)
+        {
+            _logger.LogInformation($"{nameof(Delete)} id={id}");
+
+            var user = await _userManager.FindByIdAsync(id)
+                ?? throw new UserFriendlyException(ErrorCodes.AuthErrorUserNotFound);
+
+            var userRoles = await _userManager.GetRolesAsync(user);
+
+            var isSuperAdmin = userRoles.Any(x => x == RoleConstants.ROLE_SUPER_ADMIN);
+            if (isSuperAdmin)
+            {
+                throw new UserFriendlyException(ErrorCodes.AuthErrorCannotDeleteSuperAdmin);
+            }
+
+            if (user.Id == getCurrentUserId())
+            {
+                throw new UserFriendlyException(ErrorCodes.AuthErrorCannotDeleteCurrentUser);
+            }
+
+            await _userManager.DeleteAsync(user);
+        }
+
+        public async Task ToggleLockAccount(string id)
+        {
+            _logger.LogInformation($"{nameof(ToggleLockAccount)} id={id}");
+
+            var user = await _userManager.FindByIdAsync(id)
+                ?? throw new UserFriendlyException(ErrorCodes.AuthErrorUserNotFound);
+
+            if (user.LockoutEnd != null && user.LockoutEnd > DateTimeOffset.UtcNow)
+            {
+                // Unlock account
+                user.LockoutEnd = DateTimeOffset.UtcNow;
+            }
+            else
+            {
+                // Lock account for 100 years
+                user.LockoutEnd = DateTimeOffset.UtcNow.AddYears(100);
+            }
+
+            await _userManager.UpdateAsync(user);
+        }
     }
 }

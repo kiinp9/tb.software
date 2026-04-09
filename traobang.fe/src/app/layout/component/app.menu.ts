@@ -42,50 +42,50 @@ export class AppMenu {
                         expanded: true,
                         icon: "pi pi-desktop",
                         styleClass: 'header-label',
-                        visible: this._sharedService.isGranted(PermissionConstants.MenuTraoBang),
+                        visible: this._sharedService.isGranted(PermissionConstants.MenuManHinh),
                         items: [
                             {
                                 label: 'Sân khấu',
                                 routerLink: ['/guest/trao-bang/main-screen'],
-                                visible: true,
+                                visible: this._sharedService.isGranted(PermissionConstants.MenuManHinhSanKhau),
                                 icon: 'pi pi-expand'
                             },
                             {
                                 label: 'Cánh gà',
                                 routerLink: ['/guest/trao-bang/side-screen'],
-                                visible: true,
+                                visible: this._sharedService.isGranted(PermissionConstants.MenuManHinhCanhGa),
                                 heroIcon: 'heroBarsArrowUp'
                             },
                             {
                                 label: 'Điều khiển',
                                 routerLink: ['/trao-bang/mc-screen'],
-                                visible: this._sharedService.isGranted(PermissionConstants.MenuTraoBangMc),
+                                visible: this._sharedService.isGranted(PermissionConstants.MenuManHinhDieuKhien),
                                 icon: 'pi pi-arrow-right-arrow-left'
                             },
                             {
                                 label: 'Checkin',
                                 routerLink: ['/trao-bang/scan-qr-sv'],
-                                visible: this._sharedService.isGranted(PermissionConstants.MenuTraoBangQuetQr),
+                                visible: this._sharedService.isGranted(PermissionConstants.MenuManHinhCheckin),
                                 icon: 'pi pi-qrcode'
                             },
                         ]
                     },
                     {
                         label: 'Cấu hình',
-                        visible: this._sharedService.isGranted(PermissionConstants.MenuTraoBangCauHinh),
+                        visible: this._sharedService.isGranted(PermissionConstants.MenuCauHinh),
                         expanded: true,
                         styleClass: 'header-label',
                         icon: 'pi pi-cog',
                         items: [
                             {
                                 label: 'Chương trình',
-                                visible: this._sharedService.isGranted(PermissionConstants.MenuTraoBangCauHinhChuongTrinh),
+                                visible: this._sharedService.isGranted(PermissionConstants.MenuCauHinhChuongTrinh),
                                 routerLink: ['/trao-bang/config/plan'],
                                 icon: 'pi pi-list'
                             },
                             {
                                 label: 'Khoa',
-                                visible: this._sharedService.isGranted(PermissionConstants.MenuTraoBangCauHinhKhoa),
+                                visible: this._sharedService.isGranted(PermissionConstants.MenuCauHinhKhoa),
                                 routerLink: ['/trao-bang/config/sub-plan'],
                                 icon: 'pi pi-building-columns'
                             },
@@ -96,13 +96,13 @@ export class AppMenu {
                             // },
                             {
                                 label: 'Slide',
-                                visible: this._sharedService.isGranted(PermissionConstants.MenuTraoBangCauHinhSinhVienNhanBang),
+                                visible: this._sharedService.isGranted(PermissionConstants.MenuCauHinhSlide),
                                 routerLink: ['/trao-bang/config/slide'],
                                 icon: 'pi pi-images'
                             },
                             {
                                 label: 'Giao diện',
-                                visible: this._sharedService.isGranted(PermissionConstants.MenuTraoBangCauHinhSinhVienNhanBang),
+                                visible: this._sharedService.isGranted(PermissionConstants.MenuCauHinhGiaoDien),
                                 routerLink: ['/trao-bang/config/giao-dien'],
                                 heroIcon: 'heroPaintBrush'
                             },

@@ -528,6 +528,142 @@ namespace traobang.be.application.TraoBang.Implements
             _tbDbContext.SaveChanges();
         }
 
+        public void CreateSlideTextFast(CreateSlideTextFastDto dto)
+        {
+            _logger.LogInformation($"{nameof(CreateSlideTextFast)} dto={JsonSerializer.Serialize(dto)}");
+
+            var username = getCurrentName();
+            if (string.IsNullOrEmpty(dto.NoiDung))
+            {
+                throw new UserFriendlyException(ErrorCodes.TraoBangErrorLoaiSlideBinhThuongPhaiCoNoiDung);
+            }
+
+            // check subplan có đang trao bằng ko
+            var subPlan = (from sp in _tbDbContext.SubPlans.AsNoTracking()
+                           join p in _tbDbContext.Plans.AsNoTracking() on sp.IdPlan equals p.Id
+                           where !sp.Deleted && !p.Deleted
+                             && p.TrangThai == TrangThaiPlan.DangHoatDong
+                             && sp.TrangThai == TrangThaiSubPlan.DangTraoBang
+                             && sp.IsShow
+                             && sp.Id == dto.IdSubPlan
+                           select sp).FirstOrDefault()
+                        ?? throw new UserFriendlyException(ErrorCodes.TraoBangErrorSubPlanNotFound);
+
+            // check slide trước
+            int newOrder = 2;
+
+            if (dto.IdSlideTruoc != null)
+            {
+                var slideTruoc = _tbDbContext.Slides.AsNoTracking()
+                                .Where(x => x.Id == dto.IdSlideTruoc && x.IdSubPlan == subPlan.Id && !x.Deleted)
+                                .FirstOrDefault()
+                              ?? throw new UserFriendlyException(ErrorCodes.TraoBangErrorSlideNotFound);
+
+                newOrder = slideTruoc.Order + 1;
+            }
+
+            using (var tran = _tbDbContext.Database.BeginTransaction())
+            {
+                var slideBefore = _tbDbContext.Slides
+                                    .Where(x => x.IdSubPlan == subPlan.Id && !x.Deleted && x.Order >= newOrder)
+                                    .ExecuteUpdate(setter => setter.SetProperty(x => x.Order, x => x.Order + 1));
+
+                _tbDbContext.Slides.Add(new Slide()
+                {
+                    IdSinhVienNhanBang = -1,
+                    IdSubPlan = subPlan.Id,
+                    IsShow = true,
+                    NoiDung = dto.NoiDung,
+                    LoaiSlide = LoaiSlides.TEXT,
+                    Note = dto.Note,
+                    TrangThai = TraoBangConstants.ThamGiaTraoBang,
+                    Order = newOrder,
+                    CreatedBy = username
+                });
+                _tbDbContext.SaveChanges();
+                tran.Commit();
+            }
+        }
+
+        public void UpdateTienDoOrder(UpdateTienDoOrderDto dto)
+        {
+            _logger.LogInformation($"{nameof(UpdateTienDoOrder)} dto={JsonSerializer.Serialize(dto)}");
+
+            // check tiến độ có tồn tại ko
+            var tienDo = _tbDbContext.TienDoTraoBangs.Where(x => x.Id == dto.IdTienDo && !x.Deleted).FirstOrDefault()
+                    ?? throw new UserFriendlyException(ErrorCodes.TraoBangErrorSinhVienOrderInvalid);
+
+            // check subplan có đang trao bằng ko
+            var subPlan = (from sp in _tbDbContext.SubPlans.AsNoTracking()
+                           join p in _tbDbContext.Plans.AsNoTracking() on sp.IdPlan equals p.Id
+                           where !sp.Deleted && !p.Deleted
+                             && p.TrangThai == TrangThaiPlan.DangHoatDong
+                             && sp.TrangThai == TrangThaiSubPlan.DangTraoBang
+                             && sp.IsShow
+                             && sp.Id == tienDo.IdSubPlan
+                           select sp).FirstOrDefault()
+                        ?? throw new UserFriendlyException(ErrorCodes.TraoBangErrorSubPlanNotFound);
+
+            // lấy slide trước
+            var slideTruocTrongBangTienDo = _tbDbContext.TienDoTraoBangs.AsNoTracking()
+                                .Where(x => x.Id == dto.IdSlideTruoc && x.IdSubPlan == subPlan.Id && !x.Deleted)
+                                .FirstOrDefault();
+            int newOrder = 1;
+            if (slideTruocTrongBangTienDo != null)
+            {
+                newOrder = slideTruocTrongBangTienDo.Order + 1;
+            }
+
+            using (var tran = _tbDbContext.Database.BeginTransaction())
+            {
+                tienDo.Order = newOrder;
+                _tbDbContext.SaveChanges();
+
+                _tbDbContext.TienDoTraoBangs.Where(x => x.IdSubPlan == tienDo.IdSubPlan && x.Order >= newOrder && !x.Deleted && x.Id != tienDo.Id)
+                               .ExecuteUpdate(setter => setter.SetProperty(x => x.Order, x => x.Order + 1));
+
+                var listTienDo = _tbDbContext.TienDoTraoBangs.Where(x => x.IdSubPlan == tienDo.IdSubPlan && !x.Deleted).OrderBy(x => x.Order).ToList();
+                int order = 1;
+                foreach (var item in listTienDo)
+                {
+                    item.Order = order;
+                    order++;
+                }
+                _tbDbContext.SaveChanges();
+                tran.Commit();
+            }
+        }
+
+        public void RevertTienDoTraoBang(int idTienDo)
+        {
+            _logger.LogInformation($"{nameof(RevertTienDoTraoBang)} idTienDo={idTienDo}");
+
+            using (var tran = _tbDbContext.Database.BeginTransaction())
+            {
+                var tienDo = _tbDbContext.TienDoTraoBangs.Where(x => x.Id == idTienDo && !x.Deleted).FirstOrDefault()
+                    ?? throw new UserFriendlyException(ErrorCodes.TraoBangErrorTienDoNotFound);
+
+                tienDo.Deleted = true;
+                tienDo.DeletedBy = getCurrentName();
+                tienDo.DeletedDate = DateTime.Now;
+
+                // Nếu là loại slide text thì xóa cả tiến độ lẫn slide đó
+                if (tienDo.LoaiSlide == LoaiSlides.TEXT)
+                {
+                    var slide = _tbDbContext.Slides.Where(x => x.Id == tienDo.IdSlide && !x.Deleted).FirstOrDefault();
+                    if (slide != null)
+                    {
+                        slide.Deleted = true;
+                        slide.DeletedBy = getCurrentName();
+                        slide.DeletedDate = DateTime.Now;
+                    }
+                }
+
+                _tbDbContext.SaveChanges();
+                tran.Commit();
+            }
+        }
+
         private async Task _generateQrCommon(DanhSachSinhVienNhanBang sv, SubPlan sp)
         {
             string templateContent = _templateSettings.UrlSvInfo;

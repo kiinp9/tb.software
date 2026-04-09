@@ -35,6 +35,11 @@
             { ErrorCodes.TraoBangErrorSlideNotFound, "Không tìm thấy slide" },
             { ErrorCodes.TraoBangErrorGiaoDienNotFound, "Không tìm thấy giao diện" },
             { ErrorCodes.TraoBangErrorCannotDeleteActivePlan, "Không xóa được chương trình đang hoạt động" },
+            { ErrorCodes.TraoBangErrorSubPlanNotActive, "Không phải khoa đang trao bằng" },
+            { ErrorCodes.TraoBangErrorTienDoNotFound, "Không tìm thấy slide trong hàng đợi" },
+            { ErrorCodes.AuthErrorRoleInUsed, "Role đang được sử dụng. Không thể xóa." },
+            { ErrorCodes.AuthErrorCannotDeleteSuperAdmin, "Không thể xóa Super Admin." },
+            { ErrorCodes.AuthErrorCannotDeleteCurrentUser, "Không thể xóa người dùng hiện tại đang đăng nhập." },
         };
         public static string GetMessage(int code)
         {

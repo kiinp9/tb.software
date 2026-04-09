@@ -16,7 +16,9 @@
         public const int AuthErrorCreateRole = 104;
         public const int AuthErrorRoleNotFound = 105;
         public const int AuthErrorUserEmailHuceNotFound = 106;
-
+        public const int AuthErrorRoleInUsed = 107;
+        public const int AuthErrorCannotDeleteSuperAdmin = 108;
+        public const int AuthErrorCannotDeleteCurrentUser = 109;
 
         public const int ServiceAccountErrorNotFound = 701;
         public const int GoogleSheetUrlErrorInvalid = 702;
@@ -40,6 +42,8 @@
         public const int TraoBangErrorLoaiSlideSinhVienPhaiCoSinhVien = 1011;
         public const int TraoBangErrorSlideNotFound = 1012;
         public const int TraoBangErrorCannotDeleteActivePlan = 1013;
+        public const int TraoBangErrorSubPlanNotActive = 1014;
+        public const int TraoBangErrorTienDoNotFound = 1015;
 
         public const int TraoBangErrorGiaoDienNotFound = 1101;
     }

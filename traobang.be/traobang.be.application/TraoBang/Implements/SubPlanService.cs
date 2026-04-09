@@ -668,9 +668,12 @@ namespace traobang.be.application.TraoBang.Implements
                 IdPlan = query.sp.IdPlan,
                 Deleted = false
             };
+
             _tbDbContext.TienDoTraoBangs.Add(tienDoTraoBang);
             _tbDbContext.SaveChanges();
+
             await _traoBangService.NotifyCheckIn();
+
             return new DiemDanhNhanBangDto
             {
                 TenKhoa = subPlan?.Ten ?? String.Empty,
@@ -761,6 +764,7 @@ namespace traobang.be.application.TraoBang.Implements
             await _traoBangService.NotifySinhVienDangTrao();
             _logger.LogInformation($"Đã bắn SignalR cho sinh viên Id: {id}, SubPlan: {idSubPlan}");
         }
+
         public async Task<GetSinhVienDangTraoBangInforDto> GetSinhVienDangTraoBang()
         {
             _logger.LogInformation($"{nameof(GetSinhVienDangTraoBang)} ");
@@ -1030,7 +1034,8 @@ namespace traobang.be.application.TraoBang.Implements
                 Order = result.Order,
                 IsShow = result.IsShow,
                 LoaiSlide = result.LoaiSlide,
-                IsSlideDauCuoi = result.IdSlide == slideDau || result.IdSlide == slideCuoi
+                IsSlideDauCuoi = result.IdSlide == slideDau || result.IdSlide == slideCuoi,
+                IdSlide = result.IdSlide,
             }).ToList();
         }
         public async Task<GetNextSubPlanResponseDto?> NextSubPlan()
@@ -1198,6 +1203,8 @@ namespace traobang.be.application.TraoBang.Implements
             return new GetInforSubPlanDto
             {
                 Ten = subPlan.Ten,
+                IdPlan = plan.Id,
+                IdSubPlan = subPlan.Id,
                 SoLuongThamGia = soLuongThamGia,
                 SoLuongVangMat = soLuongVangMat,
                 SoLuongDaTrao = soLuongDaTrao,
@@ -2048,19 +2055,49 @@ namespace traobang.be.application.TraoBang.Implements
                 Items = items
             };
         }
+
         public async Task Restart()
         {
             _logger.LogInformation($"{nameof(Restart)}");
 
-            await _tbDbContext.Database.ExecuteSqlRawAsync("DELETE FROM tb.TienDoTraoBang");
-            await _tbDbContext.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('tb.TienDoTraoBang', RESEED, 0)");
+            var activePlan = _tbDbContext.Plans.FirstOrDefault(x => x.TrangThai == TrangThaiPlan.DangHoatDong && !x.Deleted)
+                                ?? throw new UserFriendlyException(ErrorCodes.TraoBangErrorPlanNotFound);
 
-            await _tbDbContext.Database.ExecuteSqlRawAsync("UPDATE [tb].[SubPlan] SET [TrangThai] = 2");
+            var listSp = _tbDbContext.SubPlans.Where(x => !x.Deleted && x.IdPlan == activePlan.Id).ToList();
 
-            await _tbDbContext.Database.ExecuteSqlRawAsync("DELETE FROM tb.TraoBangLog");
-            await _tbDbContext.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('tb.TraoBangLog', RESEED, 0)");
+            var listTienDoDelete = new List<TienDoTraoBang>();
+            var listLogDelete = new List<TraoBangLog>();
 
-            await _tbDbContext.SaveChangesAsync();
+            using (var tran = _tbDbContext.Database.BeginTransaction())
+            {
+                foreach (var sp in listSp)
+                {
+                    var tmpListTienDo = _tbDbContext.TienDoTraoBangs.Where(x => x.IdSubPlan == sp.Id && !x.Deleted).ToList();
+                    listTienDoDelete.AddRange(tmpListTienDo);
+
+                    sp.TrangThai = TrangThaiSubPlan.ChuanBi;
+
+                    var tmpListLog = _tbDbContext.TraoBangLogs.Where(x => x.IdSubPlan == sp.Id && !x.Deleted).ToList();
+                    listLogDelete.AddRange(tmpListLog);
+                }
+
+                //await _tbDbContext.Database.ExecuteSqlRawAsync("DELETE FROM tb.TienDoTraoBang");
+                //await _tbDbContext.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('tb.TienDoTraoBang', RESEED, 0)");
+
+                //await _tbDbContext.Database.ExecuteSqlRawAsync("UPDATE [tb].[SubPlan] SET [TrangThai] = 2");
+
+                //await _tbDbContext.Database.ExecuteSqlRawAsync("DELETE FROM tb.TraoBangLog");
+                //await _tbDbContext.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('tb.TraoBangLog', RESEED, 0)");
+
+                _tbDbContext.TienDoTraoBangs.RemoveRange(listTienDoDelete);
+                _tbDbContext.TraoBangLogs.RemoveRange(listLogDelete);
+
+                await _tbDbContext.SaveChangesAsync();
+
+                tran.Commit();
+            }
+
+
         }
         public async Task<ImportDanhSachSinhVienNhanBangResponseDto> ImportDanhSachNhanBang(ImportDanhSachSinhVienNhanBangDto dto)
         {

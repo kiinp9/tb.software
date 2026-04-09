@@ -67,6 +67,7 @@ export interface IViewScanQrCurrentSubPlan {
     soLuongThamGia?: number
     soLuongVangMat?: number
     ten?: string
+    idPlan?:number
     slideTexts?: ISlideItem[]
 }
 
@@ -79,6 +80,7 @@ export interface IViewScanQrTienDoSv {
     orderDanhSachNhanBang?: number;
     trangThai?: number;
     capBang?: string;
+    idSlide?:number
     tenKhoa?: string;
     loaiSlide?:number;
     isSlideDauCuoi?:Boolean

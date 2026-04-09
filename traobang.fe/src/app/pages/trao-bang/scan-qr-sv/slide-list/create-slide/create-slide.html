@@ -1,0 +1,32 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="grid grid-cols-1 gap-2">
+
+        <div class="mb-3">
+            <label for="noiDung" class="block text-surface-900 dark:text-surface-0 font-medium mb-2">Nội dung<span
+                    class="text-red-500">*</span></label>
+            <textarea pInputText formControlName="noiDung" id="noiDung" class="w-full mb-2"></textarea>
+            @if (form.get('noiDung')?.hasError('required') && form.get('noiDung')?.touched) {
+            <p-message severity="error" variant="simple" size="small">{{ getError('noiDung') }} </p-message>
+            }
+        </div>
+        <div class="mb-3">
+            <label for="note" class="block text-surface-900 dark:text-surface-0 font-medium mb-2">Note<span
+                    class="text-red-500">*</span></label>
+            <textarea pInputText formControlName="note" id="note" class="w-full mb-2"></textarea>
+            @if (form.get('note')?.hasError('required') && form.get('note')?.touched) {
+            <p-message severity="error" variant="simple" size="small">{{ getError('note') }} </p-message>
+            }
+        </div>
+
+    </div>
+    <div class="flex flex-row justify-end">
+        <div class="mt-5 mr-4 ">
+            <p-button label="Thoát" outlined (onClick)="onClose()" />
+        </div>
+
+        <div class="mt-5 flex x">
+            <p-button label="Lưu" icon="pi pi-save" type="submit" [loading]="loading" />
+        </div>
+    </div>
+
+</form>

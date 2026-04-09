@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using traobang.be.application.Auth.Dtos.Role;
+﻿using traobang.be.application.Auth.Dtos.Role;
 using traobang.be.shared.HttpRequest.BaseRequest;
 
 namespace traobang.be.application.Auth.Interfaces
@@ -15,5 +10,6 @@ namespace traobang.be.application.Auth.Interfaces
         public Task<BaseResponsePagingDto<ViewRoleDto>> FindPaging(FindPagingRoleDto dto);
         public Task<ViewRoleDto> FindById(string id);
         public Task<List<ViewRoleDto>> GetList();
+        public Task Delete(string id);
     }
 }

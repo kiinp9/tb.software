@@ -21,9 +21,9 @@ namespace traobang.be.application.Auth.Implements
     {
         private readonly RoleManager<IdentityRole> _roleManager;
         public RoleService(
-            TbDbContext tbDbContext, 
-            ILogger<BaseService> logger, 
-            IHttpContextAccessor httpContextAccessor, 
+            TbDbContext tbDbContext,
+            ILogger<BaseService> logger,
+            IHttpContextAccessor httpContextAccessor,
             IMapper mapper,
             RoleManager<IdentityRole> roleManager
         ) : base(tbDbContext, logger, httpContextAccessor, mapper)
@@ -113,7 +113,7 @@ namespace traobang.be.application.Auth.Implements
 
             var role = await _roleManager.FindByIdAsync(dto.Id)
                             ?? throw new UserFriendlyException(ErrorCodes.AuthErrorRoleNotFound);
-            
+
             var trans = await _tbDbContext.Database.BeginTransactionAsync();
             var oldRoleClaims = await _tbDbContext.RoleClaims
                                     .Where(rc => rc.RoleId == role.Id)
@@ -139,7 +139,8 @@ namespace traobang.be.application.Auth.Implements
             await trans.CommitAsync();
         }
 
-        public async Task<List<ViewRoleDto>> GetList() {
+        public async Task<List<ViewRoleDto>> GetList()
+        {
             _logger.LogInformation($"{nameof(GetList)}");
 
             var query = _roleManager.Roles.AsNoTracking().AsQueryable();
@@ -149,6 +150,25 @@ namespace traobang.be.application.Auth.Implements
             var result = _mapper.Map<List<ViewRoleDto>>(data);
 
             return result;
+        }
+
+        public async Task Delete(string id)
+        {
+            _logger.LogInformation($"{nameof(Delete)} id={id}");
+
+            var role = await _roleManager.FindByIdAsync(id)
+                            ?? throw new UserFriendlyException(ErrorCodes.AuthErrorRoleNotFound);
+
+            var roleInUsed = await _tbDbContext.UserRoles
+                                .Where(ur => ur.RoleId == role.Id)
+                                .AnyAsync();
+
+            if (roleInUsed)
+            {
+                throw new UserFriendlyException(ErrorCodes.AuthErrorRoleInUsed);
+            }
+
+            await _roleManager.DeleteAsync(role);
         }
     }
 }

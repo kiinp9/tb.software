@@ -32,4 +32,9 @@ export class RoleService {
     update(body: IUpdateRole) {
         return this.http.put<IBaseResponse>(`${this.api}`, body);
     }
+
+    delete(id: string) {
+        return this.http.delete<IBaseResponseWithData<IViewRowRole>>(`${this.api}/${id}`);
+    }
+
 }

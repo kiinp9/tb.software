@@ -25,3 +25,7 @@ services:
       - /usr/share/fonts:/usr/share/fonts
     environment:
       - DOTNET_ENVIRONMENT=${APP_BE_ENV}
+      - INFISICAL_URL=${INFISICAL_URL}
+      - INFISICAL_PROJECT_ID=${INFISICAL_PROJECT_ID}
+      - INFISICAL_CLIENT_ID=${INFISICAL_CLIENT_ID}
+      - INFISICAL_CLIENT_SECRET=${INFISICAL_CLIENT_SECRET}

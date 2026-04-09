@@ -1,12 +1,12 @@
-<div class="flex justify-between">
+<div class="flex justify-between sv-info-root" [class.sv-info-root--next]="animateDirection() === 'next'" [class.sv-info-root--prev]="animateDirection() === 'prev'" [class.sv-info-root--fast]="isNext()">
 
     @if (svDangTrao() && !svDangTrao()?.text) {
     <!-- Info -->
     <div class="space-y-1">
-        <div class="font-bold">{{svDangTrao()?.capBang}} {{ svDangTrao()?.hoVaTen }}</div>
-        <div><span class="font-semibold">Ngành:</span> {{ svDangTrao()?.tenNganhDaoTao }}</div>
+        <div class="sv-info-line sv-info-line--1 font-bold">{{svDangTrao()?.capBang}} {{ svDangTrao()?.hoVaTen }}</div>
+        <div class="sv-info-line sv-info-line--2"><span class="font-semibold">Ngành:</span> {{ svDangTrao()?.tenNganhDaoTao }}</div>
         @if (svDangTrao()?.xepHang) {
-            <div><span class="font-semibold">Xếp loại:</span> {{ svDangTrao()?.xepHang || '' }}</div>
+            <div class="sv-info-line sv-info-line--3"><span class="font-semibold">Xếp loại:</span> {{ svDangTrao()?.xepHang || '' }}</div>
         }
         <!-- @if (svDangTrao()?.thanhTich) {
         <div><span class="font-semibold">Thành tích:</span><br><span class="whitespace-pre-line">{{
@@ -14,7 +14,7 @@
                 }}</span></div>
         } -->
     </div>
-    <div class="w-1/2">
+    <div class="w-1/2 sv-info-line sv-info-line--4">
         <span class="font-semibold">Ghi chú:</span><br>
         @if (svDangTrao()?.note) {
         <span class="whitespace-pre-line">{{ svDangTrao()?.note }}</span>
@@ -23,9 +23,9 @@
     }
     @if (svDangTrao() && svDangTrao()?.text) {
     <div class="space-y-1">
-        <div class="font-bold">{{svDangTrao()?.text}}</div>
+        <div class="sv-info-line sv-info-line--1 font-bold">{{svDangTrao()?.text}}</div>
     </div>
-    <div class="w-1/2">
+    <div class="w-1/2 sv-info-line sv-info-line--2">
         <span class="font-semibold">Ghi chú:</span><br>
         @if (svDangTrao()?.textNote) {
             <div [innerHTML]="svDangTrao()?.textNote" [ngClass]="{

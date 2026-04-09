@@ -1,4 +1,5 @@
 using Hangfire;
+using InfisicalConfiguration;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +35,36 @@ logger.Info("Starting application...");
 var builder = WebApplication.CreateBuilder(args);
 
 Console.WriteLine("EnvironmentName => " + builder.Environment.EnvironmentName);
+
+#region secret manager
+if (builder.Environment.IsEnvironment("Staging") || builder.Environment.IsEnvironment("Production"))
+{
+    string infisicalEnv = builder.Environment.EnvironmentName switch
+    {
+        "Staging" => "staging",
+        "Production" => "production",
+        _ => ""
+    };
+
+    builder.Configuration
+        .SetBasePath(builder.Environment.ContentRootPath)
+        .AddInfisical(
+            new InfisicalConfigBuilder()
+                .SetProjectId(Environment.GetEnvironmentVariable("INFISICAL_PROJECT_ID")!)
+                .SetEnvironment(infisicalEnv)
+                .SetInfisicalUrl(Environment.GetEnvironmentVariable("INFISICAL_URL")!) // your self-hosted URL
+                .SetAuth(
+                    new InfisicalAuthBuilder()
+                        .SetUniversalAuth(
+                            Environment.GetEnvironmentVariable("INFISICAL_CLIENT_ID")!,
+                            Environment.GetEnvironmentVariable("INFISICAL_CLIENT_SECRET")!
+                        )
+                        .Build()
+                )
+                .Build()
+        );
+}
+#endregion
 
 
 builder.Logging.ClearProviders();
@@ -98,6 +129,21 @@ builder.Services.AddCors(options =>
 builder.Services.AddIdentity<AppUser, IdentityRole>()
     .AddEntityFrameworkStores<TbDbContext>()
     .AddDefaultTokenProviders();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Events.OnRedirectToLogin = context =>
+    {
+        context.Response.StatusCode = 401;
+        return Task.CompletedTask;
+    };
+
+    options.Events.OnRedirectToAccessDenied = context =>
+    {
+        context.Response.StatusCode = 403;
+        return Task.CompletedTask;
+    };
+});
 #endregion
 
 #region auth
@@ -189,8 +235,6 @@ builder.Services.AddAuthentication(options =>
     )
     .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme);
 
-
-
 builder.Services.AddAuthorization();
 
 
@@ -245,6 +289,7 @@ builder.Services.AddScoped<IPlanService, PlanService>();
 builder.Services.AddScoped<ISubPlanService, SubPlanService>();
 builder.Services.AddScoped<ISlideService, SlideService>();
 builder.Services.AddScoped<IGiaoDienService, GiaoDienService>();
+builder.Services.AddScoped<IPrepareDataService, PrepareDataService>();
 
 #endregion
 

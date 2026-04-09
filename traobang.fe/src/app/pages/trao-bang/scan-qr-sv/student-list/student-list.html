@@ -2,63 +2,67 @@
     DANH SÁCH HÀNG ĐỢI
 </h4>
 
-<p-table [value]="students() || []" class="!text-xl">
+<p-table [value]="studentsList()" class="!text-xl" cdkDropList (cdkDropListDropped)="drop($event)">
+    <!-- HEADER -->
     <ng-template pTemplate="header">
         <tr class="font-bold">
+            <th class="!text-center"></th>
             <th class="!text-center">STT</th>
             <th class="!text-center">MSSV</th>
             <th>Họ và Tên</th>
             <th>Ngành/Chuyên ngành</th>
             <th>Trạng thái</th>
+            <th>Actions</th>
         </tr>
     </ng-template>
 
+    <!-- BODY -->
     <ng-template pTemplate="body" let-student let-ri="rowIndex">
-        <tr [class.slide-enter-animation]="highlightLast() && ri === students().length - 1">
-            <td [ngClass]="{
-                    '!text-center': true,
-                    'bg-orange-200': student.trangThai === constStatuses.DANG_TRAO_BANG,
-                    '!bg-[#d4ffd1]': student.loaiSlide === loaiSlide.TEXT,
-                    '!bg-[#ffedd5]': student.isSlideDauCuoi
-                }">
+        <tr cdkDrag cdkDragHandle [cdkDragDisabled]="ri < 2"
+            [class.slide-enter-animation]="highlightLast() && ri === studentsList().length - 1"
+            [class.cursor-grab]="ri >= 2" [class.cursor-not-allowed]="ri < 2"
+            class="group hover:bg-blue-50 transition-colors" [cdkDragData]="student">
+            <!-- Drag handle -->
+            <td class="!text-center" [ngClass]="getRowClass(student)">
+                <span class="select-none opacity-0 transition-opacity duration-150 group-hover:opacity-100">
+                    <i class="pi pi-align-justify text-gray-500"></i>
+                </span>
+            </td>
+
+            <!-- STT -->
+            <td class="!text-center" [ngClass]="getRowClass(student)">
                 {{ student.order }}
             </td>
 
-            <td [ngClass]="{
-                    '!text-center': true,
-                    'bg-orange-200': student.trangThai === constStatuses.DANG_TRAO_BANG,
-                    '!bg-[#d4ffd1]': student.loaiSlide === loaiSlide.TEXT,
-                     '!bg-[#ffedd5]': student.isSlideDauCuoi
-                }">
+            <!-- MSSV -->
+            <td class="!text-center" [ngClass]="getRowClass(student)">
                 {{ student.maSoSinhVien }}
             </td>
 
-            <td [ngClass]="{
-                    'bg-orange-200': student.trangThai === constStatuses.DANG_TRAO_BANG,
-                    '!bg-[#d4ffd1]': student.loaiSlide === loaiSlide.TEXT,
-                     '!bg-[#ffedd5]': student.isSlideDauCuoi
-                }">
+            <!-- HỌ TÊN -->
+            <td [ngClass]="getRowClass(student)">
                 {{ student.hoVaTen }}
             </td>
 
-            <td [ngClass]="{
-                    'bg-orange-200': student.trangThai === constStatuses.DANG_TRAO_BANG,
-                    '!bg-[#d4ffd1]': student.loaiSlide === loaiSlide.TEXT,
-                    '!bg-[#ffedd5]': student.isSlideDauCuoi
-                }">
+            <!-- NGÀNH -->
+            <td [ngClass]="getRowClass(student)">
                 {{ student.tenNganhDaoTao }}
             </td>
 
-            <td [ngClass]="{
-                    'bg-orange-200': student.trangThai === constStatuses.DANG_TRAO_BANG,
-                    '!bg-[#d4ffd1]': student.loaiSlide === loaiSlide.TEXT,
-                     '!bg-[#ffedd5]': student.isSlideDauCuoi
-                }">
-                <p-tag *ngIf="student.loaiSlide !== loaiSlide.TEXT" [severity]="constStatuses.getSeverity(student.trangThai)">
+            <!-- TRẠNG THÁI -->
+            <td [ngClass]="getRowClass(student)">
+                <p-tag *ngIf="student.loaiSlide !== loaiSlide.TEXT"
+                    [severity]="constStatuses.getSeverity(student.trangThai)">
                     <span class="text-xl">
-                        {{ student.loaiSlide !== loaiSlide.TEXT ? constStatuses.getName(student.trangThai):null }}
+                        {{ constStatuses.getName(student.trangThai) }}
                     </span>
                 </p-tag>
+            </td>
+            <td [ngClass]="getRowClass(student)">
+                <p-button *ngIf="student.loaiSlide !== loaiSlide.TEXT" icon="pi pi-replay" (onClick)="changeStatus(student.id)"
+                    class="mr-3" label="" />
+                <p-button *ngIf="student.loaiSlide === loaiSlide.TEXT && !student.isSlideDauCuoi" icon="pi pi-trash" (onClick)="onDeleteSlide(student.id)"
+                    class="mr-3" label="" />
             </td>
         </tr>
     </ng-template>

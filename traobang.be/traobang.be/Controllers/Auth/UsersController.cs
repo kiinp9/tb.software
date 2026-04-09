@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using traobang.be.application.Auth.Dtos.User;
 using traobang.be.application.Auth.Interfaces;
@@ -7,7 +7,6 @@ using traobang.be.Attributes;
 using traobang.be.Controllers.Base;
 using traobang.be.shared.Constants.Auth;
 using traobang.be.shared.HttpRequest;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 
 namespace traobang.be.Controllers.Auth
@@ -134,6 +133,46 @@ namespace traobang.be.Controllers.Auth
             {
                 var data = await _usersService.GetMe();
                 return new(data);
+            }
+            catch (Exception ex)
+            {
+                return OkException(ex);
+            }
+        }
+
+        /// <summary>
+        /// Xóa user
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [Permission(PermissionKeys.UserDelete)]
+        [HttpDelete("{id}")]
+        public async Task<ApiResponse> DeleteUser([FromRoute] string id)
+        {
+            try
+            {
+                await _usersService.Delete(id);
+                return new();
+            }
+            catch (Exception ex)
+            {
+                return OkException(ex);
+            }
+        }
+
+        /// <summary>
+        /// Khóa/mở khóa user
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [Permission(PermissionKeys.UserUpdate)]
+        [HttpPut("{id}/toggle-lock")]
+        public async Task<ApiResponse> ToggleLockUser([FromRoute] string id)
+        {
+            try
+            {
+                await _usersService.ToggleLockAccount(id);
+                return new();
             }
             catch (Exception ex)
             {

@@ -2,20 +2,22 @@ export class PermissionConstants {
     static Menu = "Menu.";
     static Function = "Function.";
 
-
-
+    static MenuManHinh = this.Menu + "ManHinh";
+    static MenuManHinhSanKhau = this.MenuManHinh + "_SanKhau";
+    static MenuManHinhCanhGa = this.MenuManHinh + "_CanhGa";
+    static MenuManHinhDieuKhien = this.MenuManHinh + "_DieuKhien";
+    static MenuManHinhCheckin = this.MenuManHinh + "_Checkin";
+    
+    static MenuCauHinh = this.Menu + "_CauHinh";
+    static MenuCauHinhChuongTrinh = this.MenuCauHinh + "_ChuongTrinh";
+    static MenuCauHinhKhoa = this.MenuCauHinh + "_Khoa";
+    static MenuCauHinhSlide = this.MenuCauHinh + "_Slide";
+    static MenuCauHinhGiaoDien = this.MenuCauHinh + "_GiaoDien";
+    
     static MenuUserManagement = this.Menu + "UserManagement";
     static MenuUserManagementUser = this.MenuUserManagement + "_User";
     static MenuUserManagementRole = this.MenuUserManagement + "_User";
-
-    static MenuTraoBang = this.Menu + "TraoBang";
-
-    static MenuTraoBangCauHinh = this.MenuTraoBang + "_CauHinh";
-    static MenuTraoBangCauHinhChuongTrinh = this.MenuTraoBangCauHinh + "_ChuongTrinh";
-    static MenuTraoBangCauHinhKhoa = this.MenuTraoBangCauHinh + "_Khoa";
-    static MenuTraoBangCauHinhSinhVienNhanBang = this.MenuTraoBangCauHinh + "_SinhVienNhanBang";
-    static MenuTraoBangQuetQr = this.MenuTraoBang + "_QuetQr";
-    static MenuTraoBangMc = this.MenuTraoBang + "_Mc";
+    
 
     static CategoryUser = "QL User";
     static UserAdd = this.Function + "UserAdd";

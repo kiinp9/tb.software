@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using traobang.be.application.TraoBang.Dtos.Slide;
 using traobang.be.application.TraoBang.Interfaces;
+using traobang.be.Attributes;
 using traobang.be.Controllers.Base;
+using traobang.be.shared.Constants.Auth;
 using traobang.be.shared.HttpRequest;
 
 namespace traobang.be.Controllers.Config
@@ -24,6 +26,7 @@ namespace traobang.be.Controllers.Config
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
+        [Permission(PermissionKeys.SlideAdd)]
         [HttpPost("")]
         public ApiResponse Create(CreateSlideDto dto)
         {
@@ -44,6 +47,7 @@ namespace traobang.be.Controllers.Config
         /// <param name="dto"></param>
         /// <returns></returns>
         [HttpPut("")]
+        [Permission(PermissionKeys.SlideUpdate)]
         public ApiResponse Update(UpdateSlideDto dto)
         {
             try
@@ -63,6 +67,7 @@ namespace traobang.be.Controllers.Config
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
+        [Permission(PermissionKeys.SlideDelete)]
         public ApiResponse Delete([FromRoute] int id)
         {
             try
@@ -77,6 +82,7 @@ namespace traobang.be.Controllers.Config
         }
 
         [HttpGet("")]
+        [Permission(PermissionKeys.SlideView)]
         public ApiResponse FindPaging([FromQuery] FindPagingSlideDto dto)
         {
             try
@@ -91,6 +97,7 @@ namespace traobang.be.Controllers.Config
         }
 
         [HttpGet("{id}")]
+        [Permission(PermissionKeys.SlideView)]
         public ApiResponse FindById([FromRoute] int id)
         {
             try
@@ -109,6 +116,7 @@ namespace traobang.be.Controllers.Config
         /// </summary>
         /// <returns></returns>
         [HttpGet("export/template-import-slide")]
+        [Permission(PermissionKeys.SlideAdd)]
         public IActionResult ExportTemplateImportSlide()
         {
             try
@@ -134,6 +142,7 @@ namespace traobang.be.Controllers.Config
         /// <param name="dto"></param>
         /// <returns></returns>
         [HttpPost("import/slide")]
+        [Permission(PermissionKeys.SlideAdd)]
         public ApiResponse ImportSlide([FromForm] ImportExcelSlideDto dto)
         {
             try
@@ -153,6 +162,7 @@ namespace traobang.be.Controllers.Config
         /// <param name="dto"></param>
         /// <returns></returns>
         [HttpPost("qr")]
+        [Permission(PermissionKeys.SlideUpdate)]
         public async Task<ApiResponse> GenerateQr([FromBody] GenerateSinhVienQrDto dto)
         {
             try
@@ -172,6 +182,7 @@ namespace traobang.be.Controllers.Config
         /// <param name="idSlide"></param>
         /// <returns></returns>
         [HttpPost("qr/slide/{idSlide}")]
+        [Permission(PermissionKeys.SlideUpdate)]
         public async Task<ApiResponse> GenerateQrOneSV([FromRoute] int idSlide)
         {
             try

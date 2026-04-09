@@ -138,7 +138,7 @@ export class Create extends BaseComponent {
                     if (!!res.data.passwordRandom) {
                         this.form.patchValue({ password: res.data.passwordRandom })
                     }
-                    // this._ref?.close(true);
+                    this._ref?.close(true);
                 }
             },
             error: (err) => {

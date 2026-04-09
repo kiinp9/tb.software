@@ -1,11 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using traobang.be.application.Auth.Dtos.Permission;
 using traobang.be.application.Auth.Interfaces;
 using traobang.be.application.Base;
@@ -26,7 +21,7 @@ namespace traobang.be.application.Auth.Implements
         {
             _logger.LogInformation($"{nameof(GetAllPermissions)}");
 
-            var query = PermissionKeys.All.OrderBy(p => p).Select(x => new ViewPermissionDto
+            var query = PermissionKeys.All.Select(x => new ViewPermissionDto
             {
                 Key = x.Key,
                 Name = x.Name,

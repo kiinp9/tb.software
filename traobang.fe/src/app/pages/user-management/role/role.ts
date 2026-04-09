@@ -1,4 +1,3 @@
-
 import { BaseComponent } from '@/shared/components/base/base-component';
 import { DataTable } from '@/shared/components/data-table/data-table';
 import { CellViewTypes } from '@/shared/constants/data-table.constants';
@@ -91,6 +90,24 @@ export class Role extends BaseComponent {
         if (data.type === TblActionTypes.update) {
             this.onOpenUpdate(data.data);
         } else if (data.type === TblActionTypes.delete) {
+            this.confirmDelete(
+                {
+                    header: 'Bạn chắc chắn muốn xóa Vai trò này?',
+                    message: 'Không thể khôi phục sau khi xóa'
+                },
+                () => {
+                    this._roleService.delete(data.data.id || '').subscribe(
+                        (res) => {
+                            if (this.isResponseSucceed(res, true, 'Đã xóa')) {
+                                this.getData();
+                            }
+                        },
+                        (err) => {
+                            this.messageError(err?.message);
+                        }
+                    );
+                }
+            );
         }
     }
 }

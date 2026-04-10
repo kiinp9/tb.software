@@ -1,4 +1,3 @@
-
 import { IViewGiaoDien } from '@/models/traobang/giao-dien.models';
 import { ICreateConfigPlan, IUpdateConfigPlan, PlanTrangThai } from '@/models/traobang/plan.models';
 import { GiaoDienService } from '@/service/giao-dien.service';
@@ -22,31 +21,30 @@ export class Create extends BaseComponent {
     private _planService = inject(TraoBangPlanService);
     private _giaoDienService = inject(GiaoDienService);
 
-    listTrangThai = PlanTrangThai.ListTrangThai
+    listTrangThai = PlanTrangThai.ListTrangThai;
 
-    listGiaoDien: IViewGiaoDien[] = []
+    listGiaoDien: IViewGiaoDien[] = [];
 
     override form: FormGroup = new FormGroup({
         id: new FormControl(null),
         ten: new FormControl('', [Validators.required]),
-        trangThai: new FormControl(this.listTrangThai[0].code, [Validators.required]),
+        trangThai: new FormControl(this.listTrangThai[0].code),
         moTa: new FormControl(''),
-        time: new FormControl(null, [Validators.required]),
-        idGiaoDien: new FormControl("",)
+        time: new FormControl(null),
+        idGiaoDien: new FormControl('')
     });
 
     override ValidationMessages: Record<string, Record<string, string>> = {
         ten: {
             required: 'Không được bỏ trống'
-        },
-        time: {
-            required: 'Không được bỏ trống'
         }
+        // time: {
+        //     required: 'Không được bỏ trống'
+        // }
     };
 
     override ngOnInit(): void {
-        console.log(this._config.data)
-        this.getListGiaoDien()
+        this.getListGiaoDien();
         if (this.isUpdate) {
             this.form.setValue({
                 id: this._config.data.id,
@@ -70,7 +68,7 @@ export class Create extends BaseComponent {
                     this.listGiaoDien = res.data;
                 }
             }
-        })
+        });
     }
 
     onSubmit() {
@@ -86,8 +84,13 @@ export class Create extends BaseComponent {
     }
 
     onSubmitCreate() {
-        const from = Utils.formatDateCallApi(this.form.value['time'][0])
-        const to = this.form.value['time'][1] ? Utils.formatDateCallApi(this.form.value['time'][1]) : from;
+        let from = null;
+        let to = null;
+
+        if (this.form.value['time']) {
+            from = Utils.formatDateCallApi(this.form.value['time'][0]);
+            to = this.form.value['time'][1] ? Utils.formatDateCallApi(this.form.value['time'][1]) : from;
+        }
 
         const body: ICreateConfigPlan = {
             ten: this.form.value['ten'],
@@ -114,7 +117,7 @@ export class Create extends BaseComponent {
     }
 
     onSubmitUpdate() {
-        const from = Utils.formatDateCallApi(this.form.value['time'][0])
+        const from = Utils.formatDateCallApi(this.form.value['time'][0]);
         const to = this.form.value['time'][1] ? Utils.formatDateCallApi(this.form.value['time'][1]) : from;
 
         const body: IUpdateConfigPlan = {

@@ -19,8 +19,8 @@ export interface ICreateConfigPlan {
     moTa?: string;
     trangThai?: number;
     idGiaoDien?: number;
-    thoiGianBatDau?: string;
-    thoiGianKetThuc?: string;
+    thoiGianBatDau?: string | null;
+    thoiGianKetThuc?: string | null;
 }
 
 export interface IUpdateConfigPlan extends ICreateConfigPlan {
